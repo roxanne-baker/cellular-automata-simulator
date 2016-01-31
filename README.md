@@ -95,9 +95,9 @@ We tried to separate out each main component of the animation into its own set o
 
 ###Team Responsibilities
 
-Roxanne Baker - Simulation
-Zdravko Paskalev - Visualization
-Sarp Uner - Configuration
+- Roxanne Baker - Simulation
+- Zdravko Paskalev - Visualization
+- Sarp Uner - Configuration
 
 
 All the team members have agreed to collaborate on others’ components upon request.  We have arranged multiple meetings in the upcoming week to work on the project together, in addition to working on the individual components on our own time.  We plan to start by ensuring that we have a basic Cell and Grid classes working, as these are vital to the Visualization and Simulation components, before focusing primarily on our own individual components.
