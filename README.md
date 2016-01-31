@@ -30,11 +30,11 @@ UserInterface - creates the UserInterface for the game, where the user can press
 CellSocietyMain - This is the class that is used to start the program by instantiating the UserInterface.
 
 XMLConfiguration - Reads and processes the XML file for the configuration of the simulation.
-
+![Design Image](https://github.com/duke-compsci308-spring2016/cellsociety_team11/blob/master/ClassDiagram.png)
 ###User Interface
 
 The program interface will be represented by a rectangular frame showing the name of the simulation and the time passed on top, the square grid pane below it and 8 buttons in 2 rows on the very bottom giving the options to the user to load file, start, stop, pause, resume, slow down, speed up and fast forward through the animation. Erroneous messages will be displayed in the space for the grid.
-![Design Image](https://github.com/duke-compsci308-spring2016/cellsociety_team11/blob/master/Screen.jpg)
+![Interface Image](https://github.com/duke-compsci308-spring2016/cellsociety_team11/blob/master/Screen.jpg)
 
 ###Design Details
 
