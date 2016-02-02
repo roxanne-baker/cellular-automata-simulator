@@ -22,6 +22,10 @@ public class UserInterface {
     private Button SpeedUp;
     private Button SlowDown;
     private Button Pause;
+    private int count=0;
+    private boolean forward=false;
+    private boolean active=true;
+    private double rate=1;
 	public UserInterface(){
 		
 	}
@@ -72,7 +76,19 @@ public class UserInterface {
     	            public void handle(ActionEvent event) {
     	            	KeyFrame frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY),new EventHandler<ActionEvent>(){
 		            		public void handle(ActionEvent newEvent){
-		            			newSimulation.update();
+		            			if(!forward){
+		            				newSimulation.update();
+		            				newSimulation.updateNeighbours();
+		            			}
+		            			else{
+		            				while(count<5){
+		            					newSimulation.update();
+		            					newSimulation.updateNeighbours();
+		            					count++;
+		            				}
+		            				forward=false;
+		            				
+		            			}
 		            		}
 		            	});
     	            }
@@ -80,11 +96,34 @@ public class UserInterface {
     			Stop.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
     				public void handle(MouseEvent event){
     					animation.stop();
+    					active=false;
+    				}
+    			});
+    			Pause.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+    				public void handle(MouseEvent event){
+    					animation.stop();
     				}
     			});
     			Resume.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
     				public void handle(MouseEvent event){
-    					animation.play();
+    					if(active){
+    						animation.play();
+    					}
+    				}
+    			});
+    			SpeedUp.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+    				public void handle(MouseEvent event){
+    						animation.setRate(rate*2);
+    				}
+    			});
+    			SlowDown.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+    				public void handle(MouseEvent event){
+						animation.setRate(rate/2);
+    				}
+    			});
+    			Forward.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+    				public void handle(MouseEvent event){
+						forward=true;
     				}
     			});
     		}
