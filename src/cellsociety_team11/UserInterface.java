@@ -26,14 +26,34 @@ public class UserInterface {
     private boolean forward=false;
     private boolean active=true;
     private double rate=1;
-	public UserInterface(){
-		
-	}
+    Grid myGrid;
+	Timeline animation = new Timeline();
+	Simulation newSimulation= null;
+	KeyFrame myFrame;
+	public UserInterface(){}
 	public Scene setScene(){
 		Group root=new Group();
     	myScene=new Scene(root, HSIZE, VSIZE);
     	setButtons(root);
+    	setGrid(root);
     	return myScene;
+	}
+	public void setGrid(Group root) {
+		Grid grid = new SquareGrid(root, 6, 6);
+		for(int i=0; i<6; i++) {
+			for (int j=0; j<6; j++) {
+				if ((i==1 || i==2) && (j==1 || j==2) &&  (!(i==2 && j==2))) {
+					grid.myCells[i][j].setState("dead");					
+				}
+				else if ((i==3 ||i==4) && (j==3 || j==4) && (!(i==3 && j==3))) {
+					grid.myCells[i][j].setState("dead");
+				}
+				else {
+					grid.myCells[i][j].setState("live");
+				}
+			}
+		}
+		myGrid = grid;
 	}
 	public void setButtons(Group root){
 		Button[] newButtons=new Button[8];
@@ -66,31 +86,25 @@ public class UserInterface {
 			newButtons[i].setPrefWidth(HSIZE/4);
 			root.getChildren().add(newButtons[i]);
 		}
+		Timeline animation = new Timeline();
 		Load.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
     		@Override
 			public void handle(MouseEvent event) {
-    			Timeline animation = new Timeline();
-    			Simulation newSimulation=new Simulation();
+    			setGrid(root);
+    			Simulation newSimulation=new GameOfLifeSimulation(myGrid.myCells);
     			Start.setOnAction(new EventHandler<ActionEvent>(){
     	            @Override
     	            public void handle(ActionEvent event) {
+    	            	
     	            	KeyFrame frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY),new EventHandler<ActionEvent>(){
 		            		public void handle(ActionEvent newEvent){
-		            			if(!forward){
 		            				newSimulation.update();
-		            				newSimulation.updateNeighbours();
-		            			}
-		            			else{
-		            				while(count<5){
-		            					newSimulation.update();
-		            					newSimulation.updateNeighbours();
-		            					count++;
-		            				}
-		            				forward=false;
-		            				
-		            			}
 		            		}
 		            	});
+    	            	animation.setCycleCount(Timeline.INDEFINITE);
+    	            	animation.getKeyFrames().add(frame);
+    	            	animation.play();
+    	            	
     	            }
     	        });
     			Stop.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
@@ -123,13 +137,15 @@ public class UserInterface {
     			});
     			Forward.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
     				public void handle(MouseEvent event){
-						forward=true;
+						animation.play();
+						newSimulation.update();
+						animation.stop();
     				}
     			});
+    			
+    			
     		}
     	});
-		
-		
 	}
 }
 	
