@@ -6,7 +6,7 @@ import javafx.scene.shape.Shape;
 
 public class Cell {
 	private int countNeighbours;
-	public ArrayList<Cell> neighbours;
+	private ArrayList<Cell> neighbours;
 	private String state;
 	public final Shape shape;
 	public Cell (Shape myShape){

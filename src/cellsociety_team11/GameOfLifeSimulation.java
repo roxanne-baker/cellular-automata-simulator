@@ -27,7 +27,6 @@ public class GameOfLifeSimulation extends Simulation {
 		for(int i=0;i<6;i++){
 			for(int j=0;j<6;j++){
 				int k=myCells[i][j].getMyNeighbours().size();
-				System.out.println(k);
 				int count=0;
 				ArrayList<Cell> neighbours=new ArrayList<Cell>();
 				neighbours=myCells[i][j].getMyNeighbours();
@@ -51,7 +50,6 @@ public class GameOfLifeSimulation extends Simulation {
 		}
 	}
 	public void setCellColor(){
-		System.out.println("In method 2");
 		for (int i=0; i<6; i++) {
 			for (int j=0; j<6; j++) {
 				if (myCells[i][j].getState().equals("live")) {

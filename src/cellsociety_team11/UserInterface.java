@@ -1,4 +1,6 @@
 package cellsociety_team11;
+import java.util.ArrayList;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Group;
@@ -14,64 +16,59 @@ public class UserInterface {
 	private Scene myScene;
 	public static final int FRAMES_PER_SECOND = 60;
     private static final int MILLISECOND_DELAY = 1000 / FRAMES_PER_SECOND;
-    private Button Load;
-    private Button Start;
-    private Button Stop;
-    private Button Resume;
-    private Button Forward;
-    private Button SpeedUp;
-    private Button SlowDown;
-    private Button Pause;
     private int count=0;
     private boolean forward=false;
     private boolean active=true;
     private double rate=1;
+    private Configuration myconfig;
+    private Simulation RunningSimulation;
     Grid myGrid;
 	Timeline animation = new Timeline();
 	Simulation newSimulation= null;
 	KeyFrame myFrame;
-	public UserInterface(){}
+	private String[] myPossible = { 
+			"GameOfLife",
+	        "Seggregation",
+	        "PredatorPrey",
+	        "Fire"
+	    };
+	public UserInterface(){
+		myconfig=new Configuration();
+		RunningSimulation=new Simulation();
+	}
 	public Scene setScene(){
 		Group root=new Group();
     	myScene=new Scene(root, HSIZE, VSIZE);
     	setButtons(root);
-    	setGrid(root);
+    	setGrid(root, myconfig.getWidth(),myconfig.getHeight(), myconfig.getStates());
     	return myScene;
 	}
-	public void setGrid(Group root) {
-		Grid grid = new SquareGrid(root, 6, 6);
-		for(int i=0; i<6; i++) {
-			for (int j=0; j<6; j++) {
-				if ((i==1 || i==2) && (j==1 || j==2) &&  (!(i==2 && j==2))) {
-					grid.myCells[i][j].setState("dead");					
-				}
-				else if ((i==3 ||i==4) && (j==3 || j==4) && (!(i==3 && j==3))) {
-					grid.myCells[i][j].setState("dead");
-				}
-				else {
-					grid.myCells[i][j].setState("live");
-				}
+	public void setGrid(Group root, int width, int height, ArrayList<String> cellStates) {
+		Grid grid = new SquareGrid(root, width, height);
+		for(int i=0; i<width; i++) {
+			for (int j=0; j<height; j++) {
+					grid.myCells[i][j].setState(cellStates.get(i*width+j));
 			}
 		}
 		myGrid = grid;
 	}
 	public void setButtons(Group root){
 		Button[] newButtons=new Button[8];
-		Load=new Button("Load New Simulation");
+		Button Load=new Button("Load New Simulation");
 		newButtons[0]=Load;
-		Start=new Button("Start the Simulation");
+		Button Start=new Button("Start the Simulation");
 		newButtons[1]=Start;
-		Stop=new Button("Stop the Simulation");
+		Button Stop=new Button("Stop the Simulation");
 		newButtons[2]=Stop;
-		Resume=new Button("Resume the Simulation");
+		Button Resume=new Button("Resume the Simulation");
 		newButtons[3]=Resume;
-		Pause=new Button("Pause the Simulation");
+		Button Pause=new Button("Pause the Simulation");
 		newButtons[4]=Pause;
-		Forward=new Button("Fast Forward the Simulation");
+		Button Forward=new Button("Fast Forward the Simulation");
 		newButtons[5]=Forward;
-		SpeedUp=new Button("Speed Up the Simulation");
+		Button SpeedUp=new Button("Speed Up the Simulation");
 		newButtons[6]=SpeedUp;
-		SlowDown=new Button("Slow Down the Simulation");
+		Button SlowDown=new Button("Slow Down the Simulation");
 		newButtons[7]=SlowDown;
 		for(int i=0;i<newButtons.length;i++){
 			if(i<4){
@@ -90,15 +87,21 @@ public class UserInterface {
 		Load.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
     		@Override
 			public void handle(MouseEvent event) {
+    			/**
     			setGrid(root);
-    			Simulation newSimulation=new GameOfLifeSimulation(myGrid.myCells);
+    			**/
+    			if(myconfig.getName().equals("GameOfLife")){
+    				Simulation newSimulation=new GameOfLifeSimulation(myGrid.myCells);
+    				RunningSimulation=newSimulation;
+    				
+    			}
     			Start.setOnAction(new EventHandler<ActionEvent>(){
     	            @Override
     	            public void handle(ActionEvent event) {
     	            	
     	            	KeyFrame frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY),new EventHandler<ActionEvent>(){
 		            		public void handle(ActionEvent newEvent){
-		            				newSimulation.update();
+		            			RunningSimulation.update();
 		            		}
 		            	});
     	            	animation.setCycleCount(Timeline.INDEFINITE);
@@ -138,7 +141,7 @@ public class UserInterface {
     			Forward.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
     				public void handle(MouseEvent event){
 						animation.play();
-						newSimulation.update();
+						RunningSimulation.update();
 						animation.stop();
     				}
     			});
