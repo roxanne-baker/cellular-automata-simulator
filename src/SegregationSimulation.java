@@ -9,8 +9,8 @@ public class SegregationSimulation extends Simulation {
 	private double threshold;
 	Cell[][] myGrid;
 	
-	public SegregationSimulation(Cell[][] myGrid, int thresholdPercentage) {
-		threshold = thresholdPercentage*0.01;
+	public SegregationSimulation(Cell[][] myGrid, int thresholdDecimal) {
+		threshold = thresholdDecimal;
 		this.myGrid = myGrid;
 		setAllNeighbors();
 		setCellColor();
@@ -47,13 +47,15 @@ public class SegregationSimulation extends Simulation {
 	}
 	
 	public void moveAllCells() {
-		// what if more dissatisfied cells than open spaces?
 		List<Cell> emptyCells = getEmptyCells();
 		for(int i=0; i<myGrid.length; i++) {
 			for (int j=0; j<myGrid[0].length; j++) {
-				if (moveCell(myGrid[i][j]) && !emptyCells.isEmpty()) {
+				if (moveCell(myGrid[i][j]) && !emptyCells.isEmpty() && !myGrid[i][j].justUpdated) {
 					emptyCells.get(0).setState(myGrid[i][j].getState());
+					emptyCells.get(0).justUpdated = true;
+					
 					myGrid[i][j].setState("EMPTY");
+					myGrid[i][j].justUpdated = true;
 					emptyCells.remove(0);
 					emptyCells.add(myGrid[i][j]);
 				}
@@ -62,8 +64,6 @@ public class SegregationSimulation extends Simulation {
 	}
 	
 	public void setCellColor() {
-//		Cell[][] nextGrid = myGrid.clone();
-		
 		for (int i=0; i<myGrid.length; i++) {
 			for (int j=0; j<myGrid[0].length; j++) {
 				if (myGrid[i][j].getState().equals("BLUE")) {
@@ -77,7 +77,6 @@ public class SegregationSimulation extends Simulation {
 				}
 			}
 		}
-//		myGrid = nextGrid;
 	}
 	
 	public void setAllNeighbors() {

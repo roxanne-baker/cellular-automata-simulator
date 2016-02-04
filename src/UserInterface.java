@@ -47,18 +47,36 @@ public class UserInterface {
 //		myGrid = grid;
 //	}
 	
+//	public void setGrid(Group root) {
+//		Grid grid = new SquareGrid(root, 6, 6);
+//		for(int i=0; i<6; i++) {
+//			for (int j=0; j<6; j++) {
+//				if ((i==1 || i==2) && (j==1 || j==2) &&  (!(i==2 && j==2))) {
+//					grid.myCells[i][j].setState("PREDATOR");					
+//				}
+//				else if ((i==3 ||i==4) && (j==3 || j==4) && (!(i==3 && j==3))) {
+//					grid.myCells[i][j].setState("PREY");
+//				}
+//				else {
+//					grid.myCells[i][j].setState("EMPTY");
+//				}
+//			}
+//		}
+//		myGrid = grid;
+//	}
+	
 	public void setGrid(Group root) {
 		Grid grid = new SquareGrid(root, 6, 6);
 		for(int i=0; i<6; i++) {
 			for (int j=0; j<6; j++) {
 				if ((i==1 || i==2) && (j==1 || j==2) &&  (!(i==2 && j==2))) {
-					grid.myCells[i][j].setState("PREDATOR");					
+					grid.myCells[i][j].setState("FIRE");					
 				}
 				else if ((i==3 ||i==4) && (j==3 || j==4) && (!(i==3 && j==3))) {
-					grid.myCells[i][j].setState("PREY");
+					grid.myCells[i][j].setState("EMPTY");
 				}
 				else {
-					grid.myCells[i][j].setState("EMPTY");
+					grid.myCells[i][j].setState("TREE");
 				}
 			}
 		}
@@ -103,7 +121,7 @@ public class UserInterface {
     		@Override
 			public void handle(MouseEvent event) {
     			setGrid(root);
-    			Simulation newSimulation=new PredatorPreySimulation(myGrid.myCells, 10, 6, 2);
+    			Simulation newSimulation=new FireSimulation(myGrid.myCells, 0.15);
     			Start.setOnAction(new EventHandler<ActionEvent>(){
     	            @Override
     	            public void handle(ActionEvent event) {

@@ -8,6 +8,8 @@ public class Cell {
 	public List<Cell> neighbours;
 	private String state;
 	public final Shape shape;
+	boolean justUpdated = false;
+	
 	public Cell (Shape myShape){
 		shape=myShape;
 		neighbours=new ArrayList<Cell>();

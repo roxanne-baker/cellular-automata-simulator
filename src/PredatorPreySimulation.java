@@ -75,13 +75,13 @@ public class PredatorPreySimulation extends Simulation {
 		for (int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
 				killPredatorOrBreed(myCells[i][j]);
-				myCells[i][j].justVacated = false;
+				myCells[i][j].justUpdated = false;
 			}
 		}		
 	}		
 
 	public void updatePredatorState(PredatorPreyCell cell) {
-		if (cell.justVacated) return;
+		if (cell.justUpdated) return;
 		List<PredatorPreyCell> neighbours = (List<PredatorPreyCell>)(List<?>) cell.getMyNeighbours();
 		List<Integer> openSpaces = getNeighboursOfState("EMPTY", neighbours);
 		List<Integer> preySpaces = getNeighboursOfState("PREY", neighbours);
@@ -127,7 +127,7 @@ public class PredatorPreySimulation extends Simulation {
 
 
 	public void updatePreyState(PredatorPreyCell cell) {
-		if (cell.justVacated) return;
+		if (cell.justUpdated) return;
 		List<PredatorPreyCell> neighbours = (List<PredatorPreyCell>)(List<?>) cell.getMyNeighbours();
 
 		List<Integer> openSpaces = getNeighboursOfState("EMPTY", neighbours);
@@ -146,7 +146,7 @@ public class PredatorPreySimulation extends Simulation {
 	public List<Integer> getNeighboursOfState(String state, List<PredatorPreyCell> neighbourCells) {
 		List<Integer> stateSpaces = new ArrayList<Integer>();
 		for (int i=0; i<neighbourCells.size(); i++) {
-			if (neighbourCells.get(i).getState().equals(state) && neighbourCells.get(i).justVacated == false) {
+			if (neighbourCells.get(i).getState().equals(state) && neighbourCells.get(i).justUpdated == false) {
 				stateSpaces.add(i);
 			}
 		}	
@@ -156,11 +156,11 @@ public class PredatorPreySimulation extends Simulation {
 	public void switchCells(PredatorPreyCell neighbour, PredatorPreyCell cell) {
 		neighbour.setState(cell.getState());
 		neighbour.turnsSinceBreeding = cell.turnsSinceBreeding + 1;
-		neighbour.justVacated = true;
+		neighbour.justUpdated = true;
 
 		cell.setState("EMPTY");
 		cell.turnsSinceBreeding = 0;
-		cell.justVacated = true;	
+		cell.justUpdated = true;	
 	}
 
 	private int getIndexToSwitch(List<Integer> stateSpaces) {
