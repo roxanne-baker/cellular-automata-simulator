@@ -1,5 +1,5 @@
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javafx.scene.paint.Color;
@@ -20,7 +20,7 @@ public class SegregationSimulation extends Simulation {
 		List<Cell> emptyCells = new ArrayList<Cell>();
 		for (int i=0; i<myGrid.length; i++) {
 			for (int j=0; j<myGrid[0].length; j++) {
-				if (myGrid[i][j].state.equals("EMPTY")) {
+				if (myGrid[i][j].getState().equals("EMPTY")) {
 					emptyCells.add(myGrid[i][j]);
 				}
 			}
@@ -31,11 +31,11 @@ public class SegregationSimulation extends Simulation {
 	public boolean moveCell(Cell cell) {
 		int numNeighbors = 0;
 		int similarNeighbors = 0;
-		for (Cell neighbor : cell.neighbors) {
-			if(!neighbor.state.equals("EMPTY")) {
+		for (Cell neighbor : cell.getMyNeighbours()) {
+			if(!neighbor.getState().equals("EMPTY")) {
 				numNeighbors++;
 			}
-			if(neighbor.state.equals(cell.state)) {
+			if(neighbor.getState().equals(cell.getState())) {
 				similarNeighbors++;
 			}
 		}
@@ -52,8 +52,8 @@ public class SegregationSimulation extends Simulation {
 		for(int i=0; i<myGrid.length; i++) {
 			for (int j=0; j<myGrid[0].length; j++) {
 				if (moveCell(myGrid[i][j]) && !emptyCells.isEmpty()) {
-					emptyCells.get(0).state = myGrid[i][j].state;
-					myGrid[i][j].state = "EMPTY";
+					emptyCells.get(0).setState(myGrid[i][j].getState());
+					myGrid[i][j].setState("EMPTY");
 					emptyCells.remove(0);
 					emptyCells.add(myGrid[i][j]);
 				}
@@ -66,10 +66,10 @@ public class SegregationSimulation extends Simulation {
 		
 		for (int i=0; i<myGrid.length; i++) {
 			for (int j=0; j<myGrid[0].length; j++) {
-				if (myGrid[i][j].state.equals("BLUE")) {
+				if (myGrid[i][j].getState().equals("BLUE")) {
 					myGrid[i][j].shape.setFill(Color.BLUE);
 				}
-				else if (myGrid[i][j].state.equals("RED")) {
+				else if (myGrid[i][j].getState().equals("RED")) {
 					myGrid[i][j].shape.setFill(Color.RED);
 				}
 				else {
@@ -89,33 +89,32 @@ public class SegregationSimulation extends Simulation {
 	}
 	
 	public void setNeighbors(Cell cell, int row, int col) {
-		cell.neighbors = new ArrayList<Cell>();
 		boolean isFirstRow = (row == 0);
 		boolean isLastRow = (row == myGrid.length-1);
 		boolean isFirstCol = (col == 0);
 		boolean isLastCol = (col == myGrid[0].length-1);
 		if (!isFirstRow) {
 			if (!isFirstCol) {
-				cell.neighbors.add(myGrid[row-1][col-1]);
+				cell.getMyNeighbours().add(myGrid[row-1][col-1]);
 			}
-			cell.neighbors.add(myGrid[row-1][col]);
+			cell.getMyNeighbours().add(myGrid[row-1][col]);
 			if (!isLastCol) {
-				cell.neighbors.add(myGrid[row-1][col+1]);
+				cell.getMyNeighbours().add(myGrid[row-1][col+1]);
 			}
 		}
 		if (!isFirstCol) {
-			cell.neighbors.add(myGrid[row][col-1]);
+			cell.getMyNeighbours().add(myGrid[row][col-1]);
 		}
 		if (!isLastCol) {
-			cell.neighbors.add(myGrid[row][col+1]);
+			cell.getMyNeighbours().add(myGrid[row][col+1]);
 		}
 		if (!isLastRow) {
 			if (!isFirstCol) {
-				cell.neighbors.add(myGrid[row+1][col-1]);
+				cell.getMyNeighbours().add(myGrid[row+1][col-1]);
 			}
-			cell.neighbors.add(myGrid[row+1][col]);
+			cell.getMyNeighbours().add(myGrid[row+1][col]);
 			if (!isLastCol) {
-				cell.neighbors.add(myGrid[row+1][col+1]);
+				cell.getMyNeighbours().add(myGrid[row+1][col+1]);
 			}
 		}
 	}

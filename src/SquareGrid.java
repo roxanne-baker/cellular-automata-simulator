@@ -1,4 +1,3 @@
-import javafx.*;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -6,17 +5,18 @@ import javafx.scene.shape.*;
 public class SquareGrid extends Grid {
 
 	public SquareGrid(Group root, int width, int height) {
-		super(root, width, height);
+		super(root,width,height);
 	}
 	
 	public void setGrid(int width, int height) {
-		myGrid = new Cell[width][height];
+		
+		myCells = new Cell[width][height];
 		int cellWidth = 350/width;
 		int cellHeight = 350/height;
 		for (int i=0; i<width; i++) {
 			for (int j=0; j<height; j++) {
 				Shape cellShape = getSquare(i*cellWidth+25, j*cellHeight+30, cellWidth, cellHeight);
-				myGrid[i][j] = new Cell(cellShape);
+				myCells[i][j] = new Cell(cellShape);
 			}
 		}
 	}

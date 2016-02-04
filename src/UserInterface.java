@@ -12,30 +12,15 @@ public class UserInterface {
 	public static final int VSIZE=500;
 	private Scene myScene;
 	public static final int FRAMES_PER_SECOND = 60;
-//    private static final int MILLISECOND_DELAY = 1000 / FRAMES_PER_SECOND;
-//    private Button Load;
-//    private Button Start;
-//    private Button Stop;
-//    private Button Resume;
-//    private Button Forward;
-//    private Button SpeedUp;
-//    private Button SlowDown;
-//    private Button Pause;
-//    private int count=0;
-    private boolean forward=false;
+    private static final int MILLISECOND_DELAY = 1000 / FRAMES_PER_SECOND;
     private boolean active=true;
-    private boolean runningAnimation = false;
-    private boolean loaded = false;
-    private double frameRate = 150;
-//    private double rate=1;
+    private double rate=0.05;
     Grid myGrid;
-	Timeline animation = new Timeline();
 	Simulation newSimulation= null;
-    
-	public UserInterface(){
-		
-	}
+	KeyFrame myFrame;
 	
+	public UserInterface(){
+	}
 	public Scene setScene(){
 		Group root=new Group();
     	myScene=new Scene(root, HSIZE, VSIZE);
@@ -44,50 +29,40 @@ public class UserInterface {
     	return myScene;
 	}
 	
-	// for testing purposes until able to parse XML
+//	public void setGrid(Group root) {
+//		Grid grid = new SquareGrid(root, 6, 6);
+//		for(int i=0; i<6; i++) {
+//			for (int j=0; j<6; j++) {
+//				if ((i==1 || i==2) && (j==1 || j==2) &&  (!(i==2 && j==2))) {
+//					grid.myCells[i][j].setState("live");					
+//				}
+//				else if ((i==3 ||i==4) && (j==3 || j==4) && (!(i==3 && j==3))) {
+//					grid.myCells[i][j].setState("live");
+//				}
+//				else {
+//					grid.myCells[i][j].setState("dead");
+//				}
+//			}
+//		}
+//		myGrid = grid;
+//	}
+	
 	public void setGrid(Group root) {
-		Grid grid = new SquareGrid(root, 5, 5);
-		for(int i=0; i<5; i++) {
-			for (int j=0; j<5; j++) {
-				if (j==0 && (i != 1) ||
-						(i == 3 && j != 1) ||
-						(i==0 && j!= 2 && j != 4) ||
-						(i == 2 && j == 1)) {
-					grid.myGrid[j][i].state = "BLUE";					
+		Grid grid = new SquareGrid(root, 6, 6);
+		for(int i=0; i<6; i++) {
+			for (int j=0; j<6; j++) {
+				if ((i==1 || i==2) && (j==1 || j==2) &&  (!(i==2 && j==2))) {
+					grid.myCells[i][j].setState("PREDATOR");					
 				}
-				else if (j==1 || (i==1 && j != 0) ||
-						(j==2 || j==4) && (i==0 || i==4)) {
-					grid.myGrid[j][i].state = "RED";
+				else if ((i==3 ||i==4) && (j==3 || j==4) && (!(i==3 && j==3))) {
+					grid.myCells[i][j].setState("PREY");
 				}
 				else {
-					grid.myGrid[j][i].state = "EMPTY";
+					grid.myCells[i][j].setState("EMPTY");
 				}
 			}
 		}
 		myGrid = grid;
-	}
-	
-	public boolean playAnimation(double elapsedTime) {
-		if (loaded && runningAnimation && active && elapsedTime > frameRate) {
-//    			if(!forward){
-    				newSimulation.update();
-//    				newSimulation.updateNeighbours();
-//    			}
-//    			else{
-//    				while(count<5){
-//    					newSimulation.update();
-////    					newSimulation.updateNeighbours();
-//    					count++;
-//    				}
-//    				forward=false;	
-//    			}	
-    			return true;
-		}
-		else if (loaded && forward) {
-			newSimulation.update();
-			forward = false;
-		}
-		return false;
 	}
 	
 	public void setButtons(Group root){
@@ -121,57 +96,69 @@ public class UserInterface {
 			newButtons[i].setPrefWidth(HSIZE/4);
 			root.getChildren().add(newButtons[i]);
 		}
-		//will need to change once XML configuration added	
+		Timeline animation = new Timeline();
+		animation.setRate(0.05);
+		System.out.println(animation.getRate());
 		Load.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
     		@Override
 			public void handle(MouseEvent event) {
-//    			animation = new Timeline();
-    			newSimulation=new SegregationSimulation(myGrid.myGrid, 30);
-    			loaded = true;
-    			active = true;
+    			setGrid(root);
+    			Simulation newSimulation=new PredatorPreySimulation(myGrid.myCells, 10, 6, 2);
+    			Start.setOnAction(new EventHandler<ActionEvent>(){
+    	            @Override
+    	            public void handle(ActionEvent event) {
+    	            	
+    	            	KeyFrame frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY),new EventHandler<ActionEvent>(){
+		            		public void handle(ActionEvent newEvent){
+		            				newSimulation.update();
+		            		}
+		            	});
+    	            	animation.setCycleCount(Timeline.INDEFINITE);
+    	            	animation.getKeyFrames().add(frame);
+    	            	animation.play();
+    	            	
+    	            }
+    	        });
+    			Stop.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+    				public void handle(MouseEvent event){
+    					animation.stop();
+    					active=false;
+    				}
+    			});
+    			Pause.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+    				public void handle(MouseEvent event){
+    					animation.stop();
+    				}
+    			});
+    			Resume.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+    				public void handle(MouseEvent event){
+    					if(active){
+    						animation.play();
+    					}
+    				}
+    			});
+    			SpeedUp.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+    				public void handle(MouseEvent event){
+    					rate *= 2;
+    						animation.setRate(rate);
+    				}
+    			});
+    			SlowDown.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+    				public void handle(MouseEvent event){
+    					rate /= 2;
+						animation.setRate(rate);
+    				}
+    			});
+    			Forward.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+    				public void handle(MouseEvent event){
+						animation.play();
+						newSimulation.update();
+						animation.stop();
+    				}
+    			});
+    			
+    			
     		}
-		});
-		
-        Start.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
-    	    @Override
-    	    public void handle(MouseEvent event) {
-    	        runningAnimation = true;
-		    }
-		});
-
-        Stop.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
-        	public void handle(MouseEvent event){
-        		runningAnimation = false;
-        		active=false;
-        	}
-        });
-        Pause.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
-        	public void handle(MouseEvent event){
-        		runningAnimation = false;
-        	}
-        });
-        Resume.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
-        	public void handle(MouseEvent event){
-        		if(active){
-        			runningAnimation = true;
-        		}
-        	}
-        });
-        SpeedUp.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
-        	public void handle(MouseEvent event){
-        		frameRate /= 2;
-        	}
-        });
-        SlowDown.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
-        	public void handle(MouseEvent event){
-        		frameRate *= 2;
-        	}
-        });
-        Forward.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
-        	public void handle(MouseEvent event){
-        		forward=true;
-        	}
-        });		
-
+    	});
 	}
 }
