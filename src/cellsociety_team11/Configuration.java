@@ -7,6 +7,11 @@ public class Configuration {
 	int height=6;
 	ArrayList<String>states;
 	String name="GameOfLife";
+	String myFile;
+	public Configuration(String fileName){
+		myFile=fileName;
+	}
+	public Configuration(){}
 	public int getWidth(){
 		return width;
 	}

@@ -1,11 +1,13 @@
 package cellsociety_team11;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import javafx.event.*;
@@ -22,6 +24,9 @@ public class UserInterface {
     private double rate=1;
     private Configuration myconfig;
     private Simulation RunningSimulation;
+    public static final String DEFAULT_RESOURCE_PACKAGE = "resources/";
+    private ResourceBundle myResources;
+    private ComboBox<String> myFiles;
     Grid myGrid;
 	Timeline animation = new Timeline();
 	Simulation newSimulation= null;
@@ -35,6 +40,7 @@ public class UserInterface {
 	public UserInterface(){
 		myconfig=new Configuration();
 		RunningSimulation=new Simulation();
+		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + "Buttons");
 	}
 	public Scene setScene(){
 		Group root=new Group();
@@ -54,21 +60,29 @@ public class UserInterface {
 	}
 	public void setButtons(Group root){
 		Button[] newButtons=new Button[8];
-		Button Load=new Button("Load New Simulation");
+		Button Load=new Button(myResources.getString("LoadButton"));
 		newButtons[0]=Load;
-		Button Start=new Button("Start the Simulation");
+		Load.setWrapText(true);
+		Button Start=new Button(myResources.getString("StartButton"));
 		newButtons[1]=Start;
-		Button Stop=new Button("Stop the Simulation");
+		Start.setWrapText(true);
+		Button Stop=new Button(myResources.getString("StopButton"));
+		Stop.setWrapText(true);
 		newButtons[2]=Stop;
-		Button Resume=new Button("Resume the Simulation");
+		Button Resume=new Button(myResources.getString("ResumeButton"));
+		Resume.setWrapText(true);
 		newButtons[3]=Resume;
-		Button Pause=new Button("Pause the Simulation");
+		Button Pause=new Button(myResources.getString("PauseButton"));
+		Pause.setWrapText(true);
 		newButtons[4]=Pause;
-		Button Forward=new Button("Fast Forward the Simulation");
+		Button Forward=new Button(myResources.getString("FastForwardButton"));
+		Forward.setWrapText(true);
 		newButtons[5]=Forward;
-		Button SpeedUp=new Button("Speed Up the Simulation");
+		Button SpeedUp=new Button(myResources.getString("SpeedUpButton"));
+		SpeedUp.setWrapText(true);
 		newButtons[6]=SpeedUp;
-		Button SlowDown=new Button("Slow Down the Simulation");
+		Button SlowDown=new Button(myResources.getString("SlowDownButton"));
+		SlowDown.setWrapText(true);
 		newButtons[7]=SlowDown;
 		for(int i=0;i<newButtons.length;i++){
 			if(i<4){
@@ -84,12 +98,16 @@ public class UserInterface {
 			root.getChildren().add(newButtons[i]);
 		}
 		Timeline animation = new Timeline();
+		myFiles=new ComboBox<String>();
+		myFiles.getItems().addAll("GameOfLife","GameOfLife2","GameOfLife3");
+		root.getChildren().add(myFiles);
 		Load.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
     		@Override
 			public void handle(MouseEvent event) {
     			/**
     			setGrid(root);
     			**/
+    			String myFile=myFiles.getValue();
     			if(myconfig.getName().equals("GameOfLife")){
     				Simulation newSimulation=new GameOfLifeSimulation(myGrid.myCells);
     				RunningSimulation=newSimulation;
@@ -149,6 +167,10 @@ public class UserInterface {
     			
     		}
     	});
+	}
+	public Configuration setUpConfiguration(String file){
+		Configuration newCon= new Configuration(file);
+		return newCon;
 	}
 }
 	
