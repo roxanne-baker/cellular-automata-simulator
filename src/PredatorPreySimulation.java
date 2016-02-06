@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
 
 import javafx.scene.paint.Color;
 
@@ -11,31 +12,62 @@ public class PredatorPreySimulation extends Simulation {
 	private int turnsUntilPredatorBreeds;
 	private int turnsUntilPredatorStarves;
 
-	public PredatorPreySimulation(Cell[][] newCells, int predatorStarve, int predatorBreed, int preyBreed){
-		setMyCells(newCells);
+	public PredatorPreySimulation(Grid newGrid, int predatorStarve, int predatorBreed, int preyBreed){
+		setMyCells(newGrid.myCells);
 		turnsUntilPreyBreeds = preyBreed;
 		turnsUntilPredatorStarves = predatorStarve;
 		turnsUntilPredatorBreeds = predatorBreed;
-		setAllNeighbors();
-		setCellColor();
+		addNeighbors();
+		updateCell(cell -> setCellColor(cell));
 	}
-
-	public void setCellColor(){
+	
+	public void addNeighbors() {
 		for (int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
-				if (myCells[i][j].getState().equals("EMPTY")) {
-					myCells[i][j].shape.setFill(Color.BLUE);
-				}
-				else if (myCells[i][j].getState().equals("PREDATOR")) {
-					myCells[i][j].shape.setFill(Color.GRAY);
-				}
-				else if (myCells[i][j].getState().equals("PREY")) {
-					myCells[i][j].shape.setFill(Color.ORANGE);
-				}				
+				addCardinalNeighbors(myCells[i][j], new int[]{i, j});
 			}
 		}
 	}
+	
+	public void addCardinalNeighbors(Cell cell, int[] position) {
+		int row = position[0];
+		int col = position[1];
+		boolean isFirstRow = (row == 0);
+		boolean isLastRow = (row == myCells.length-1);
+		boolean isFirstCol = (col == 0);
+		boolean isLastCol = (col == myCells[0].length-1);
+		if (!isFirstRow) {
+			cell.getMyNeighbours().add(myCells[row-1][col]);
+		}
+		if (!isFirstCol) {
+			cell.getMyNeighbours().add(myCells[row][col-1]);
+		}
+		if (!isLastCol) {
+			cell.getMyNeighbours().add(myCells[row][col+1]);
+		}
+		if (!isLastRow) {
+			cell.getMyNeighbours().add(myCells[row+1][col]);
+		}
+	}
+	
+	
+	public void setCellColor(Cell cell) {
+		if (cell.getState().equals("EMPTY")) {
+			cell.shape.setFill(Color.BLUE);
+		}
+		else if (cell.getState().equals("PREDATOR")) {
+			cell.shape.setFill(Color.GRAY);
+		}
+		else if (cell.getState().equals("PREY")) {
+			cell.shape.setFill(Color.ORANGE);
+		}			
+	}
 
+	/*
+	 * Cells have additional properties that need
+	 * to be kept track of (time since breeding/feeding)
+	 * must convert each cell to a PredatorPreyCell
+	 */
 	public void setMyCells(Cell[][] newCells) {
 		myCells = new PredatorPreyCell[newCells.length][newCells[0].length];
 		for (int i=0; i<newCells.length; i++) {
@@ -47,38 +79,33 @@ public class PredatorPreySimulation extends Simulation {
 	}
 
 	public void update() {
-		updatePredatorStates();
-		updatePreyStates();
-		killAndBreed();
-		setCellColor();
+		updateCellStates();
+		updateCell(cell -> setCellColor(cell));
 	}
-
-	private void updatePredatorStates() {
+	
+	public void updateCellStates() {
+		moveCellsOfState("PREDATOR", cell -> updatePredatorState(cell));
+		moveCellsOfState("PREY", cell -> updatePreyState(cell));
+		updateCell(cell -> killPredatorOrBreed(cell));
+	}
+	
+	private void updateCell(Consumer<PredatorPreyCell> updateProperty) {
 		for (int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
-				if (myCells[i][j].getState().equals("PREDATOR"))
-					updatePredatorState(myCells[i][j]);
+					updateProperty.accept(myCells[i][j]);					
 			}
-		}		
+		}			
 	}
-
-	private void updatePreyStates() {
+	
+	private void moveCellsOfState(String state, Consumer<PredatorPreyCell> moveStateFunction) {
 		for (int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
-				if (myCells[i][j].getState().equals("PREY"))
-					updatePreyState(myCells[i][j]);
+				if (myCells[i][j].getState().equals(state)) {
+					moveStateFunction.accept(myCells[i][j]);					
+				}	
 			}
-		}		
-	}
-
-	private void killAndBreed() {
-		for (int i=0; i<myCells.length; i++) {
-			for (int j=0; j<myCells[0].length; j++) {
-				killPredatorOrBreed(myCells[i][j]);
-				myCells[i][j].justUpdated = false;
-			}
-		}		
-	}		
+		}			
+	}	
 
 	public void updatePredatorState(PredatorPreyCell cell) {
 		if (cell.justUpdated) return;
@@ -101,9 +128,26 @@ public class PredatorPreySimulation extends Simulation {
 			cell.turnsSinceEating += 1;
 		}		
 	}
+	
+	public void updatePreyState(PredatorPreyCell cell) {
+		if (cell.justUpdated) return;
+		List<PredatorPreyCell> neighbours = (List<PredatorPreyCell>)(List<?>) cell.getMyNeighbours();
 
-	public void killPredatorOrBreed(PredatorPreyCell cell) {		
-		if (cell.getState().equals("PREDATOR") && cell.turnsSinceBreeding > turnsUntilPredatorStarves) {
+		List<Integer> openSpaces = getNeighboursOfState("EMPTY", neighbours);
+		int indexToSwitchWith = getPreyNeighbourToSwitch(openSpaces);
+
+		if (indexToSwitchWith >= 0) {
+			neighbours.get(indexToSwitchWith).turnsSinceEating = 0;	
+			switchCells(neighbours.get(indexToSwitchWith), cell);	
+		}
+		else {
+			cell.turnsSinceBreeding += 1;
+		}
+	}
+
+	public void killPredatorOrBreed(PredatorPreyCell cell) {
+		cell.justUpdated = false;
+		if (cell.getState().equals("PREDATOR") && cell.turnsSinceEating > turnsUntilPredatorStarves) {
 			cell.setState("EMPTY");
 			cell.turnsSinceBreeding = 0;
 		}
@@ -123,23 +167,6 @@ public class PredatorPreySimulation extends Simulation {
 			neighbours.get(indexToBreedAt).setState(predatorOrPrey);
 			cell.turnsSinceBreeding = 0;
 		}		
-	}
-
-
-	public void updatePreyState(PredatorPreyCell cell) {
-		if (cell.justUpdated) return;
-		List<PredatorPreyCell> neighbours = (List<PredatorPreyCell>)(List<?>) cell.getMyNeighbours();
-
-		List<Integer> openSpaces = getNeighboursOfState("EMPTY", neighbours);
-		int indexToSwitchWith = getPreyNeighbourToSwitch(openSpaces);
-
-		if (indexToSwitchWith >= 0) {
-			neighbours.get(indexToSwitchWith).turnsSinceEating = 0;	
-			switchCells(neighbours.get(indexToSwitchWith), cell);	
-		}
-		else {
-			cell.turnsSinceBreeding += 1;
-		}
 	}
 
 
@@ -184,32 +211,4 @@ public class PredatorPreySimulation extends Simulation {
 		}
 		return indexToSwitchWith;
 	}	
-
-	public void setAllNeighbors() {
-		for(int i=0; i<myCells.length; i++) {
-			for (int j=0; j<myCells[0].length; j++) {
-				setNeighbors(myCells[i][j], i, j);
-			}
-		}
-	}
-
-	public void setNeighbors(Cell cell, int row, int col) {
-		boolean isFirstRow = (row == 0);
-		boolean isLastRow = (row == myCells.length-1);
-		boolean isFirstCol = (col == 0);
-		boolean isLastCol = (col == myCells[0].length-1);
-		if (!isFirstRow) {
-			cell.getMyNeighbours().add(myCells[row-1][col]);
-		}
-		if (!isFirstCol) {
-			cell.getMyNeighbours().add(myCells[row][col-1]);
-		}
-		if (!isLastCol) {
-			cell.getMyNeighbours().add(myCells[row][col+1]);
-		}
-		if (!isLastRow) {
-			cell.getMyNeighbours().add(myCells[row+1][col]);
-		}
-	}
-
 }

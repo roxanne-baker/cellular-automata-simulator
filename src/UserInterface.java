@@ -121,7 +121,7 @@ public class UserInterface {
     		@Override
 			public void handle(MouseEvent event) {
     			setGrid(root);
-    			Simulation newSimulation=new FireSimulation(myGrid.myCells, 0.15);
+    			Simulation newSimulation=new FireSimulation(myGrid, 0.85);
     			Start.setOnAction(new EventHandler<ActionEvent>(){
     	            @Override
     	            public void handle(ActionEvent event) {

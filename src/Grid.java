@@ -1,3 +1,5 @@
+import java.util.function.BiConsumer;
+
 import javafx.scene.Group;
 
 public abstract class Grid {
@@ -18,4 +20,25 @@ public abstract class Grid {
 			}
 		}
 	}
+	
+	public void resetJustUpdated() {
+		for (int i=0;i<myCells.length; i++) {
+			for (int j=0; j<myCells[0].length; j++) {
+				myCells[i][j].justUpdated = false;
+			}
+		}
+	}
+	
+	public void addAllNeighbors(BiConsumer<Cell, int[]> addNeighborType) {
+		for(int i=0; i<myCells.length; i++) {
+			for (int j=0; j<myCells[0].length; j++) {
+				addNeighborType.accept(myCells[i][j], new int[]{i, j});
+			}
+		}
+	}
+	
+	public abstract void addCardinalNeighbors(Cell cell, int[] position);
+	
+	public abstract void addDiagonalNeighbors(Cell cell, int[] position);
+	
 }

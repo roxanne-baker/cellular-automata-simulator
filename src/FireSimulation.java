@@ -6,16 +6,14 @@ import javafx.scene.paint.Color;
 public class FireSimulation extends Simulation {
 
 	private double probCatch;
-	Cell[][] myCells;
 	
-	public FireSimulation(Cell[][] myCells, double probCatchDecimal) {
+	public FireSimulation(Grid myGrid, double probCatchDecimal) {
+		super(myGrid);
 		probCatch = probCatchDecimal;
-		this.myCells = myCells;
-		setAllNeighbors();
-		setCellColor();
+		myGrid.addAllNeighbors((cell, position) -> myGrid.addCardinalNeighbors(cell, position));
 	}
 	
-	public void updateCellState(Cell cell) {
+	public void updateCell(Cell cell) {
 		if (cell.getState().equals("FIRE") && !cell.justUpdated) {
 			Random random = new Random();
 			cell.setState("EMPTY");
@@ -26,70 +24,34 @@ public class FireSimulation extends Simulation {
 						neighbor.setState("FIRE");
 						neighbor.justUpdated = true;
 					}
-				}
-						
+				}		
 			}
 		}
 	}
 	
-	public void updateAllCells() {
+	public void updateCellStates() {
 		for(int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
-				updateCellState(myCells[i][j]);
+				updateCell(myCells[i][j]);
 			}
 		}
 	}
 	
-	public void setCellColor() {
-		for (int i=0; i<myCells.length; i++) {
-			for (int j=0; j<myCells[0].length; j++) {
-				if (myCells[i][j].getState().equals("TREE")) {
-					myCells[i][j].shape.setFill(Color.FORESTGREEN);
-				}
-				else if (myCells[i][j].getState().equals("FIRE")) {
-					myCells[i][j].shape.setFill(Color.FIREBRICK);
-				}
-				else {
-					myCells[i][j].shape.setFill(Color.TAN);
-				}
-			}
+	public void setCellColor(Cell cell) {
+		if (cell.getState().equals("TREE")) {
+			cell.shape.setFill(Color.FORESTGREEN);
 		}
-	}
-	
-	public void setAllNeighbors() {
-		for(int i=0; i<myCells.length; i++) {
-			for (int j=0; j<myCells[0].length; j++) {
-				setNeighbors(myCells[i][j], i, j);
-			}
+		else if (cell.getState().equals("FIRE")) {
+			cell.shape.setFill(Color.FIREBRICK);
 		}
-	}
-	
-	public void setNeighbors(Cell cell, int row, int col) {
-		boolean isFirstRow = (row == 0);
-		boolean isLastRow = (row == myCells.length-1);
-		boolean isFirstCol = (col == 0);
-		boolean isLastCol = (col == myCells[0].length-1);
-		if (!isFirstRow) {
-			cell.getMyNeighbours().add(myCells[row-1][col]);
-		}
-		if (!isFirstCol) {
-			cell.getMyNeighbours().add(myCells[row][col-1]);
-		}
-		if (!isLastCol) {
-			cell.getMyNeighbours().add(myCells[row][col+1]);
-		}
-		if (!isLastRow) {
-			cell.getMyNeighbours().add(myCells[row+1][col]);
+		else {
+			cell.shape.setFill(Color.TAN);
 		}
 	}
 	
 	public void update() {
-		updateAllCells();
+		updateCellStates();
 		setCellColor();
-		for (int i=0; i<myCells.length; i++) {
-			for (int j=0; j<myCells[0].length; j++) {
-				myCells[i][j].justUpdated = false;
-			}
-		}
+		resetJustUpdated();
 	}
 }

@@ -7,21 +7,20 @@ import javafx.scene.paint.Color;
 public class SegregationSimulation extends Simulation {
 
 	private double threshold;
-	Cell[][] myGrid;
 	
-	public SegregationSimulation(Cell[][] myGrid, int thresholdDecimal) {
+	public SegregationSimulation(Grid newGrid, int thresholdDecimal){
+		super(newGrid);
 		threshold = thresholdDecimal;
-		this.myGrid = myGrid;
-		setAllNeighbors();
-		setCellColor();
+		newGrid.addAllNeighbors((cell, position) -> newGrid.addCardinalNeighbors(cell, position));
+		newGrid.addAllNeighbors((cell, position) -> newGrid.addDiagonalNeighbors(cell, position));		
 	}
 	
 	public List<Cell> getEmptyCells() {
 		List<Cell> emptyCells = new ArrayList<Cell>();
-		for (int i=0; i<myGrid.length; i++) {
-			for (int j=0; j<myGrid[0].length; j++) {
-				if (myGrid[i][j].getState().equals("EMPTY")) {
-					emptyCells.add(myGrid[i][j]);
+		for (int i=0; i<myCells.length; i++) {
+			for (int j=0; j<myCells[0].length; j++) {
+				if (myCells[i][j].getState().equals("EMPTY")) {
+					emptyCells.add(myCells[i][j]);
 				}
 			}
 		}
@@ -39,87 +38,49 @@ public class SegregationSimulation extends Simulation {
 				similarNeighbors++;
 			}
 		}
-		
 		if (((double) similarNeighbors/numNeighbors) < threshold) {
 			return true;
 		}
 		return false;
 	}
 	
-	public void moveAllCells() {
+	
+	public void updateCellStates() {
+		for(int i=0; i<myCells.length; i++) {
+			for (int j=0; j<myCells[0].length; j++) {
+				updateCell(myCells[i][j]);
+			}
+		}
+	}
+	
+	public void updateCell(Cell cell) {
 		List<Cell> emptyCells = getEmptyCells();
-		for(int i=0; i<myGrid.length; i++) {
-			for (int j=0; j<myGrid[0].length; j++) {
-				if (moveCell(myGrid[i][j]) && !emptyCells.isEmpty() && !myGrid[i][j].justUpdated) {
-					emptyCells.get(0).setState(myGrid[i][j].getState());
-					emptyCells.get(0).justUpdated = true;
-					
-					myGrid[i][j].setState("EMPTY");
-					myGrid[i][j].justUpdated = true;
-					emptyCells.remove(0);
-					emptyCells.add(myGrid[i][j]);
-				}
-			}
+		if (moveCell(cell) && !emptyCells.isEmpty() && !cell.justUpdated) {
+			emptyCells.get(0).setState(cell.getState());
+			emptyCells.get(0).justUpdated = true;
+			
+			cell.setState("EMPTY");
+			cell.justUpdated = true;
+			emptyCells.remove(0);
+			emptyCells.add(cell);
 		}
 	}
 	
-	public void setCellColor() {
-		for (int i=0; i<myGrid.length; i++) {
-			for (int j=0; j<myGrid[0].length; j++) {
-				if (myGrid[i][j].getState().equals("BLUE")) {
-					myGrid[i][j].shape.setFill(Color.BLUE);
-				}
-				else if (myGrid[i][j].getState().equals("RED")) {
-					myGrid[i][j].shape.setFill(Color.RED);
-				}
-				else {
-					myGrid[i][j].shape.setFill(Color.WHITE);
-				}
-			}
+	public void setCellColor(Cell cell) {
+		if (cell.getState().equals("BLUE")) {
+			cell.shape.setFill(Color.BLUE);
 		}
-	}
-	
-	public void setAllNeighbors() {
-		for(int i=0; i<myGrid.length; i++) {
-			for (int j=0; j<myGrid[0].length; j++) {
-				setNeighbors(myGrid[i][j], i, j);
-			}
+		else if (cell.getState().equals("RED")) {
+			cell.shape.setFill(Color.RED);
 		}
-	}
-	
-	public void setNeighbors(Cell cell, int row, int col) {
-		boolean isFirstRow = (row == 0);
-		boolean isLastRow = (row == myGrid.length-1);
-		boolean isFirstCol = (col == 0);
-		boolean isLastCol = (col == myGrid[0].length-1);
-		if (!isFirstRow) {
-			if (!isFirstCol) {
-				cell.getMyNeighbours().add(myGrid[row-1][col-1]);
-			}
-			cell.getMyNeighbours().add(myGrid[row-1][col]);
-			if (!isLastCol) {
-				cell.getMyNeighbours().add(myGrid[row-1][col+1]);
-			}
-		}
-		if (!isFirstCol) {
-			cell.getMyNeighbours().add(myGrid[row][col-1]);
-		}
-		if (!isLastCol) {
-			cell.getMyNeighbours().add(myGrid[row][col+1]);
-		}
-		if (!isLastRow) {
-			if (!isFirstCol) {
-				cell.getMyNeighbours().add(myGrid[row+1][col-1]);
-			}
-			cell.getMyNeighbours().add(myGrid[row+1][col]);
-			if (!isLastCol) {
-				cell.getMyNeighbours().add(myGrid[row+1][col+1]);
-			}
+		else {
+			cell.shape.setFill(Color.WHITE);
 		}
 	}
 	
 	public void update() {
-		moveAllCells();
+		updateCellStates();
 		setCellColor();
+		resetJustUpdated();
 	}
 }
