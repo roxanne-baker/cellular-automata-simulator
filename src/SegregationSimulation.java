@@ -7,19 +7,22 @@ import javafx.scene.paint.Color;
 public class SegregationSimulation extends Simulation {
 
 	private double threshold;
+	public static final Color RED = Color.RED;
+	public static final Color BLUE = Color.BLUE;
+	public static final Color EMPTY = Color.WHITE;
 	
-	public SegregationSimulation(Grid newGrid, int thresholdDecimal){
+	public SegregationSimulation(Grid newGrid, double thresholdDecimal){
 		super(newGrid);
 		threshold = thresholdDecimal;
-		newGrid.addAllNeighbors((cell, position) -> newGrid.addCardinalNeighbors(cell, position));
-		newGrid.addAllNeighbors((cell, position) -> newGrid.addDiagonalNeighbors(cell, position));		
+		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
+		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addDiagonalNeighbors(grid, position));		
 	}
 	
 	public List<Cell> getEmptyCells() {
 		List<Cell> emptyCells = new ArrayList<Cell>();
 		for (int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
-				if (myCells[i][j].getState().equals("EMPTY")) {
+				if (myCells[i][j].getState().equals(EMPTY)) {
 					emptyCells.add(myCells[i][j]);
 				}
 			}
@@ -31,7 +34,7 @@ public class SegregationSimulation extends Simulation {
 		int numNeighbors = 0;
 		int similarNeighbors = 0;
 		for (Cell neighbor : cell.getMyNeighbours()) {
-			if(!neighbor.getState().equals("EMPTY")) {
+			if(!neighbor.getState().equals(EMPTY)) {
 				numNeighbors++;
 			}
 			if(neighbor.getState().equals(cell.getState())) {
@@ -59,28 +62,16 @@ public class SegregationSimulation extends Simulation {
 			emptyCells.get(0).setState(cell.getState());
 			emptyCells.get(0).justUpdated = true;
 			
-			cell.setState("EMPTY");
+			cell.setState(EMPTY);
 			cell.justUpdated = true;
 			emptyCells.remove(0);
 			emptyCells.add(cell);
 		}
 	}
 	
-	public void setCellColor(Cell cell) {
-		if (cell.getState().equals("BLUE")) {
-			cell.shape.setFill(Color.BLUE);
-		}
-		else if (cell.getState().equals("RED")) {
-			cell.shape.setFill(Color.RED);
-		}
-		else {
-			cell.shape.setFill(Color.WHITE);
-		}
-	}
-	
 	public void update() {
 		updateCellStates();
-		setCellColor();
+		setCellColor(myCells);
 		resetJustUpdated();
 	}
 }

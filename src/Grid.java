@@ -29,16 +29,16 @@ public abstract class Grid {
 		}
 	}
 	
-	public void addAllNeighbors(BiConsumer<Cell, int[]> addNeighborType) {
-		for(int i=0; i<myCells.length; i++) {
-			for (int j=0; j<myCells[0].length; j++) {
-				addNeighborType.accept(myCells[i][j], new int[]{i, j});
+	public void addAllNeighbors(Cell[][] myGrid, BiConsumer<Cell[][], int[]> addNeighborType) {
+		for(int i=0; i<myGrid.length; i++) {
+			for (int j=0; j<myGrid[0].length; j++) {
+				addNeighborType.accept(myGrid, new int[]{i, j});
 			}
 		}
 	}
 	
-	public abstract void addCardinalNeighbors(Cell cell, int[] position);
+	public abstract void addCardinalNeighbors(Cell[][] myGrid, int[] position);
 	
-	public abstract void addDiagonalNeighbors(Cell cell, int[] position);
+	public abstract void addDiagonalNeighbors(Cell[][] myGrid, int[] position);
 	
 }

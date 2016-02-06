@@ -6,22 +6,25 @@ import javafx.scene.paint.Color;
 public class FireSimulation extends Simulation {
 
 	private double probCatch;
+	public static final Color FIRE = Color.FIREBRICK;
+	public static final Color TREE = Color.FORESTGREEN;
+	public static final Color EMPTY = Color.TAN;
 	
 	public FireSimulation(Grid myGrid, double probCatchDecimal) {
 		super(myGrid);
 		probCatch = probCatchDecimal;
-		myGrid.addAllNeighbors((cell, position) -> myGrid.addCardinalNeighbors(cell, position));
+		myGrid.addAllNeighbors(myCells, (grid, position) -> myGrid.addCardinalNeighbors(grid, position));
 	}
 	
 	public void updateCell(Cell cell) {
-		if (cell.getState().equals("FIRE") && !cell.justUpdated) {
+		if (cell.getState().equals(FIRE) && !cell.justUpdated) {
 			Random random = new Random();
-			cell.setState("EMPTY");
+			cell.setState(EMPTY);
 			for (Cell neighbor : cell.getMyNeighbours()) {
-				if (neighbor.getState().equals("TREE")) {
+				if (neighbor.getState().equals(TREE)) {
 					double treeCatch = random.nextDouble();
 					if (treeCatch <= probCatch) {
-						neighbor.setState("FIRE");
+						neighbor.setState(FIRE);
 						neighbor.justUpdated = true;
 					}
 				}		
@@ -37,21 +40,9 @@ public class FireSimulation extends Simulation {
 		}
 	}
 	
-	public void setCellColor(Cell cell) {
-		if (cell.getState().equals("TREE")) {
-			cell.shape.setFill(Color.FORESTGREEN);
-		}
-		else if (cell.getState().equals("FIRE")) {
-			cell.shape.setFill(Color.FIREBRICK);
-		}
-		else {
-			cell.shape.setFill(Color.TAN);
-		}
-	}
-	
 	public void update() {
 		updateCellStates();
-		setCellColor();
+		setCellColor(myCells);
 		resetJustUpdated();
 	}
 }

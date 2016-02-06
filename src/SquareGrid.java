@@ -43,44 +43,44 @@ public class SquareGrid extends Grid {
 	}	
 
 
-	public void addCardinalNeighbors(Cell cell, int[] position) {
+	public void addCardinalNeighbors(Cell[][] myGrid, int[] position) {
 		int row = position[0];
 		int col = position[1];
 		boolean isFirstRow = (row == 0);
-		boolean isLastRow = (row == myCells.length-1);
+		boolean isLastRow = (row == myGrid.length-1);
 		boolean isFirstCol = (col == 0);
-		boolean isLastCol = (col == myCells[0].length-1);
+		boolean isLastCol = (col == myGrid[0].length-1);
 		if (!isFirstRow) {
-			cell.getMyNeighbours().add(myCells[row-1][col]);
+			myGrid[row][col].getMyNeighbours().add(myGrid[row-1][col]);
 		}
 		if (!isFirstCol) {
-			cell.getMyNeighbours().add(myCells[row][col-1]);
+			myGrid[row][col].getMyNeighbours().add(myGrid[row][col-1]);
 		}
 		if (!isLastCol) {
-			cell.getMyNeighbours().add(myCells[row][col+1]);
+			myGrid[row][col].getMyNeighbours().add(myGrid[row][col+1]);
 		}
 		if (!isLastRow) {
-			cell.getMyNeighbours().add(myCells[row+1][col]);
+			myGrid[row][col].getMyNeighbours().add(myGrid[row+1][col]);
 		}
 	}
 	
-	public void addDiagonalNeighbors(Cell cell, int[] position) {
+	public void addDiagonalNeighbors(Cell[][] myGrid, int[] position) {
 		int row = position[0];
 		int col = position[1];
 		boolean isFirstRow = (row == 0);
-		boolean isLastRow = (row == myCells.length-1);
+		boolean isLastRow = (row == myGrid.length-1);
 		boolean isFirstCol = (col == 0);
-		boolean isLastCol = (col == myCells[0].length-1);
+		boolean isLastCol = (col == myGrid[0].length-1);
 		if (!isFirstRow && !isFirstCol) {
-			cell.getMyNeighbours().add(myCells[row-1][col-1]);
+			myGrid[row][col].getMyNeighbours().add(myGrid[row-1][col-1]);
 		}
 		if (!isFirstRow && !isLastCol) {
-			cell.getMyNeighbours().add(myCells[row-1][col+1]);
+			myGrid[row][col].getMyNeighbours().add(myGrid[row-1][col+1]);
 		}
 		if (!isLastRow && !isFirstCol) {
-			cell.getMyNeighbours().add(myCells[row+1][col-1]);
-		if (!isLastRow && isLastCol) {
-			cell.getMyNeighbours().add(myCells[row+1][col+1]);
+			myGrid[row][col].getMyNeighbours().add(myGrid[row+1][col-1]);
+		if (!isLastRow && !isLastCol) {
+			myGrid[row][col].getMyNeighbours().add(myGrid[row+1][col+1]);
 		}
 		}
 	}

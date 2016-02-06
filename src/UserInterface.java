@@ -47,41 +47,41 @@ public class UserInterface {
 //		myGrid = grid;
 //	}
 	
-//	public void setGrid(Group root) {
-//		Grid grid = new SquareGrid(root, 6, 6);
-//		for(int i=0; i<6; i++) {
-//			for (int j=0; j<6; j++) {
-//				if ((i==1 || i==2) && (j==1 || j==2) &&  (!(i==2 && j==2))) {
-//					grid.myCells[i][j].setState("PREDATOR");					
-//				}
-//				else if ((i==3 ||i==4) && (j==3 || j==4) && (!(i==3 && j==3))) {
-//					grid.myCells[i][j].setState("PREY");
-//				}
-//				else {
-//					grid.myCells[i][j].setState("EMPTY");
-//				}
-//			}
-//		}
-//		myGrid = grid;
-//	}
-	
 	public void setGrid(Group root) {
 		Grid grid = new SquareGrid(root, 6, 6);
 		for(int i=0; i<6; i++) {
 			for (int j=0; j<6; j++) {
 				if ((i==1 || i==2) && (j==1 || j==2) &&  (!(i==2 && j==2))) {
-					grid.myCells[i][j].setState("FIRE");					
+					grid.myCells[i][j].setState(PredatorPreySimulation.PREDATOR);					
 				}
 				else if ((i==3 ||i==4) && (j==3 || j==4) && (!(i==3 && j==3))) {
-					grid.myCells[i][j].setState("EMPTY");
+					grid.myCells[i][j].setState(PredatorPreySimulation.PREY);
 				}
 				else {
-					grid.myCells[i][j].setState("TREE");
+					grid.myCells[i][j].setState(PredatorPreySimulation.EMPTY);
 				}
 			}
 		}
 		myGrid = grid;
 	}
+	
+//	public void setGrid(Group root) {
+//		Grid grid = new SquareGrid(root, 6, 6);
+//		for(int i=0; i<6; i++) {
+//			for (int j=0; j<6; j++) {
+//				if ((i==1 || i==2) && (j==1 || j==2) &&  (!(i==2 && j==2))) {
+//					grid.myCells[i][j].setState(SegregationSimulation.RED);					
+//				}
+//				else if ((i==3 ||i==4) && (j==3 || j==4) && (!(i==3 && j==3))) {
+//					grid.myCells[i][j].setState(SegregationSimulation.EMPTY);
+//				}
+//				else {
+//					grid.myCells[i][j].setState(SegregationSimulation.BLUE);
+//				}
+//			}
+//		}
+//		myGrid = grid;
+//	}
 	
 	public void setButtons(Group root){
 		Button[] newButtons=new Button[8];
@@ -121,7 +121,7 @@ public class UserInterface {
     		@Override
 			public void handle(MouseEvent event) {
     			setGrid(root);
-    			Simulation newSimulation=new FireSimulation(myGrid, 0.85);
+    			Simulation newSimulation=new PredatorPreySimulation(myGrid, 6, 8, 4);
     			Start.setOnAction(new EventHandler<ActionEvent>(){
     	            @Override
     	            public void handle(ActionEvent event) {

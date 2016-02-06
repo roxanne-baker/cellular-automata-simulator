@@ -11,56 +11,18 @@ public class PredatorPreySimulation extends Simulation {
 	private int turnsUntilPreyBreeds;
 	private int turnsUntilPredatorBreeds;
 	private int turnsUntilPredatorStarves;
+	
+	public static final Color PREDATOR = Color.GRAY;
+	public static final Color PREY = Color.ORANGE;
+	public static final Color EMPTY = Color.BLUE;
 
 	public PredatorPreySimulation(Grid newGrid, int predatorStarve, int predatorBreed, int preyBreed){
 		setMyCells(newGrid.myCells);
+		setCellColor(myCells);
 		turnsUntilPreyBreeds = preyBreed;
 		turnsUntilPredatorStarves = predatorStarve;
 		turnsUntilPredatorBreeds = predatorBreed;
-		addNeighbors();
-		updateCell(cell -> setCellColor(cell));
-	}
-	
-	public void addNeighbors() {
-		for (int i=0; i<myCells.length; i++) {
-			for (int j=0; j<myCells[0].length; j++) {
-				addCardinalNeighbors(myCells[i][j], new int[]{i, j});
-			}
-		}
-	}
-	
-	public void addCardinalNeighbors(Cell cell, int[] position) {
-		int row = position[0];
-		int col = position[1];
-		boolean isFirstRow = (row == 0);
-		boolean isLastRow = (row == myCells.length-1);
-		boolean isFirstCol = (col == 0);
-		boolean isLastCol = (col == myCells[0].length-1);
-		if (!isFirstRow) {
-			cell.getMyNeighbours().add(myCells[row-1][col]);
-		}
-		if (!isFirstCol) {
-			cell.getMyNeighbours().add(myCells[row][col-1]);
-		}
-		if (!isLastCol) {
-			cell.getMyNeighbours().add(myCells[row][col+1]);
-		}
-		if (!isLastRow) {
-			cell.getMyNeighbours().add(myCells[row+1][col]);
-		}
-	}
-	
-	
-	public void setCellColor(Cell cell) {
-		if (cell.getState().equals("EMPTY")) {
-			cell.shape.setFill(Color.BLUE);
-		}
-		else if (cell.getState().equals("PREDATOR")) {
-			cell.shape.setFill(Color.GRAY);
-		}
-		else if (cell.getState().equals("PREY")) {
-			cell.shape.setFill(Color.ORANGE);
-		}			
+		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
 	}
 
 	/*
@@ -80,12 +42,12 @@ public class PredatorPreySimulation extends Simulation {
 
 	public void update() {
 		updateCellStates();
-		updateCell(cell -> setCellColor(cell));
+		setCellColor(myCells);
 	}
 	
 	public void updateCellStates() {
-		moveCellsOfState("PREDATOR", cell -> updatePredatorState(cell));
-		moveCellsOfState("PREY", cell -> updatePreyState(cell));
+		moveCellsOfState(PREDATOR, cell -> updatePredatorState(cell));
+		moveCellsOfState(PREY, cell -> updatePreyState(cell));
 		updateCell(cell -> killPredatorOrBreed(cell));
 	}
 	
@@ -97,7 +59,7 @@ public class PredatorPreySimulation extends Simulation {
 		}			
 	}
 	
-	private void moveCellsOfState(String state, Consumer<PredatorPreyCell> moveStateFunction) {
+	private void moveCellsOfState(Color state, Consumer<PredatorPreyCell> moveStateFunction) {
 		for (int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
 				if (myCells[i][j].getState().equals(state)) {
@@ -109,9 +71,9 @@ public class PredatorPreySimulation extends Simulation {
 
 	public void updatePredatorState(PredatorPreyCell cell) {
 		if (cell.justUpdated) return;
-		List<PredatorPreyCell> neighbours = (List<PredatorPreyCell>)(List<?>) cell.getMyNeighbours();
-		List<Integer> openSpaces = getNeighboursOfState("EMPTY", neighbours);
-		List<Integer> preySpaces = getNeighboursOfState("PREY", neighbours);
+		List<PredatorPreyCell> neighbours = getPredPreyNeighbours(cell);
+		List<Integer> openSpaces = getNeighboursOfState(EMPTY, neighbours);
+		List<Integer> preySpaces = getNeighboursOfState(PREY, neighbours);
 		int indexToSwitchWith = getPredatorNeighbourToSwitch(openSpaces, preySpaces);	
 
 		if (indexToSwitchWith >= 0) {
@@ -131,9 +93,9 @@ public class PredatorPreySimulation extends Simulation {
 	
 	public void updatePreyState(PredatorPreyCell cell) {
 		if (cell.justUpdated) return;
-		List<PredatorPreyCell> neighbours = (List<PredatorPreyCell>)(List<?>) cell.getMyNeighbours();
 
-		List<Integer> openSpaces = getNeighboursOfState("EMPTY", neighbours);
+		List<PredatorPreyCell> neighbours = getPredPreyNeighbours(cell);
+		List<Integer> openSpaces = getNeighboursOfState(EMPTY, neighbours);
 		int indexToSwitchWith = getPreyNeighbourToSwitch(openSpaces);
 
 		if (indexToSwitchWith >= 0) {
@@ -144,23 +106,32 @@ public class PredatorPreySimulation extends Simulation {
 			cell.turnsSinceBreeding += 1;
 		}
 	}
+	
+	public List<PredatorPreyCell> getPredPreyNeighbours(PredatorPreyCell cell) {
+		List<PredatorPreyCell> predPreyNeighbours = new ArrayList<PredatorPreyCell>();
+		for (Cell neighbour : cell.getMyNeighbours()) {
+			predPreyNeighbours.add((PredatorPreyCell) neighbour);				
+		}		
+		return predPreyNeighbours;
+	}
 
 	public void killPredatorOrBreed(PredatorPreyCell cell) {
 		cell.justUpdated = false;
-		if (cell.getState().equals("PREDATOR") && cell.turnsSinceEating > turnsUntilPredatorStarves) {
-			cell.setState("EMPTY");
+		if (cell.getState().equals(PREDATOR) && cell.turnsSinceEating > turnsUntilPredatorStarves) {
+			cell.setState(EMPTY);
 			cell.turnsSinceBreeding = 0;
 		}
 		else {
-			breed("PREY", turnsUntilPreyBreeds, cell);
-			breed("PREDATOR", turnsUntilPredatorBreeds, cell);
+			breed(PREY, turnsUntilPreyBreeds, cell);
+			breed(PREDATOR, turnsUntilPredatorBreeds, cell);
 		}
 	}
 
-	public void breed(String predatorOrPrey, int numberTurnsUntilBreed, PredatorPreyCell cell) {
+	public void breed(Color predatorOrPrey, int numberTurnsUntilBreed, PredatorPreyCell cell) {
 		Random random = new Random();
-		List<PredatorPreyCell> neighbours = (List<PredatorPreyCell>)(List<?>) cell.getMyNeighbours();
-		List<Integer> openSpaces = getNeighboursOfState("EMPTY", neighbours);
+		List<PredatorPreyCell> neighbours = getPredPreyNeighbours(cell);
+		
+		List<Integer> openSpaces = getNeighboursOfState(EMPTY, neighbours);
 
 		if (cell.getState().equals(predatorOrPrey) && !openSpaces.isEmpty() && cell.turnsSinceBreeding > numberTurnsUntilBreed) {
 			int indexToBreedAt = random.nextInt(openSpaces.size());
@@ -169,8 +140,7 @@ public class PredatorPreySimulation extends Simulation {
 		}		
 	}
 
-
-	public List<Integer> getNeighboursOfState(String state, List<PredatorPreyCell> neighbourCells) {
+	public List<Integer> getNeighboursOfState(Color state, List<PredatorPreyCell> neighbourCells) {
 		List<Integer> stateSpaces = new ArrayList<Integer>();
 		for (int i=0; i<neighbourCells.size(); i++) {
 			if (neighbourCells.get(i).getState().equals(state) && neighbourCells.get(i).justUpdated == false) {
@@ -185,7 +155,7 @@ public class PredatorPreySimulation extends Simulation {
 		neighbour.turnsSinceBreeding = cell.turnsSinceBreeding + 1;
 		neighbour.justUpdated = true;
 
-		cell.setState("EMPTY");
+		cell.setState(EMPTY);
 		cell.turnsSinceBreeding = 0;
 		cell.justUpdated = true;	
 	}

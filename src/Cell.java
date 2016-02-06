@@ -1,12 +1,13 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
 public class Cell {
 	private int countNeighbours;
 	public List<Cell> neighbours;
-	private String state;
+	private Color state;
 	public final Shape shape;
 	boolean justUpdated = false;
 	
@@ -26,11 +27,10 @@ public class Cell {
 	public List<Cell> getMyNeighbours(){
 		return neighbours;
 	}
-	public String getState(){
+	public Color getState(){
 		return state;
 	}
-	public void setState(String newState){
+	public void setState(Color newState){
 		state=newState;
-	}
-	
+	}	
 }

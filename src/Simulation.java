@@ -6,7 +6,7 @@ public abstract class Simulation {
 	
 	public Simulation(Grid newGrid) {
 		myCells = newGrid.myCells;
-		setCellColor();
+		setCellColor(myCells);
 	}
 	
 	public Simulation(){
@@ -16,12 +16,14 @@ public abstract class Simulation {
 	
 	public abstract void updateCellStates();
 	
-	public abstract void setCellColor(Cell cell);
+	public void setCellColor(Cell cell) {
+		cell.shape.setFill(cell.getState());
+	}
 	
-	public void setCellColor() {
-		for (int i=0; i<myCells.length; i++) {
-			for (int j=0; j<myCells[0].length; j++) {
-				setCellColor(myCells[i][j]);
+	public void setCellColor(Cell[][] myGrid) {
+		for (int i=0; i<myGrid.length; i++) {
+			for (int j=0; j<myGrid[0].length; j++) {
+				myGrid[i][j].shape.setFill(myGrid[i][j].getState());
 			}
 		}
 	}
