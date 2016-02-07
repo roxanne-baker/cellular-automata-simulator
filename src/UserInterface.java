@@ -92,7 +92,11 @@ public class UserInterface {
 		}
 		myGrid = grid;
 	}
-	
+	/**
+	 * Sets up a new simulation by calling a configuration to read the simulation parameters and type 
+	 * from a file
+	 * @param root
+	 */
 	public void setNewSimulation(Group root){
 		animation.setRate(STARTING_RATE);
 		active=true;
@@ -125,7 +129,10 @@ public class UserInterface {
 		}
 		RunningSimulation=newSimulation;
 	}
-	
+	/**
+	 * Removes the cell nodes from the scene
+	 * @param root
+	 */
 	public void clearMyGrid(Group root){
 		for(int i=0;i<myGrid.myCells.length;i++){
 			for( int j=0; j<myGrid.myCells[0].length;j++){
@@ -133,14 +140,21 @@ public class UserInterface {
 			}
 		}
 	}
-	
+	/**
+	 * Creates a Button given its name and initializes an array with all the Buttons
+	 * @param buttonString
+	 * @param buttonNum
+	 * @return
+	 */
 	public Button createButton(String buttonString, int buttonNum) {
 		Button myButton = new Button(myResources.getString(buttonString));
 		myButton.setWrapText(true);
 		allButtons[buttonNum] = myButton;
 		return myButton;
 	}
-	
+	/**
+	 * Calls createButton to initialize the buttons of the user interface 
+	 */
 	public void createAllButtons() {
 		allButtons=new Button[8];
 		Load = createButton("LoadButton", 0);
@@ -152,7 +166,10 @@ public class UserInterface {
 		SpeedUp = createButton ("SpeedUpButton", 6);
 		SlowDown = createButton("SlowDownButton", 7);
 	}
-	
+	/**
+	 * Places the buttons on the grid
+	 * @param root
+	 */
 	public void placeButtons(Group root) {
 		for(int i=0;i<allButtons.length;i++){
 			if(i<4){
@@ -168,17 +185,24 @@ public class UserInterface {
 			root.getChildren().add(allButtons[i]);
 		}
 	}
-	
+	/**
+	 * Calls methods to create the Buttons and sets up the Combo box
+	 * @param root
+	 */
 	public void setButtons(Group root){
 		createAllButtons();
 		placeButtons(root);
 		myFiles=new ComboBox<String>();
-		myFiles.getItems().addAll("test.xml", "test2.xml", "test3.xml", "segregation.xml", "segregation2.xml", "cornerFire.xml", "centerFire.xml", 
+		myFiles.getItems().addAll("gameoflife.xml", "gameoflife2.xml", "gameoflife3.xml", "segregation.xml", "segregation2.xml", "cornerFire.xml", "centerFire.xml", 
 		                          "patchyFire.xml", "segregation3.xml", "predatorprey.xml", "predatorprey2.xml", "predatorprey3.xml");
 		root.getChildren().add(myFiles);
 		loadHandler(root);
 		
 	}
+	/**
+	 * Adds handler to the load button
+	 * @param root
+	 */
 	private void loadHandler(Group root) {
 		Load.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
     		@Override
@@ -196,12 +220,18 @@ public class UserInterface {
     		}
     	});
 	}
-	
+	/**
+	 * Calls methods to set and add new handlers to the Buttons
+	 * @param root
+	 */
 	public void setNewHandlers(Group root){
 		setHandlers(root);
 		addHandlers();
 	}
-	
+	/**
+	 * Calls methods to set handlers to the buttons
+	 * @param root
+	 */
 	private void setHandlers(Group root) {
 		setStartHandler();
 		setStopHandler(root);
@@ -211,7 +241,9 @@ public class UserInterface {
 		setSlowDownHandler();
 		setForwardHandler();
 	}
-	
+	/**
+	 * adds event handlers to the buttons
+	 */
 	private void addHandlers() {
 		Start.addEventHandler(ActionEvent.ACTION, startHandler);
 		Pause.addEventHandler(MouseEvent.MOUSE_CLICKED, pauseHandler);
@@ -221,7 +253,9 @@ public class UserInterface {
 		SlowDown.addEventHandler(MouseEvent.MOUSE_CLICKED, slowDownHandler);
 		Forward.addEventHandler(MouseEvent.MOUSE_CLICKED, forwardHandler);
 	}
-	
+	/**
+	 * Sets up the eventhandler for the start button
+	 */
 	private void setStartHandler() {
 		startHandler=new EventHandler<ActionEvent>(){
 			public void handle(ActionEvent event) {
