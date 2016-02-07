@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<simulation>
+	<name>PredatorPrey</name>
+	<width>5</width>
+	<height>5</height>
+	<PredatorStarve>1</PredatorStarve>
+	<PredatorBreed>1</PredatorBreed>
+	<PreyBreed>1</PreyBreed>
+	<state>predator</state>
+	<state>prey</state>
+	<state>empty</state>
+	<state>predator</state>
+	<state>empty</state>
+	<state>prey</state>
+	<state>prey</state>
+	<state>prey</state>
+	<state>empty</state>
+	<state>prey</state>
+	<state>prey</state>
+	<state>prey</state>
+	<state>prey</state>
+	<state>prey</state>
+	<state>empty</state>
+	<state>empty</state>
+	<state>prey</state>
+	<state>empty</state>
+	<state>prey</state>
+	<state>empty</state>
+	<state>prey</state>
+	<state>empty</state>
+	<state>prey</state>
+	<state>empty</state>
+	<state>empty</state>
+</simulation>
