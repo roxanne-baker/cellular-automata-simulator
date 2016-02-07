@@ -18,28 +18,28 @@ public class GameOfLifeSimulation extends Simulation {
 		// TODO Auto-generated method stub
 		System.out.println("Count:" + count);
 		count++;
-		String[][] newState=new String[6][6];
-		for(int i=0; i<6; i++) {
-			for (int j=0; j<6; j++) {
+		String[][] newState=new String[myCells.length][myCells[0].length];
+		for(int i=0; i<myCells.length; i++) {
+			for (int j=0; j<myCells[0].length; j++) {
 				newState[i][j]=myCells[i][j].getState();
 			}
 		}
-		for(int i=0;i<6;i++){
-			for(int j=0;j<6;j++){
+		for(int i=0;i<myCells.length;i++){
+			for(int j=0;j<myCells[0].length;j++){
 				int k=myCells[i][j].getMyNeighbours().size();
 				int count=0;
 				ArrayList<Cell> neighbours=new ArrayList<Cell>();
 				neighbours=myCells[i][j].getMyNeighbours();
 				for(int l=0;l<k;l++){
-					if(neighbours.get(l).getState().equals("live")){
+					if(neighbours.get(l).getState().equals("alive")){
 						count++;
 					}
 				}
-				if((count<2 || count>3) && myCells[i][j].getState().equals("live")){
+				if((count<2 || count>3) && myCells[i][j].getState().equals("alive")){
 					newState[i][j]="dead";
 				}
 				if(count==3 && myCells[i][j].getState().equals("dead")){
-					newState[i][j]="live";
+					newState[i][j]="alive";
 				}
 			}
 		}
@@ -50,9 +50,9 @@ public class GameOfLifeSimulation extends Simulation {
 		}
 	}
 	public void setCellColor(){
-		for (int i=0; i<6; i++) {
-			for (int j=0; j<6; j++) {
-				if (myCells[i][j].getState().equals("live")) {
+		for (int i=0; i<myCells.length; i++) {
+			for (int j=0; j<myCells[0].length; j++) {
+				if (myCells[i][j].getState().equals("alive")) {
 					myCells[i][j].shape.setFill(Color.WHITE);
 				}
 				else if (myCells[i][j].getState().equals("dead")) {

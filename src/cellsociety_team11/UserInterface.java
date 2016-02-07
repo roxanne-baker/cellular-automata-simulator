@@ -18,27 +18,41 @@ public class UserInterface {
 	private Scene myScene;
 	public static final int FRAMES_PER_SECOND = 60;
     private static final int MILLISECOND_DELAY = 1000 / FRAMES_PER_SECOND;
-    private int count=0;
-    private boolean forward=false;
     private boolean active=true;
     private double rate=1;
-    private Configuration myconfig;
     private Simulation RunningSimulation;
     public static final String DEFAULT_RESOURCE_PACKAGE = "resources/";
+    public static final String DEFAULT_DIRECTORY = "src/resources/";
     private ResourceBundle myResources;
     private ComboBox<String> myFiles;
+    private Button Load;
+    private Button Start;
+    private Button Resume;
+    private Button Forward;
+    private Button SpeedUp;
+    private Button SlowDown;
+    private Button Stop;
+    private Button Pause;
+    private EventHandler<MouseEvent> forwardHandler;
+    private EventHandler<MouseEvent> stopHandler;
+    private EventHandler<MouseEvent> resumeHandler;
+    private EventHandler<ActionEvent> startHandler;
+    private EventHandler<MouseEvent> speedUpHandler;
+    private EventHandler<MouseEvent> slowDownHandler;
+    private EventHandler<MouseEvent> pauseHandler;
+    
+    private boolean firsttime=true;
     Grid myGrid;
 	Timeline animation = new Timeline();
 	Simulation newSimulation= null;
 	KeyFrame myFrame;
-	private String[] myPossible = { 
+	private String[] myPossibilities = { 
 			"GameOfLife",
 	        "Seggregation",
 	        "PredatorPrey",
 	        "Fire"
 	    };
 	public UserInterface(){
-		myconfig=new Configuration();
 		RunningSimulation=new Simulation();
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + "Buttons");
 	}
@@ -46,7 +60,6 @@ public class UserInterface {
 		Group root=new Group();
     	myScene=new Scene(root, HSIZE, VSIZE);
     	setButtons(root);
-    	setGrid(root, myconfig.getWidth(),myconfig.getHeight(), myconfig.getStates());
     	return myScene;
 	}
 	public void setGrid(Group root, int width, int height, ArrayList<String> cellStates) {
@@ -58,30 +71,56 @@ public class UserInterface {
 		}
 		myGrid = grid;
 	}
+	public void setNewSimulation(Group root){
+		active=true;
+		String myFile=DEFAULT_DIRECTORY+myFiles.getValue();
+		Configuration newConfiguration=new Configuration(myFile);
+		int width=newConfiguration.width();
+		int height=newConfiguration.height();
+		ArrayList<String>states=new ArrayList<String>();
+		states=newConfiguration.states();
+		setGrid(root, width, height, states);
+		String name=newConfiguration.name();
+		Simulation newSimulation;
+		if(name.equals(myPossibilities[0])){
+			newSimulation=new GameOfLifeSimulation(myGrid.myCells);
+		}
+		else{
+			newSimulation=new SegregationSimulation(myGrid.myCells, 30);
+		}
+		RunningSimulation=newSimulation;
+	}
+	public void clearMyGrid(Group root){
+		for(int i=0;i<myGrid.myCells.length;i++){
+			for( int j=0; j<myGrid.myCells[0].length;j++){
+				root.getChildren().remove(myGrid.myCells[i][j].shape);
+			}
+		}
+	}
 	public void setButtons(Group root){
 		Button[] newButtons=new Button[8];
-		Button Load=new Button(myResources.getString("LoadButton"));
+		Load=new Button(myResources.getString("LoadButton"));
 		newButtons[0]=Load;
 		Load.setWrapText(true);
-		Button Start=new Button(myResources.getString("StartButton"));
+		Start=new Button(myResources.getString("StartButton"));
 		newButtons[1]=Start;
 		Start.setWrapText(true);
-		Button Stop=new Button(myResources.getString("StopButton"));
+		Stop=new Button(myResources.getString("StopButton"));
 		Stop.setWrapText(true);
 		newButtons[2]=Stop;
-		Button Resume=new Button(myResources.getString("ResumeButton"));
+		Resume=new Button(myResources.getString("ResumeButton"));
 		Resume.setWrapText(true);
 		newButtons[3]=Resume;
-		Button Pause=new Button(myResources.getString("PauseButton"));
+		Pause=new Button(myResources.getString("PauseButton"));
 		Pause.setWrapText(true);
 		newButtons[4]=Pause;
-		Button Forward=new Button(myResources.getString("FastForwardButton"));
+		Forward=new Button(myResources.getString("FastForwardButton"));
 		Forward.setWrapText(true);
 		newButtons[5]=Forward;
-		Button SpeedUp=new Button(myResources.getString("SpeedUpButton"));
+		SpeedUp=new Button(myResources.getString("SpeedUpButton"));
 		SpeedUp.setWrapText(true);
 		newButtons[6]=SpeedUp;
-		Button SlowDown=new Button(myResources.getString("SlowDownButton"));
+		SlowDown=new Button(myResources.getString("SlowDownButton"));
 		SlowDown.setWrapText(true);
 		newButtons[7]=SlowDown;
 		for(int i=0;i<newButtons.length;i++){
@@ -97,73 +136,22 @@ public class UserInterface {
 			newButtons[i].setPrefWidth(HSIZE/4);
 			root.getChildren().add(newButtons[i]);
 		}
-		Timeline animation = new Timeline();
 		myFiles=new ComboBox<String>();
-		myFiles.getItems().addAll("GameOfLife","GameOfLife2","GameOfLife3");
+		myFiles.getItems().addAll("test.xml", "test2.xml","test3.xml");
 		root.getChildren().add(myFiles);
 		Load.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
     		@Override
 			public void handle(MouseEvent event) {
-    			/**
-    			setGrid(root);
-    			**/
-    			String myFile=myFiles.getValue();
-    			if(myconfig.getName().equals("GameOfLife")){
-    				Simulation newSimulation=new GameOfLifeSimulation(myGrid.myCells);
-    				RunningSimulation=newSimulation;
-    				
+    			if(firsttime==false){
+    				animation.stop();
+    				clearMyGrid(root);
+    				animation.getKeyFrames().remove(myFrame);
+    				removeHandlers();
+    				Start.removeEventHandler(ActionEvent.ACTION, startHandler);
     			}
-    			Start.setOnAction(new EventHandler<ActionEvent>(){
-    	            @Override
-    	            public void handle(ActionEvent event) {
-    	            	
-    	            	KeyFrame frame = new KeyFrame(Duration.millis(MILLISECOND_DELAY),new EventHandler<ActionEvent>(){
-		            		public void handle(ActionEvent newEvent){
-		            			RunningSimulation.update();
-		            		}
-		            	});
-    	            	animation.setCycleCount(Timeline.INDEFINITE);
-    	            	animation.getKeyFrames().add(frame);
-    	            	animation.play();
-    	            	
-    	            }
-    	        });
-    			Stop.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
-    				public void handle(MouseEvent event){
-    					animation.stop();
-    					active=false;
-    				}
-    			});
-    			Pause.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
-    				public void handle(MouseEvent event){
-    					animation.stop();
-    				}
-    			});
-    			Resume.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
-    				public void handle(MouseEvent event){
-    					if(active){
-    						animation.play();
-    					}
-    				}
-    			});
-    			SpeedUp.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
-    				public void handle(MouseEvent event){
-    						animation.setRate(rate*2);
-    				}
-    			});
-    			SlowDown.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
-    				public void handle(MouseEvent event){
-						animation.setRate(rate/2);
-    				}
-    			});
-    			Forward.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
-    				public void handle(MouseEvent event){
-						animation.play();
-						RunningSimulation.update();
-						animation.stop();
-    				}
-    			});
-    			
+    			firsttime=false;
+    			setNewSimulation(root);
+    			setNewHandlers(root);
     			
     		}
     	});
@@ -171,6 +159,76 @@ public class UserInterface {
 	public Configuration setUpConfiguration(String file){
 		Configuration newCon= new Configuration(file);
 		return newCon;
+	}
+	public void setNewHandlers(Group root){
+		startHandler=new EventHandler<ActionEvent>(){
+			public void handle(ActionEvent event) {
+        	
+        	myFrame = new KeyFrame(Duration.millis(MILLISECOND_DELAY),new EventHandler<ActionEvent>(){
+        		public void handle(ActionEvent newEvent){
+        			RunningSimulation.update();
+        		}
+        	});
+        	animation.setCycleCount(Timeline.INDEFINITE);
+        	animation.getKeyFrames().add(myFrame);
+        	animation.play();
+        	
+        }
+    };
+    
+		stopHandler=new EventHandler<MouseEvent>(){
+			public void handle(MouseEvent event){
+				animation.stop();
+				clearMyGrid(root);
+				active=false;
+			}
+		};
+		pauseHandler=new EventHandler<MouseEvent>(){
+			public void handle(MouseEvent event){
+				animation.stop();
+			}
+		};
+		resumeHandler=new EventHandler<MouseEvent>(){
+			public void handle(MouseEvent event){
+				if(active){
+					animation.play();
+				}
+			}
+		};
+		speedUpHandler=new EventHandler<MouseEvent>(){
+			public void handle(MouseEvent event){
+					animation.setRate(rate*2);
+			}
+		};
+		slowDownHandler=new EventHandler<MouseEvent>(){
+			public void handle(MouseEvent event){
+				animation.setRate(rate/2);
+			}
+		};
+		forwardHandler=new EventHandler<MouseEvent>(){
+			public void handle(MouseEvent event){
+				if(active){
+					animation.play();
+					RunningSimulation.update();
+					animation.stop();
+				}
+			}
+		};
+		Start.addEventHandler(ActionEvent.ACTION, startHandler);
+		Pause.addEventHandler(MouseEvent.MOUSE_CLICKED, pauseHandler);
+		Stop.addEventHandler(MouseEvent.MOUSE_CLICKED, stopHandler);
+		Resume.addEventHandler(MouseEvent.MOUSE_CLICKED, resumeHandler);
+		SpeedUp.addEventHandler(MouseEvent.MOUSE_CLICKED, speedUpHandler);
+		SlowDown.addEventHandler(MouseEvent.MOUSE_CLICKED, slowDownHandler);
+		Forward.addEventHandler(MouseEvent.MOUSE_CLICKED, forwardHandler);
+	}
+	public void removeHandlers(){
+		Pause.removeEventHandler(MouseEvent.MOUSE_CLICKED, pauseHandler);
+		Stop.removeEventHandler(MouseEvent.MOUSE_CLICKED, stopHandler);
+		Resume.removeEventHandler(MouseEvent.MOUSE_CLICKED, resumeHandler);
+		SpeedUp.removeEventHandler(MouseEvent.MOUSE_CLICKED, speedUpHandler);
+		SlowDown.removeEventHandler(MouseEvent.MOUSE_CLICKED, slowDownHandler);
+		Forward.removeEventHandler(MouseEvent.MOUSE_CLICKED,forwardHandler);
 	}
 }
 	
