@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
@@ -11,10 +12,9 @@ public class PredatorPreySimulation extends Simulation {
 	private int turnsUntilPreyBreeds;
 	private int turnsUntilPredatorBreeds;
 	private int turnsUntilPredatorStarves;
-	
-	public static final Color PREDATOR = Color.GRAY;
-	public static final Color PREY = Color.ORANGE;
-	public static final Color EMPTY = Color.BLUE;
+	public static final String PREDATOR = "PREDATOR";
+	public static final String PREY = "PREY";
+	public static final String EMPTY = "EMPTY";
 
 	public PredatorPreySimulation(Grid newGrid, int predatorStarve, int predatorBreed, int preyBreed){
 		setMyCells(newGrid.myCells);
@@ -23,6 +23,13 @@ public class PredatorPreySimulation extends Simulation {
 		turnsUntilPredatorStarves = predatorStarve;
 		turnsUntilPredatorBreeds = predatorBreed;
 		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
+	}
+	
+	public void setStateNameToColor() {
+		stateNameToColor = new HashMap<String, Color>();
+		stateNameToColor.put(this.PREDATOR, Color.GRAY);
+		stateNameToColor.put(this.PREY, Color.ORANGE);
+		stateNameToColor.put(this.EMPTY, Color.WHITE);
 	}
 
 	/*
@@ -59,7 +66,7 @@ public class PredatorPreySimulation extends Simulation {
 		}			
 	}
 	
-	private void moveCellsOfState(Color state, Consumer<PredatorPreyCell> moveStateFunction) {
+	private void moveCellsOfState(String state, Consumer<PredatorPreyCell> moveStateFunction) {
 		for (int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
 				if (myCells[i][j].getState().equals(state)) {
@@ -127,7 +134,7 @@ public class PredatorPreySimulation extends Simulation {
 		}
 	}
 
-	public void breed(Color predatorOrPrey, int numberTurnsUntilBreed, PredatorPreyCell cell) {
+	public void breed(String predatorOrPrey, int numberTurnsUntilBreed, PredatorPreyCell cell) {
 		Random random = new Random();
 		List<PredatorPreyCell> neighbours = getPredPreyNeighbours(cell);
 		
@@ -140,7 +147,7 @@ public class PredatorPreySimulation extends Simulation {
 		}		
 	}
 
-	public List<Integer> getNeighboursOfState(Color state, List<PredatorPreyCell> neighbourCells) {
+	public List<Integer> getNeighboursOfState(String state, List<PredatorPreyCell> neighbourCells) {
 		List<Integer> stateSpaces = new ArrayList<Integer>();
 		for (int i=0; i<neighbourCells.size(); i++) {
 			if (neighbourCells.get(i).getState().equals(state) && neighbourCells.get(i).justUpdated == false) {

@@ -1,3 +1,4 @@
+import java.util.HashMap;
 import java.util.List;
 
 import javafx.scene.paint.Color;
@@ -5,8 +6,8 @@ import javafx.scene.paint.Color;
 public class GameOfLifeSimulation extends Simulation {
 
 	private int count=0;
-	public static final Color ALIVE = Color.BLACK;
-	public static final Color DEAD = Color.WHITE;
+	public static final String ALIVE = "alive";
+	public static final String DEAD = "dead";
 	
 	// pass in Grid in order to set neighbors accordingly
 	public GameOfLifeSimulation(Grid newGrid){
@@ -15,7 +16,13 @@ public class GameOfLifeSimulation extends Simulation {
 		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addDiagonalNeighbors(grid, position));		
 	}
 	
-	public Color[][] updateCell(Cell cell, int[] position, Color[][] newState) {
+	public void setStateNameToColor() {
+		stateNameToColor = new HashMap<String, Color>();
+		stateNameToColor.put(this.ALIVE, Color.BLACK);
+		stateNameToColor.put(this.DEAD, Color.WHITE);
+	}
+	
+	public String[][] updateCell(Cell cell, int[] position, String[][] newState) {
 		int row = position[0];
 		int col = position[1];
 		int liveNeighbours = getNumLiveNeighbours(cell);
@@ -43,12 +50,12 @@ public class GameOfLifeSimulation extends Simulation {
 	public void updateCellStates() {
 		System.out.println("Count:" + count);
 		count++;
-		Color[][] newState = getInitialStates();
+		String[][] newState = getInitialStates();
 		newState = getNextStates(newState);
 		setNextStates(newState);
 	}
 	
-	private Color[][] getNextStates(Color[][] newState) {
+	private String[][] getNextStates(String[][] newState) {
 		for(int i=0;i<myCells.length;i++){
 			for(int j=0;j<myCells[0].length;j++){
 				int liveNeighbours = getNumLiveNeighbours(myCells[i][j]);
@@ -63,8 +70,8 @@ public class GameOfLifeSimulation extends Simulation {
 		return newState;
 	}
 	
-	private Color[][] getInitialStates() {
-		Color[][] newState=new Color[myCells.length][myCells[0].length];
+	private String[][] getInitialStates() {
+		String[][] newState=new String[myCells.length][myCells[0].length];
 		for(int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
 				newState[i][j]=myCells[i][j].getState();
@@ -73,7 +80,7 @@ public class GameOfLifeSimulation extends Simulation {
 		return newState;
 	}
 	
-	public void setNextStates(Color[][] newState) {
+	public void setNextStates(String[][] newState) {
 		for(int i=0;i<myCells.length;i++){
 			for(int j=0;j<myCells[0].length;j++){
 				myCells[i][j].setState(newState[i][j]);

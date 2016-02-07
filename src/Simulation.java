@@ -1,31 +1,45 @@
+import java.util.HashMap;
+import java.util.Map;
 
+import javafx.scene.paint.Color;
 
-public abstract class Simulation {
+public class Simulation {
 	
 	Cell[][] myCells;
+	Map<String, Color> stateNameToColor;
 	
 	public Simulation(Grid newGrid) {
+		this();
 		myCells = newGrid.myCells;
 		setCellColor(myCells);
 	}
 	
 	public Simulation(){
+		setStateNameToColor();
 	}
 	
-	public abstract void update();
+	public void setStateNameToColor() {
+		stateNameToColor = new HashMap<String, Color>();
+	}
 	
-	public abstract void updateCellStates();
+	public void update(){};
+	
+	public void updateCellStates(){};
 	
 	public void setCellColor(Cell cell) {
-		cell.shape.setFill(cell.getState());
+		cell.shape.setFill(getColorFromStateName(cell.getState()));
 	}
 	
 	public void setCellColor(Cell[][] myGrid) {
 		for (int i=0; i<myGrid.length; i++) {
 			for (int j=0; j<myGrid[0].length; j++) {
-				myGrid[i][j].shape.setFill(myGrid[i][j].getState());
+				myGrid[i][j].shape.setFill(getColorFromStateName(myGrid[i][j].getState()));
 			}
 		}
+	}
+	
+	public Color getColorFromStateName(String state) {
+		return stateNameToColor.get(state);
 	}
 	
 	public void resetJustUpdated() {

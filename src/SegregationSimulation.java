@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javafx.scene.paint.Color;
@@ -7,15 +8,22 @@ import javafx.scene.paint.Color;
 public class SegregationSimulation extends Simulation {
 
 	private double threshold;
-	public static final Color RED = Color.RED;
-	public static final Color BLUE = Color.BLUE;
-	public static final Color EMPTY = Color.WHITE;
+	public static final String RED = "RED";
+	public static final String BLUE = "BLUE";
+	public static final String EMPTY = "WHITE";
 	
 	public SegregationSimulation(Grid newGrid, double thresholdDecimal){
 		super(newGrid);
 		threshold = thresholdDecimal;
 		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
 		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addDiagonalNeighbors(grid, position));		
+	}
+	
+	public void setStateNameToColor() {
+		stateNameToColor = new HashMap<String, Color>();
+		stateNameToColor.put(this.RED, Color.RED);
+		stateNameToColor.put(this.BLUE, Color.BLUE);
+		stateNameToColor.put(this.EMPTY, Color.WHITE);
 	}
 	
 	public List<Cell> getEmptyCells() {

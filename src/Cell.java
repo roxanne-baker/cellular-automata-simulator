@@ -7,7 +7,7 @@ import javafx.scene.shape.Shape;
 public class Cell {
 	private int countNeighbours;
 	public List<Cell> neighbours;
-	private Color state;
+	private String state;
 	public final Shape shape;
 	boolean justUpdated = false;
 	
@@ -27,10 +27,10 @@ public class Cell {
 	public List<Cell> getMyNeighbours(){
 		return neighbours;
 	}
-	public Color getState(){
+	public String getState(){
 		return state;
 	}
-	public void setState(Color newState){
+	public void setState(String newState){
 		state=newState;
 	}	
 }

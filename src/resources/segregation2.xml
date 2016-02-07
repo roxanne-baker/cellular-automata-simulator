@@ -3,6 +3,7 @@
 	<name>Segregation/name>
 	<width>7</width>
 	<height>6</height>
+	<Threshold>0.35</Threshold>
 	<state>red</state>
 	<state>red</state>
 	<state>empty</state>
