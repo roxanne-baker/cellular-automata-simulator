@@ -8,9 +8,9 @@ import javafx.scene.paint.Color;
 public class SegregationSimulation extends Simulation {
 
 	private double threshold;
-	public static final String RED = "RED";
-	public static final String BLUE = "BLUE";
-	public static final String EMPTY = "WHITE";
+	public static final String RED = "red";
+	public static final String BLUE = "blue";
+	public static final String EMPTY = "empty";
 	
 	public SegregationSimulation(Grid newGrid, double thresholdDecimal){
 		super(newGrid);

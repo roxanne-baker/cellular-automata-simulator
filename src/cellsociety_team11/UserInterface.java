@@ -67,7 +67,8 @@ public class UserInterface {
 		Grid grid = new SquareGrid(root, width, height);
 		for(int i=0; i<width; i++) {
 			for (int j=0; j<height; j++) {
-				grid.myCells[i][j].setState(cellStates.get(i*width+j));
+				System.out.println(i+" "+j);
+				grid.myCells[i][j].setState(cellStates.get(i*height+j));
 			}
 		}
 		myGrid = grid;
@@ -77,18 +78,18 @@ public class UserInterface {
 		active=true;
 		String myFile=DEFAULT_DIRECTORY+myFiles.getValue();
 		Configuration newConfiguration=new Configuration(myFile);
-		int width=newConfiguration.width();
-		int height=newConfiguration.height();
+		int width=newConfiguration.getWidth();
+		int height=newConfiguration.getHeight();
 		ArrayList<String>states=new ArrayList<String>();
-		states=newConfiguration.states();
+		states=newConfiguration.getStates();
 		
 		Object simClass = null;
-		String name=newConfiguration.name();
+		String name=newConfiguration.getName();
 		System.out.println(name);
 		try {
 			simClass = Class.forName(name+"Simulation").cast(simClass);
 		} catch (ClassNotFoundException e) {
-			System.out.println("ClassNotFound");
+			System.out.println("Class "+name+"Simulation NotFound");
 			System.out.println("Please load another file.");
 		}
 		Simulation simCast = (Simulation) simClass;
@@ -98,7 +99,7 @@ public class UserInterface {
 			newSimulation=new GameOfLifeSimulation(myGrid);
 		}
 		else{
-			newSimulation=new SegregationSimulation(myGrid, 30);
+			newSimulation=new SegregationSimulation(myGrid, newConfiguration.getThreshold());
 		}
 		RunningSimulation=newSimulation;
 	}
@@ -149,7 +150,7 @@ public class UserInterface {
 			root.getChildren().add(newButtons[i]);
 		}
 		myFiles=new ComboBox<String>();
-		myFiles.getItems().addAll("test.xml", "test2.xml","test3.xml");
+		myFiles.getItems().addAll("test.xml", "test2.xml","test3.xml", "segregation.xml", "segregation2.xml");
 		root.getChildren().add(myFiles);
 		Load.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
     		@Override
