@@ -22,7 +22,11 @@ public class SquareGrid extends Grid {
 		int cellHeight = gridSideLength/height;
 		for (int i=0; i<height; i++) {
 			for (int j=0; j<width; j++) {
+<<<<<<< HEAD
 				Shape cellShape = getSquare(i*cellHeight+gridHeightBuffer, j*cellWidth+gridWidthBuffer, cellHeight, cellWidth);
+=======
+				Shape cellShape = getSquare(i*cellHeight+gridWidthBuffer, j*cellWidth+gridHeightBuffer, cellHeight, cellWidth);
+>>>>>>> 2f30c614277a1396ba901a1e2a2e431f8595b72b
 				myCells[i][j] = new Cell(cellShape);
 			}
 		}

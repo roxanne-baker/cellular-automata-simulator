@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 package cellsociety_team11;
 
+=======
+>>>>>>> 2f30c614277a1396ba901a1e2a2e431f8595b72b
 import javax.xml.parsers.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
@@ -219,5 +222,9 @@ public class Configuration{
         } 
         
     }
+<<<<<<< HEAD
 }
 
+=======
+}
+>>>>>>> 2f30c614277a1396ba901a1e2a2e431f8595b72b
