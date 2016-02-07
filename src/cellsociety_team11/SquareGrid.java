@@ -1,3 +1,4 @@
+package cellsociety_team11;
 import java.util.function.BiConsumer;
 
 import javafx.scene.Group;
@@ -7,21 +8,21 @@ import javafx.scene.shape.*;
 public class SquareGrid extends Grid {
 
 	private static final int gridSideLength = 350;
-	private static final int gridWidthBuffer = 25;
-	private static final int gridHeightBuffer = 30;
+	private static final int gridWidthBuffer = 30;
+	private static final int gridHeightBuffer = 25;
 	
-	public SquareGrid(Group root, int width, int height) {
-		super(root,width,height);
+	public SquareGrid(Group root, int height, int width) {
+		super(root,height,width);
 	}
 	
-	public void setGrid(int width, int height) {
+	public void setGrid(int height, int width) {
 		
-		myCells = new Cell[width][height];
+		myCells = new Cell[height][width];
 		int cellWidth = gridSideLength/width;
 		int cellHeight = gridSideLength/height;
-		for (int i=0; i<width; i++) {
-			for (int j=0; j<height; j++) {
-				Shape cellShape = getSquare(i*cellWidth+gridWidthBuffer, j*cellHeight+gridHeightBuffer, cellWidth, cellHeight);
+		for (int i=0; i<height; i++) {
+			for (int j=0; j<width; j++) {
+				Shape cellShape = getSquare(i*cellHeight+gridHeightBuffer, j*cellWidth+gridWidthBuffer, cellHeight, cellWidth);
 				myCells[i][j] = new Cell(cellShape);
 			}
 		}

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <simulation>
-	<name>Segregation/name>
+	<name>Segregation</name>
 	<width>7</width>
 	<height>6</height>
+	<Threshold>.3</Threshold>
 	<state>red</state>
 	<state>red</state>
 	<state>empty</state>

@@ -1,5 +1,6 @@
-
+package cellsociety_team11;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -8,9 +9,9 @@ import javafx.scene.paint.Color;
 public class SegregationSimulation extends Simulation {
 
 	private double threshold;
-	public static final String RED = "RED";
-	public static final String BLUE = "BLUE";
-	public static final String EMPTY = "WHITE";
+	public static final String RED = "red";
+	public static final String BLUE = "blue";
+	public static final String EMPTY = "empty";
 	
 	public SegregationSimulation(Grid newGrid, double thresholdDecimal){
 		super(newGrid);
@@ -26,12 +27,12 @@ public class SegregationSimulation extends Simulation {
 		stateNameToColor.put(this.EMPTY, Color.WHITE);
 	}
 	
-	public List<Cell> getEmptyCells() {
-		List<Cell> emptyCells = new ArrayList<Cell>();
+	public List<int[]> getEmptyCells(String[][] nextCells) {
+		List<int[]> emptyCells = new ArrayList<int[]>();
 		for (int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
-				if (myCells[i][j].getState().equals(EMPTY)) {
-					emptyCells.add(myCells[i][j]);
+				if (nextCells[i][j].equals(EMPTY) && !myCells[i][j].justUpdated) {
+					emptyCells.add(new int[]{i, j});
 				}
 			}
 		}
@@ -39,6 +40,7 @@ public class SegregationSimulation extends Simulation {
 	}
 	
 	public boolean moveCell(Cell cell) {
+		if (cell.getState().equals(EMPTY)) return false;
 		int numNeighbors = 0;
 		int similarNeighbors = 0;
 		for (Cell neighbor : cell.getMyNeighbours()) {
@@ -57,24 +59,52 @@ public class SegregationSimulation extends Simulation {
 	
 	
 	public void updateCellStates() {
+		String[][] nextCellStates = getInitialStates();
+		nextCellStates = getNextStates(nextCellStates);
+		setNextStates(nextCellStates);		
+	}
+	
+	private String[][] getInitialStates() {
+		String[][] newState=new String[myCells.length][myCells[0].length];
 		for(int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
-				updateCell(myCells[i][j]);
+				newState[i][j]=myCells[i][j].getState();
+			}
+		}
+		return newState;
+	}
+	
+	private String[][] getNextStates(String[][] nextCellStates) {
+		for(int i=0; i<myCells.length; i++) {
+			for (int j=0; j<myCells[0].length; j++) {
+				nextCellStates = updateCell(new int[]{i, j}, nextCellStates);
+			}
+		}
+		return nextCellStates;
+	}
+	
+	public void setNextStates(String[][] newState) {
+		for(int i=0;i<myCells.length;i++){
+			for(int j=0;j<myCells[0].length;j++){
+				myCells[i][j].setState(newState[i][j]);
 			}
 		}
 	}
 	
-	public void updateCell(Cell cell) {
-		List<Cell> emptyCells = getEmptyCells();
-		if (moveCell(cell) && !emptyCells.isEmpty() && !cell.justUpdated) {
-			emptyCells.get(0).setState(cell.getState());
-			emptyCells.get(0).justUpdated = true;
+	public String[][] updateCell(int[] position, String[][] nextCells) {
+		int row = position[0];
+		int col = position[1];
+		List<int[]> emptyCells = getEmptyCells(nextCells);
+		if (moveCell(myCells[row][col]) && !emptyCells.isEmpty() && !myCells[row][col].justUpdated) {
+			int emptyRow = emptyCells.get(0)[0];
+			int emptyCol = emptyCells.get(0)[1];
+			nextCells[emptyRow][emptyCol] = myCells[row][col].getState();
+			nextCells[row][col] = EMPTY;
 			
-			cell.setState(EMPTY);
-			cell.justUpdated = true;
-			emptyCells.remove(0);
-			emptyCells.add(cell);
+			myCells[row][col].justUpdated = true;
+			myCells[emptyRow][emptyCol].justUpdated = true;
 		}
+		return nextCells;
 	}
 	
 	public void update() {
