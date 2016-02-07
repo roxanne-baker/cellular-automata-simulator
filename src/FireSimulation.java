@@ -7,6 +7,11 @@ import javafx.scene.paint.Color;
 
 public class FireSimulation extends Simulation {
 
+	/*
+	 * @author Roxanne Baker
+	 * Contains logic for representing
+	 * the Fire simulation
+	 */
 	private double probCatch;
 	public static final String FIRE = "FIRE";
 	public static final String TREE = "TREE";
@@ -18,6 +23,10 @@ public class FireSimulation extends Simulation {
 		myGrid.addAllNeighbors(myCells, (grid, position) -> myGrid.addCardinalNeighbors(grid, position));
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see Simulation#setStateNameToColor()
+	 */
 	public void setStateNameToColor() {
 		stateNameToColor = new HashMap<String, Color>();
 		stateNameToColor.put(FIRE, Color.FIREBRICK);
@@ -25,6 +34,9 @@ public class FireSimulation extends Simulation {
 		stateNameToColor.put(EMPTY, Color.TAN);
 	}
 	
+	/*
+	 * updates the state of a given cell
+	 */
 	public void updateCell(Cell cell) {
 		if (cell.getState().equals(FIRE) && !cell.justUpdated) {
 			Random random = new Random();
@@ -41,6 +53,10 @@ public class FireSimulation extends Simulation {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see Simulation#updateCellStates()
+	 */
 	public void updateCellStates() {
 		for(int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
@@ -49,6 +65,10 @@ public class FireSimulation extends Simulation {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see Simulation#update()
+	 */
 	public void update() {
 		updateCellStates();
 		setCellColor(myCells);
