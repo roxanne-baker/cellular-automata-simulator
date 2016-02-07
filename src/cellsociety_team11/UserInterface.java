@@ -1,4 +1,4 @@
-package cellsociety_team11;
+//package cellsociety_team11;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -15,11 +15,12 @@ import javafx.event.*;
 public class UserInterface {
 	public static final int HSIZE=400;
 	public static final int VSIZE=500;
+	public static final double STARTING_RATE = 0.075;
 	private Scene myScene;
 	public static final int FRAMES_PER_SECOND = 60;
     private static final int MILLISECOND_DELAY = 1000 / FRAMES_PER_SECOND;
     private boolean active=true;
-    private double rate=1;
+    private double currentRate=STARTING_RATE;
     private Simulation RunningSimulation;
     public static final String DEFAULT_RESOURCE_PACKAGE = "resources/";
     public static final String DEFAULT_DIRECTORY = "src/resources/";
@@ -62,31 +63,42 @@ public class UserInterface {
     	setButtons(root);
     	return myScene;
 	}
-	public void setGrid(Group root, int width, int height, ArrayList<String> cellStates) {
+	public void setGrid(Group root, int width, int height, ArrayList<String> cellStates, Simulation simName) {
 		Grid grid = new SquareGrid(root, width, height);
 		for(int i=0; i<width; i++) {
 			for (int j=0; j<height; j++) {
-					grid.myCells[i][j].setState(cellStates.get(i*width+j));
+				grid.myCells[i][j].setState(cellStates.get(i*width+j));
 			}
 		}
 		myGrid = grid;
 	}
 	public void setNewSimulation(Group root){
+		animation.setRate(STARTING_RATE);
 		active=true;
 		String myFile=DEFAULT_DIRECTORY+myFiles.getValue();
 		Configuration newConfiguration=new Configuration(myFile);
-		int width=newConfiguration.getWidth();
-		int height=newConfiguration.getHeight();
+		int width=newConfiguration.width();
+		int height=newConfiguration.height();
 		ArrayList<String>states=new ArrayList<String>();
-		states=newConfiguration.getStates();
-		setGrid(root, width, height, states);
-		String name=newConfiguration.getName();
+		states=newConfiguration.states();
+		
+		Object simClass = null;
+		String name=newConfiguration.name();
+		System.out.println(name);
+		try {
+			simClass = Class.forName(name+"Simulation").cast(simClass);
+		} catch (ClassNotFoundException e) {
+			System.out.println("ClassNotFound");
+			System.out.println("Please load another file.");
+		}
+		Simulation simCast = (Simulation) simClass;
+		setGrid(root, width, height, states, simCast);
 		Simulation newSimulation;
 		if(name.equals(myPossibilities[0])){
-			newSimulation=new GameOfLifeSimulation(myGrid.myCells);
+			newSimulation=new GameOfLifeSimulation(myGrid);
 		}
 		else{
-			newSimulation=new SegregationSimulation(myGrid.myCells, 30);
+			newSimulation=new SegregationSimulation(myGrid, 30);
 		}
 		RunningSimulation=newSimulation;
 	}
@@ -197,12 +209,14 @@ public class UserInterface {
 		};
 		speedUpHandler=new EventHandler<MouseEvent>(){
 			public void handle(MouseEvent event){
-					animation.setRate(rate*2);
+					currentRate += 0.025;
+					animation.setRate(currentRate);
 			}
 		};
 		slowDownHandler=new EventHandler<MouseEvent>(){
 			public void handle(MouseEvent event){
-				animation.setRate(rate/2);
+				currentRate = Math.min(0, currentRate - 0.025);
+				animation.setRate(currentRate);
 			}
 		};
 		forwardHandler=new EventHandler<MouseEvent>(){

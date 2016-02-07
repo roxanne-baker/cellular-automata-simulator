@@ -1,107 +1,96 @@
-package cellsociety_team11;
-
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javafx.scene.paint.Color;
 
 public class GameOfLifeSimulation extends Simulation {
-	private Cell[][] myCells;
+
 	private int count=0;
-	public GameOfLifeSimulation(Cell[][] newCells){
-		myCells=newCells;
-		setAllNeighbors();
-		setCellColor();
+	public static final String ALIVE = "alive";
+	public static final String DEAD = "dead";
+	
+	// pass in Grid in order to set neighbors accordingly
+	public GameOfLifeSimulation(Grid newGrid){
+		super(newGrid);
+		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
+		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addDiagonalNeighbors(grid, position));		
 	}
-	@Override
-	public void updateState() {
-		// TODO Auto-generated method stub
+	
+	public void setStateNameToColor() {
+		stateNameToColor = new HashMap<String, Color>();
+		stateNameToColor.put(this.ALIVE, Color.BLACK);
+		stateNameToColor.put(this.DEAD, Color.WHITE);
+	}
+	
+	public String[][] updateCell(Cell cell, int[] position, String[][] newState) {
+		int row = position[0];
+		int col = position[1];
+		int liveNeighbours = getNumLiveNeighbours(cell);
+		if((liveNeighbours<2 || liveNeighbours>3) && cell.getState().equals(ALIVE)){
+			newState[row][col] = DEAD;
+		}
+		if(liveNeighbours == 3 && cell.getState().equals(DEAD)){
+			newState[row][col] = ALIVE;
+		}
+		return newState;
+	}
+	
+	public int getNumLiveNeighbours(Cell cell) {
+		int k = cell.getMyNeighbours().size();
+		int numLiveNeighbours=0;
+		List<Cell> neighbours = cell.getMyNeighbours();
+		for(int l=0;l<k;l++){
+			if(neighbours.get(l).getState().equals(ALIVE)){
+				numLiveNeighbours++;
+			}
+		}
+		return numLiveNeighbours;
+	}
+	
+	public void updateCellStates() {
 		System.out.println("Count:" + count);
 		count++;
+		String[][] newState = getInitialStates();
+		newState = getNextStates(newState);
+		setNextStates(newState);
+	}
+	
+	private String[][] getNextStates(String[][] newState) {
+		for(int i=0;i<myCells.length;i++){
+			for(int j=0;j<myCells[0].length;j++){
+				int liveNeighbours = getNumLiveNeighbours(myCells[i][j]);
+				if((liveNeighbours<2 || liveNeighbours>3) && myCells[i][j].getState().equals(ALIVE)){
+					newState[i][j] = DEAD;
+				}
+				if(liveNeighbours == 3 && myCells[i][j].getState().equals(DEAD)){
+					newState[i][j] = ALIVE;
+				}
+			}
+		}
+		return newState;
+	}
+	
+	private String[][] getInitialStates() {
 		String[][] newState=new String[myCells.length][myCells[0].length];
 		for(int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
 				newState[i][j]=myCells[i][j].getState();
 			}
 		}
-		for(int i=0;i<myCells.length;i++){
-			for(int j=0;j<myCells[0].length;j++){
-				int k=myCells[i][j].getMyNeighbours().size();
-				int count=0;
-				ArrayList<Cell> neighbours=new ArrayList<Cell>();
-				neighbours=myCells[i][j].getMyNeighbours();
-				for(int l=0;l<k;l++){
-					if(neighbours.get(l).getState().equals("alive")){
-						count++;
-					}
-				}
-				if((count<2 || count>3) && myCells[i][j].getState().equals("alive")){
-					newState[i][j]="dead";
-				}
-				if(count==3 && myCells[i][j].getState().equals("dead")){
-					newState[i][j]="alive";
-				}
-			}
-		}
+		return newState;
+	}
+	
+	public void setNextStates(String[][] newState) {
 		for(int i=0;i<myCells.length;i++){
 			for(int j=0;j<myCells[0].length;j++){
 				myCells[i][j].setState(newState[i][j]);
 			}
 		}
 	}
-	public void setCellColor(){
-		for (int i=0; i<myCells.length; i++) {
-			for (int j=0; j<myCells[0].length; j++) {
-				if (myCells[i][j].getState().equals("alive")) {
-					myCells[i][j].shape.setFill(Color.WHITE);
-				}
-				else if (myCells[i][j].getState().equals("dead")) {
-					myCells[i][j].shape.setFill(Color.BLACK);
-				}
-			}
-		}
-	}
-	public void setAllNeighbors() {
-		for(int i=0; i<myCells.length; i++) {
-			for (int j=0; j<myCells[0].length; j++) {
-				setNeighbors(myCells[i][j], i, j);
-			}
-		}
-	}
 	
-	public void setNeighbors(Cell cell, int row, int col) {
-		boolean isFirstRow = (row == 0);
-		boolean isLastRow = (row == myCells.length-1);
-		boolean isFirstCol = (col == 0);
-		boolean isLastCol = (col == myCells[0].length-1);
-		if (!isFirstRow) {
-			if (!isFirstCol) {
-				cell.add(myCells[row-1][col-1]);
-			}
-			cell.add(myCells[row-1][col]);
-			if (!isLastCol) {
-				cell.add(myCells[row-1][col+1]);
-			}
-		}
-		if (!isFirstCol) {
-			cell.add(myCells[row][col-1]);
-		}
-		if (!isLastCol) {
-			cell.add(myCells[row][col+1]);
-		}
-		if (!isLastRow) {
-			if (!isFirstCol) {
-				cell.add(myCells[row+1][col-1]);
-			}
-			cell.add(myCells[row+1][col]);
-			if (!isLastCol) {
-				cell.add(myCells[row+1][col+1]);
-			}
-		}
-	}
 	public void update() {
-		updateState();
-		setCellColor();
+		updateCellStates();
+		setCellColor(myCells);
 	}
 	
 }

@@ -1,20 +1,5 @@
-package cellsociety_team11;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.text.Font;
-import javafx.stage.Stage;
-import javafx.util.Duration;
-import javafx.event.*;
-
-import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class Main extends Application {

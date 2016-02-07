@@ -1,8 +1,6 @@
-package cellsociety_team11;
+import java.util.function.BiConsumer;
 
-import javafx.*;
 import javafx.scene.Group;
-import javafx.scene.shape.Shape;
 
 public abstract class Grid {
 
@@ -22,4 +20,25 @@ public abstract class Grid {
 			}
 		}
 	}
+	
+	public void resetJustUpdated() {
+		for (int i=0;i<myCells.length; i++) {
+			for (int j=0; j<myCells[0].length; j++) {
+				myCells[i][j].justUpdated = false;
+			}
+		}
+	}
+	
+	public void addAllNeighbors(Cell[][] myGrid, BiConsumer<Cell[][], int[]> addNeighborType) {
+		for(int i=0; i<myGrid.length; i++) {
+			for (int j=0; j<myGrid[0].length; j++) {
+				addNeighborType.accept(myGrid, new int[]{i, j});
+			}
+		}
+	}
+	
+	public abstract void addCardinalNeighbors(Cell[][] myGrid, int[] position);
+	
+	public abstract void addDiagonalNeighbors(Cell[][] myGrid, int[] position);
+	
 }

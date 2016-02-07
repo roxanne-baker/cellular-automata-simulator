@@ -1,6 +1,6 @@
-package cellsociety_team11;
+
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import javafx.scene.paint.Color;
@@ -8,21 +8,30 @@ import javafx.scene.paint.Color;
 public class SegregationSimulation extends Simulation {
 
 	private double threshold;
-	Cell[][] myGrid;
+	public static final String RED = "RED";
+	public static final String BLUE = "BLUE";
+	public static final String EMPTY = "WHITE";
 	
-	public SegregationSimulation(Cell[][] myGrid, int thresholdPercentage) {
-		threshold = thresholdPercentage*0.01;
-		this.myGrid = myGrid;
-		setAllNeighbors();
-		setCellColor();
+	public SegregationSimulation(Grid newGrid, double thresholdDecimal){
+		super(newGrid);
+		threshold = thresholdDecimal;
+		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
+		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addDiagonalNeighbors(grid, position));		
+	}
+	
+	public void setStateNameToColor() {
+		stateNameToColor = new HashMap<String, Color>();
+		stateNameToColor.put(this.RED, Color.RED);
+		stateNameToColor.put(this.BLUE, Color.BLUE);
+		stateNameToColor.put(this.EMPTY, Color.WHITE);
 	}
 	
 	public List<Cell> getEmptyCells() {
 		List<Cell> emptyCells = new ArrayList<Cell>();
-		for (int i=0; i<myGrid.length; i++) {
-			for (int j=0; j<myGrid[0].length; j++) {
-				if (myGrid[i][j].getState().equals("EMPTY")) {
-					emptyCells.add(myGrid[i][j]);
+		for (int i=0; i<myCells.length; i++) {
+			for (int j=0; j<myCells[0].length; j++) {
+				if (myCells[i][j].getState().equals(EMPTY)) {
+					emptyCells.add(myCells[i][j]);
 				}
 			}
 		}
@@ -33,95 +42,44 @@ public class SegregationSimulation extends Simulation {
 		int numNeighbors = 0;
 		int similarNeighbors = 0;
 		for (Cell neighbor : cell.getMyNeighbours()) {
-			if(!neighbor.getState().equals("EMPTY")) {
+			if(!neighbor.getState().equals(EMPTY)) {
 				numNeighbors++;
 			}
 			if(neighbor.getState().equals(cell.getState())) {
 				similarNeighbors++;
 			}
 		}
-		
 		if (((double) similarNeighbors/numNeighbors) < threshold) {
 			return true;
 		}
 		return false;
 	}
 	
-	public void moveAllCells() {
-		// what if more dissatisfied cells than open spaces?
+	
+	public void updateCellStates() {
+		for(int i=0; i<myCells.length; i++) {
+			for (int j=0; j<myCells[0].length; j++) {
+				updateCell(myCells[i][j]);
+			}
+		}
+	}
+	
+	public void updateCell(Cell cell) {
 		List<Cell> emptyCells = getEmptyCells();
-		for(int i=0; i<myGrid.length; i++) {
-			for (int j=0; j<myGrid[0].length; j++) {
-				if (moveCell(myGrid[i][j]) && !emptyCells.isEmpty()) {
-					emptyCells.get(0).setState(myGrid[i][j].getState());
-					myGrid[i][j].setState("EMPTY");
-					emptyCells.remove(0);
-					emptyCells.add(myGrid[i][j]);
-				}
-			}
-		}
-	}
-	
-	public void setCellColor() {
-//		Cell[][] nextGrid = myGrid.clone();
-		
-		for (int i=0; i<myGrid.length; i++) {
-			for (int j=0; j<myGrid[0].length; j++) {
-				if (myGrid[i][j].getState().equals("BLUE")) {
-					myGrid[i][j].shape.setFill(Color.BLUE);
-				}
-				else if (myGrid[i][j].getState().equals("RED")) {
-					myGrid[i][j].shape.setFill(Color.RED);
-				}
-				else {
-					myGrid[i][j].shape.setFill(Color.WHITE);
-				}
-			}
-		}
-//		myGrid = nextGrid;
-	}
-	
-	public void setAllNeighbors() {
-		for(int i=0; i<myGrid.length; i++) {
-			for (int j=0; j<myGrid[0].length; j++) {
-				setNeighbors(myGrid[i][j], i, j);
-			}
-		}
-	}
-	
-	public void setNeighbors(Cell cell, int row, int col) {
-		boolean isFirstRow = (row == 0);
-		boolean isLastRow = (row == myGrid.length-1);
-		boolean isFirstCol = (col == 0);
-		boolean isLastCol = (col == myGrid[0].length-1);
-		if (!isFirstRow) {
-			if (!isFirstCol) {
-				cell.getMyNeighbours().add(myGrid[row-1][col-1]);
-			}
-			cell.getMyNeighbours().add(myGrid[row-1][col]);
-			if (!isLastCol) {
-				cell.getMyNeighbours().add(myGrid[row-1][col+1]);
-			}
-		}
-		if (!isFirstCol) {
-			cell.getMyNeighbours().add(myGrid[row][col-1]);
-		}
-		if (!isLastCol) {
-			cell.getMyNeighbours().add(myGrid[row][col+1]);
-		}
-		if (!isLastRow) {
-			if (!isFirstCol) {
-				cell.getMyNeighbours().add(myGrid[row+1][col-1]);
-			}
-			cell.getMyNeighbours().add(myGrid[row+1][col]);
-			if (!isLastCol) {
-				cell.getMyNeighbours().add(myGrid[row+1][col+1]);
-			}
+		if (moveCell(cell) && !emptyCells.isEmpty() && !cell.justUpdated) {
+			emptyCells.get(0).setState(cell.getState());
+			emptyCells.get(0).justUpdated = true;
+			
+			cell.setState(EMPTY);
+			cell.justUpdated = true;
+			emptyCells.remove(0);
+			emptyCells.add(cell);
 		}
 	}
 	
 	public void update() {
-		moveAllCells();
-		setCellColor();
+		updateCellStates();
+		setCellColor(myCells);
+		resetJustUpdated();
 	}
 }
