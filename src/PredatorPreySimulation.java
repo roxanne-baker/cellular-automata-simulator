@@ -8,6 +8,11 @@ import javafx.scene.paint.Color;
 
 public class PredatorPreySimulation extends Simulation {
 
+	/*
+	 * @author Roxanne Baker
+	 * Contains logic for representing the
+	 * PredatorPrey simulation
+	 */
 	private PredatorPreyCell[][] myCells;
 	private int turnsUntilPreyBreeds;
 	private int turnsUntilPredatorBreeds;
@@ -25,6 +30,10 @@ public class PredatorPreySimulation extends Simulation {
 		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see Simulation#setStateNameToColor()
+	 */
 	public void setStateNameToColor() {
 		stateNameToColor = new HashMap<String, Color>();
 		stateNameToColor.put(PREDATOR, Color.GRAY);
@@ -47,17 +56,28 @@ public class PredatorPreySimulation extends Simulation {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see Simulation#update()
+	 */
 	public void update() {
 		updateCellStates();
 		setCellColor(myCells);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see Simulation#updateCellStates()
+	 */
 	public void updateCellStates() {
 		moveCellsOfState(PREDATOR, cell -> updatePredatorState(cell));
 		moveCellsOfState(PREY, cell -> updatePreyState(cell));
 		updateCell(cell -> killPredatorOrBreed(cell));
 	}
 	
+	/*
+	 * updates a given property of a cell given the cell
+	 */
 	private void updateCell(Consumer<PredatorPreyCell> updateProperty) {
 		for (int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
@@ -66,6 +86,10 @@ public class PredatorPreySimulation extends Simulation {
 		}			
 	}
 	
+	/*
+	 * Given a String representing a certain state and a function
+	 * will move all cells of that state by the function provided
+	 */
 	private void moveCellsOfState(String state, Consumer<PredatorPreyCell> moveStateFunction) {
 		for (int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
@@ -76,6 +100,10 @@ public class PredatorPreySimulation extends Simulation {
 		}			
 	}	
 
+	/*
+	 * contains logic for updating the state of a cell
+	 * that is a predator
+	 */
 	public void updatePredatorState(PredatorPreyCell cell) {
 		if (cell.justUpdated) return;
 		List<PredatorPreyCell> neighbours = getPredPreyNeighbours(cell);
@@ -98,6 +126,10 @@ public class PredatorPreySimulation extends Simulation {
 		}		
 	}
 	
+	/*
+	 * contains logic for updating the state of a cell
+	 * that is prey
+	 */
 	public void updatePreyState(PredatorPreyCell cell) {
 		if (cell.justUpdated) return;
 
@@ -114,6 +146,11 @@ public class PredatorPreySimulation extends Simulation {
 		}
 	}
 	
+	/*
+	 * gets the neighbours of a cell as a list of PredatorPreyCell's
+	 * instead of as just a list of Cells
+	 * This allows us to access properties unique to PredatorPreyCell's
+	 */
 	public List<PredatorPreyCell> getPredPreyNeighbours(PredatorPreyCell cell) {
 		List<PredatorPreyCell> predPreyNeighbours = new ArrayList<PredatorPreyCell>();
 		for (Cell neighbour : cell.getMyNeighbours()) {
@@ -122,6 +159,10 @@ public class PredatorPreySimulation extends Simulation {
 		return predPreyNeighbours;
 	}
 
+	/*
+	 * Given a cell, will determine whether it should
+	 * breed or (in the case of a predator) die
+	 */
 	public void killPredatorOrBreed(PredatorPreyCell cell) {
 		cell.justUpdated = false;
 		if (cell.getState().equals(PREDATOR) && cell.turnsSinceEating > turnsUntilPredatorStarves) {
@@ -134,6 +175,10 @@ public class PredatorPreySimulation extends Simulation {
 		}
 	}
 
+	/*
+	 * Contains logic for breeding the given type of cell
+	 * and a value for numberTurnsUntilBreed
+	 */
 	public void breed(String predatorOrPrey, int numberTurnsUntilBreed, PredatorPreyCell cell) {
 		Random random = new Random();
 		List<PredatorPreyCell> neighbours = getPredPreyNeighbours(cell);
@@ -147,6 +192,9 @@ public class PredatorPreySimulation extends Simulation {
 		}		
 	}
 
+	/*
+	 * Gets all neighbours of the given state
+	 */
 	public List<Integer> getNeighboursOfState(String state, List<PredatorPreyCell> neighbourCells) {
 		List<Integer> stateSpaces = new ArrayList<Integer>();
 		for (int i=0; i<neighbourCells.size(); i++) {
@@ -157,6 +205,10 @@ public class PredatorPreySimulation extends Simulation {
 		return stateSpaces;		
 	}
 
+	/*
+	 * Takes two cells and switches their states
+	 * and updates their values for turnsSinceBreeding
+	 */
 	public void switchCells(PredatorPreyCell neighbour, PredatorPreyCell cell) {
 		neighbour.setState(cell.getState());
 		neighbour.turnsSinceBreeding = cell.turnsSinceBreeding + 1;
@@ -167,6 +219,9 @@ public class PredatorPreySimulation extends Simulation {
 		cell.justUpdated = true;	
 	}
 
+	/*
+	 * @return int representing an index in the given list to move to at random
+	 */
 	private int getIndexToSwitch(List<Integer> stateSpaces) {
 		Random random = new Random();
 		int indexToSwitchWith = -1;
@@ -177,10 +232,18 @@ public class PredatorPreySimulation extends Simulation {
 		return indexToSwitchWith;
 	}
 
+	/*
+	 * @return an index for a prey to switch to
+	 * from its openSpaces
+	 */
 	private int getPreyNeighbourToSwitch(List<Integer> openSpaces) {
 		return getIndexToSwitch(openSpaces);
 	}
 
+	/*
+	 * @return int representing index for a predator to switch with
+	 * from either nearby prey or an empty space
+	 */
 	private int getPredatorNeighbourToSwitch(List<Integer> openSpaces, List<Integer> preySpaces) {
 		int indexToSwitchWith = getIndexToSwitch(preySpaces);
 		if (indexToSwitchWith == -1) {

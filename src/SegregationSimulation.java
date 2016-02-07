@@ -8,6 +8,11 @@ import javafx.scene.paint.Color;
 
 public class SegregationSimulation extends Simulation {
 
+	/*
+	 * @author Roxanne Baker
+	 * Contains logic for representing the
+	 * Segregation simulation
+	 */
 	private double threshold;
 	public static final String RED = "red";
 	public static final String BLUE = "blue";
@@ -20,6 +25,10 @@ public class SegregationSimulation extends Simulation {
 		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addDiagonalNeighbors(grid, position));		
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see Simulation#setStateNameToColor()
+	 */
 	public void setStateNameToColor() {
 		stateNameToColor = new HashMap<String, Color>();
 		stateNameToColor.put(this.RED, Color.RED);
@@ -27,6 +36,10 @@ public class SegregationSimulation extends Simulation {
 		stateNameToColor.put(this.EMPTY, Color.WHITE);
 	}
 	
+	/*
+	 * Gets all empty cells, representing
+	 * where a cell is able to move to
+	 */
 	public List<int[]> getEmptyCells(String[][] nextCells) {
 		List<int[]> emptyCells = new ArrayList<int[]>();
 		for (int i=0; i<myCells.length; i++) {
@@ -39,6 +52,11 @@ public class SegregationSimulation extends Simulation {
 		return emptyCells;
 	}
 	
+	/*
+	 * @returns boolean representing
+	 * whether or not a cell is dissatisfied
+	 * and wants to "move"
+	 */
 	public boolean moveCell(Cell cell) {
 		if (cell.getState().equals(EMPTY)) return false;
 		int numNeighbors = 0;
@@ -57,13 +75,20 @@ public class SegregationSimulation extends Simulation {
 		return false;
 	}
 	
-	
+	/*
+	 * updates the state of all cells
+	 */
 	public void updateCellStates() {
 		String[][] nextCellStates = getInitialStates();
 		nextCellStates = getNextStates(nextCellStates);
 		setNextStates(nextCellStates);		
 	}
 	
+	/*
+	 * returns a double array of Strings that
+	 * represents the current states of the cells
+	 * in the grid
+	 */
 	private String[][] getInitialStates() {
 		String[][] newState=new String[myCells.length][myCells[0].length];
 		for(int i=0; i<myCells.length; i++) {
@@ -74,6 +99,11 @@ public class SegregationSimulation extends Simulation {
 		return newState;
 	}
 	
+	/*
+	 * returns a double array that represents what
+	 * the next states of the cells in the grid
+	 * are going to be
+	 */
 	private String[][] getNextStates(String[][] nextCellStates) {
 		for(int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
@@ -83,6 +113,10 @@ public class SegregationSimulation extends Simulation {
 		return nextCellStates;
 	}
 	
+	/*
+	 * takes a String double array and sets all states
+	 * in the grid based on the contents of the array
+	 */
 	public void setNextStates(String[][] newState) {
 		for(int i=0;i<myCells.length;i++){
 			for(int j=0;j<myCells[0].length;j++){
@@ -91,6 +125,11 @@ public class SegregationSimulation extends Simulation {
 		}
 	}
 	
+	/*
+	 * updates the position of a single cell given its
+	 * corresponding position in the grid and what
+	 * the next states are
+	 */
 	public String[][] updateCell(int[] position, String[][] nextCells) {
 		int row = position[0];
 		int col = position[1];
@@ -107,6 +146,9 @@ public class SegregationSimulation extends Simulation {
 		return nextCells;
 	}
 	
+	/*
+	 * updates both the states and color of all cells in the grid
+	 */
 	public void update() {
 		updateCellStates();
 		setCellColor(myCells);
