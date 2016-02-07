@@ -12,9 +12,28 @@ import java.io.*;
  *
  */
 public class Configuration{
+    /**
+     * The constant for the XML tag for the root element of the XML file, which should be simulation.
+     */
     public static final String SIMULATION = "simulation";
+    
+    /**
+     * The constant for the XML tag of the "name" element.
+     */
     public static final String NAME = "name";
+    
+    /**
+     * The constant for the XML tag of the "width" element.
+     */
     public static final String WIDTH = "width";
+    
+    /**
+     * The constant for the XML tag of the "height" element.
+     */
+    
+    /**
+     * The constant for the XML tag of the height element.
+     */
     public static final String HEIGHT = "height";
     public static final String STATE = "state";
     public static final String PROBABILITY_CATCH = "ProbabilityCatch";
