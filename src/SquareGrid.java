@@ -6,6 +6,11 @@ import javafx.scene.shape.*;
 
 public class SquareGrid extends Grid {
 
+	/*
+	 * @author Roxanne Baker
+	 * Creates a grid made up of squares
+	 * based on the width and height specified
+	 */
 	private static final int gridSideLength = 350;
 	private static final int gridWidthBuffer = 25;
 	private static final int gridHeightBuffer = 30;
@@ -14,8 +19,11 @@ public class SquareGrid extends Grid {
 		super(root,width,height);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see Grid#setGrid(int, int)
+	 */
 	public void setGrid(int height, int width) {
-		
 		myCells = new Cell[height][width];
 		int cellWidth = gridSideLength/width;
 		int cellHeight = gridSideLength/height;
@@ -27,6 +35,11 @@ public class SquareGrid extends Grid {
 		}
 	}
 	
+	/*
+	 * @return a Rectangle placed at the given location and of the 
+	 * given width and height
+	 * Default fill is white with a black border
+	 */
 	public Rectangle getSquare(int leftX, int topY, int width, int height) {
 		Rectangle r = new Rectangle();
 		r.setX(leftX);
@@ -42,7 +55,10 @@ public class SquareGrid extends Grid {
 		return r;
 	}	
 
-
+	/*
+	 * (non-Javadoc)
+	 * @see Grid#addCardinalNeighbors(Cell[][], int[])
+	 */
 	public void addCardinalNeighbors(Cell[][] myGrid, int[] position) {
 		int row = position[0];
 		int col = position[1];
@@ -64,6 +80,10 @@ public class SquareGrid extends Grid {
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see Grid#addDiagonalNeighbors(Cell[][], int[])
+	 */
 	public void addDiagonalNeighbors(Cell[][] myGrid, int[] position) {
 		int row = position[0];
 		int col = position[1];
