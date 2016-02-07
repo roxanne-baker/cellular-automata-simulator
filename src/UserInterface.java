@@ -98,7 +98,14 @@ public class UserInterface {
 		else if (name.equals(myPossibilities[1])){
 			newSimulation=new SegregationSimulation(myGrid, newConfiguration.getThreshold());
 		}
-		else {
+		
+		else if(name.equals(myPossibilities[2])){
+		    newSimulation=new PredatorPreySimulation(myGrid, newConfiguration.getPredatorStarve(), newConfiguration.getPredatorBreed(),
+		                                             newConfiguration.getPreyBreed());
+		                                             
+		}
+		
+		else{
 			newSimulation=new FireSimulation(myGrid, newConfiguration.getProbabilityCatch());			
 		}
 		RunningSimulation=newSimulation;
@@ -151,7 +158,8 @@ public class UserInterface {
 		createAllButtons();
 		placeButtons(root);
 		myFiles=new ComboBox<String>();
-		myFiles.getItems().addAll("test.xml", "test2.xml", "test3.xml", "segregation.xml", "segregation2.xml", "cornerFire.xml", "centerFire.xml", "patchyFire.xml");
+		myFiles.getItems().addAll("test.xml", "test2.xml", "test3.xml", "segregation.xml", "segregation2.xml", "cornerFire.xml", "centerFire.xml", 
+		                          "patchyFire.xml", "segregation3.xml", "predatorprey.xml", "predatorprey2.xml", "predatorprey3.xml");
 		root.getChildren().add(myFiles);
 		loadHandler(root);
 		

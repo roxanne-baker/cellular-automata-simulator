@@ -12,9 +12,9 @@ public class PredatorPreySimulation extends Simulation {
 	private int turnsUntilPreyBreeds;
 	private int turnsUntilPredatorBreeds;
 	private int turnsUntilPredatorStarves;
-	public static final String PREDATOR = "PREDATOR";
-	public static final String PREY = "PREY";
-	public static final String EMPTY = "EMPTY";
+	public static final String PREDATOR = "predator";
+	public static final String PREY = "prey";
+	public static final String EMPTY = "empty";
 
 	public PredatorPreySimulation(Grid newGrid, int predatorStarve, int predatorBreed, int preyBreed){
 		setMyCells(newGrid.myCells);
@@ -27,9 +27,9 @@ public class PredatorPreySimulation extends Simulation {
 	
 	public void setStateNameToColor() {
 		stateNameToColor = new HashMap<String, Color>();
-		stateNameToColor.put(this.PREDATOR, Color.GRAY);
-		stateNameToColor.put(this.PREY, Color.ORANGE);
-		stateNameToColor.put(this.EMPTY, Color.WHITE);
+		stateNameToColor.put(PREDATOR, Color.GRAY);
+		stateNameToColor.put(PREY, Color.ORANGE);
+		stateNameToColor.put(EMPTY, Color.WHITE);
 	}
 
 	/*
