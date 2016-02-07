@@ -229,7 +229,7 @@ public class UserInterface {
 		addHandlers();
 	}
 	/**
-	 * Calls methods to set handlers to the buttons
+	 * Calls methods to set eventhandlers to the buttons
 	 * @param root
 	 */
 	private void setHandlers(Group root) {
@@ -272,7 +272,9 @@ public class UserInterface {
         }
     };
 	}
-	
+	/**
+	 * Sets event handler for the forward button
+	 */
 	private void setForwardHandler() {
 		forwardHandler=new EventHandler<MouseEvent>(){
 			public void handle(MouseEvent event){
@@ -284,7 +286,9 @@ public class UserInterface {
 			}
 		};
 	}
-	
+	/**
+	 * Sets Event handler for the slow down button
+	 */
 	private void setSlowDownHandler() {
 		slowDownHandler=new EventHandler<MouseEvent>(){
 			public void handle(MouseEvent event){
@@ -293,7 +297,9 @@ public class UserInterface {
 			}
 		};
 	}
-	
+	/**
+	 * Sets up event handler for the speed up button
+	 */
 	private void setSpeedUpHandler() {
 		speedUpHandler=new EventHandler<MouseEvent>(){
 			public void handle(MouseEvent event){
@@ -302,7 +308,9 @@ public class UserInterface {
 			}
 		};
 	}
-	
+	/**
+	 * Sets up event handler for the resume button
+	 */
 	private void setResumeHandler() {
 		resumeHandler=new EventHandler<MouseEvent>(){
 			public void handle(MouseEvent event){
@@ -312,7 +320,9 @@ public class UserInterface {
 			}
 		};
 	}
-	
+	/**
+	 * Sets event handler for the pause button
+	 */
 	private void setPauseHandler() {
 		pauseHandler=new EventHandler<MouseEvent>(){
 			public void handle(MouseEvent event){
@@ -320,7 +330,9 @@ public class UserInterface {
 			}
 		};
 	}
-	
+	/**
+	 * Sets event handler for the stop button
+	 */
 	private void setStopHandler(Group root) {
 		stopHandler=new EventHandler<MouseEvent>(){
 			public void handle(MouseEvent event){
@@ -330,7 +342,9 @@ public class UserInterface {
 			}
 		};
 	}
-	
+	/**
+	 * Removes event handlers from the scene
+	 */
 	public void removeHandlers(){
 		Pause.removeEventHandler(MouseEvent.MOUSE_CLICKED, pauseHandler);
 		Stop.removeEventHandler(MouseEvent.MOUSE_CLICKED, stopHandler);
