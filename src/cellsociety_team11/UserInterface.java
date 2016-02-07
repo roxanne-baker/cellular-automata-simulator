@@ -75,12 +75,12 @@ public class UserInterface {
 		active=true;
 		String myFile=DEFAULT_DIRECTORY+myFiles.getValue();
 		Configuration newConfiguration=new Configuration(myFile);
-		int width=newConfiguration.width();
-		int height=newConfiguration.height();
+		int width=newConfiguration.getWidth();
+		int height=newConfiguration.getHeight();
 		ArrayList<String>states=new ArrayList<String>();
-		states=newConfiguration.states();
+		states=newConfiguration.getStates();
 		setGrid(root, width, height, states);
-		String name=newConfiguration.name();
+		String name=newConfiguration.getName();
 		Simulation newSimulation;
 		if(name.equals(myPossibilities[0])){
 			newSimulation=new GameOfLifeSimulation(myGrid.myCells);
