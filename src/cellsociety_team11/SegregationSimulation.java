@@ -66,7 +66,6 @@ public class SegregationSimulation extends Simulation {
 	
 	private String[][] getInitialStates() {
 		String[][] newState=new String[myCells.length][myCells[0].length];
-<<<<<<< HEAD
 		for(int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
 				newState[i][j]=myCells[i][j].getState();
@@ -75,22 +74,10 @@ public class SegregationSimulation extends Simulation {
 		return newState;
 	}
 	
-	private String[][] getNextStates(String[][] nextCellStates) {
-		for(int i=0; i<myCells.length; i++) {
-			for (int j=0; j<myCells[0].length; j++) {
-=======
-		for(int i=0; i<myCells.length; i++) {
-			for (int j=0; j<myCells[0].length; j++) {
-				newState[i][j]=myCells[i][j].getState();
-			}
-		}
-		return newState;
-	}
 	
 	private String[][] getNextStates(String[][] nextCellStates) {
 		for(int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
->>>>>>> 2f30c614277a1396ba901a1e2a2e431f8595b72b
 				nextCellStates = updateCell(new int[]{i, j}, nextCellStates);
 			}
 		}

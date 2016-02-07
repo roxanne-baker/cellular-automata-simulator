@@ -63,11 +63,7 @@ public class UserInterface {
     	setButtons(root);
     	return myScene;
 	}
-<<<<<<< HEAD
-	public void setGrid(Group root, int height, int width, ArrayList<String> cellStates, Simulation simName) {
-=======
 	public void setGrid(Group root, int height, int width, ArrayList<String> cellStates) {
->>>>>>> 2f30c614277a1396ba901a1e2a2e431f8595b72b
 		Grid grid = new SquareGrid(root, height, width);
 		for(int i=0; i<height; i++) {
 			for (int j=0; j<width; j++) {
@@ -86,7 +82,6 @@ public class UserInterface {
 		ArrayList<String>states=new ArrayList<String>();
 		states=newConfiguration.getStates();
 		
-<<<<<<< HEAD
 		Object simClass = null;
 		String name=newConfiguration.getName();
 		System.out.println(name);
@@ -97,17 +92,12 @@ public class UserInterface {
 			System.out.println("Please load another file.");
 		}
 		Simulation simCast = (Simulation) simClass;
-		setGrid(root, height, width, states, simCast);
-=======
-		String name=newConfiguration.getName();
-
 		setGrid(root, height, width, states);
->>>>>>> 2f30c614277a1396ba901a1e2a2e431f8595b72b
+		setGrid(root, height, width, states);
 		Simulation newSimulation;
 		if(name.equals(myPossibilities[0])){
 			newSimulation=new GameOfLifeSimulation(myGrid);
 		}
-<<<<<<< HEAD
 		else if(name.equals(myPossibilities[1])){
 			System.out.println("Got here");
 			double threshold=newConfiguration.getThreshold();
@@ -125,13 +115,6 @@ public class UserInterface {
 		}
 		else{
 			newSimulation=null;
-=======
-		else if (name.equals(myPossibilities[1])){
-			newSimulation=new SegregationSimulation(myGrid, newConfiguration.getThreshold());
-		}
-		else {
-			newSimulation=new FireSimulation(myGrid, newConfiguration.getProbabilityCatch());			
->>>>>>> 2f30c614277a1396ba901a1e2a2e431f8595b72b
 		}
 		RunningSimulation=newSimulation;
 	}
@@ -182,11 +165,7 @@ public class UserInterface {
 			root.getChildren().add(newButtons[i]);
 		}
 		myFiles=new ComboBox<String>();
-<<<<<<< HEAD
-		myFiles.getItems().addAll("test.xml", "test2.xml","test3.xml","segregation.xml","segregation2.xml");
-=======
 		myFiles.getItems().addAll("test.xml", "test2.xml","test3.xml", "segregation.xml", "segregation2.xml", "cornerFire.xml", "centerFire.xml", "patchyFire.xml");
->>>>>>> 2f30c614277a1396ba901a1e2a2e431f8595b72b
 		root.getChildren().add(myFiles);
 		firsttime=true;
 		Load.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){

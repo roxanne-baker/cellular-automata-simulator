@@ -3,11 +3,7 @@
 	<name>Segregation</name>
 	<width>5</width>
 	<height>6</height>
-<<<<<<< HEAD
 	<Threshold>.3</Threshold>
-=======
-	<Threshold>0.7</Threshold>
->>>>>>> 2f30c614277a1396ba901a1e2a2e431f8595b72b
 	<state>empty</state>
 	<state>empty</state>
 	<state>red</state>
