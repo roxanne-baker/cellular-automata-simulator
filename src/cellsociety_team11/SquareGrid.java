@@ -1,23 +1,28 @@
 package cellsociety_team11;
-import javafx.*;
+import java.util.function.BiConsumer;
+
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 
 public class SquareGrid extends Grid {
 
-	public SquareGrid(Group root, int width, int height) {
-		super(root,width,height);
+	private static final int gridSideLength = 350;
+	private static final int gridWidthBuffer = 30;
+	private static final int gridHeightBuffer = 25;
+	
+	public SquareGrid(Group root, int height, int width) {
+		super(root,height,width);
 	}
 	
-	public void setGrid(int width, int height) {
+	public void setGrid(int height, int width) {
 		
-		myCells = new Cell[width][height];
-		int cellWidth = 350/width;
-		int cellHeight = 350/height;
-		for (int i=0; i<width; i++) {
-			for (int j=0; j<height; j++) {
-				Shape cellShape = getSquare(i*cellWidth+25, j*cellHeight+30, cellWidth, cellHeight);
+		myCells = new Cell[height][width];
+		int cellWidth = gridSideLength/width;
+		int cellHeight = gridSideLength/height;
+		for (int i=0; i<height; i++) {
+			for (int j=0; j<width; j++) {
+				Shape cellShape = getSquare(i*cellHeight+gridWidthBuffer, j*cellWidth+gridHeightBuffer, cellHeight, cellWidth);
 				myCells[i][j] = new Cell(cellShape);
 			}
 		}
@@ -37,4 +42,48 @@ public class SquareGrid extends Grid {
 		
 		return r;
 	}	
+
+
+	public void addCardinalNeighbors(Cell[][] myGrid, int[] position) {
+		int row = position[0];
+		int col = position[1];
+		boolean isFirstRow = (row == 0);
+		boolean isLastRow = (row == myGrid.length-1);
+		boolean isFirstCol = (col == 0);
+		boolean isLastCol = (col == myGrid[0].length-1);
+		if (!isFirstRow) {
+			myGrid[row][col].getMyNeighbours().add(myGrid[row-1][col]);
+		}
+		if (!isFirstCol) {
+			myGrid[row][col].getMyNeighbours().add(myGrid[row][col-1]);
+		}
+		if (!isLastCol) {
+			myGrid[row][col].getMyNeighbours().add(myGrid[row][col+1]);
+		}
+		if (!isLastRow) {
+			myGrid[row][col].getMyNeighbours().add(myGrid[row+1][col]);
+		}
+	}
+	
+	public void addDiagonalNeighbors(Cell[][] myGrid, int[] position) {
+		int row = position[0];
+		int col = position[1];
+		boolean isFirstRow = (row == 0);
+		boolean isLastRow = (row == myGrid.length-1);
+		boolean isFirstCol = (col == 0);
+		boolean isLastCol = (col == myGrid[0].length-1);
+		if (!isFirstRow && !isFirstCol) {
+			myGrid[row][col].getMyNeighbours().add(myGrid[row-1][col-1]);
+		}
+		if (!isFirstRow && !isLastCol) {
+			myGrid[row][col].getMyNeighbours().add(myGrid[row-1][col+1]);
+		}
+		if (!isLastRow && !isFirstCol) {
+			myGrid[row][col].getMyNeighbours().add(myGrid[row+1][col-1]);
+		if (!isLastRow && !isLastCol) {
+			myGrid[row][col].getMyNeighbours().add(myGrid[row+1][col+1]);
+		}
+		}
+	}
+	
 }

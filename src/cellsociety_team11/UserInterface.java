@@ -15,12 +15,13 @@ import javafx.event.*;
 public class UserInterface {
 	public static final int HSIZE=400;
 	public static final int VSIZE=500;
+	public static final double STARTING_RATE = 0.075;
 	private Scene myScene;
 	public static final int FRAMES_PER_SECOND = 60;
     private static final int MILLISECOND_DELAY = 1000 / FRAMES_PER_SECOND;
     private boolean active=true;
-    private double rate=1;
-    private Simulation RunningSimulation;
+    private double currentRate=STARTING_RATE;
+    private Simulation RunningSimulation = null;
     public static final String DEFAULT_RESOURCE_PACKAGE = "resources/";
     public static final String DEFAULT_DIRECTORY = "src/resources/";
     private ResourceBundle myResources;
@@ -41,14 +42,14 @@ public class UserInterface {
     private EventHandler<MouseEvent> slowDownHandler;
     private EventHandler<MouseEvent> pauseHandler;
     
-    private boolean firsttime=true;
+    private boolean firsttime;
     Grid myGrid;
 	Timeline animation = new Timeline();
 	Simulation newSimulation= null;
 	KeyFrame myFrame;
 	private String[] myPossibilities = { 
 			"GameOfLife",
-	        "Seggregation",
+	        "Segregation",
 	        "PredatorPrey",
 	        "Fire"
 	    };
@@ -62,16 +63,17 @@ public class UserInterface {
     	setButtons(root);
     	return myScene;
 	}
-	public void setGrid(Group root, int width, int height, ArrayList<String> cellStates) {
-		Grid grid = new SquareGrid(root, width, height);
-		for(int i=0; i<width; i++) {
-			for (int j=0; j<height; j++) {
-					grid.myCells[i][j].setState(cellStates.get(i*width+j));
+	public void setGrid(Group root, int height, int width, ArrayList<String> cellStates) {
+		Grid grid = new SquareGrid(root, height, width);
+		for(int i=0; i<height; i++) {
+			for (int j=0; j<width; j++) {
+				grid.myCells[i][j].setState(cellStates.get(i*width+j));
 			}
 		}
 		myGrid = grid;
 	}
 	public void setNewSimulation(Group root){
+		animation.setRate(STARTING_RATE);
 		active=true;
 		String myFile=DEFAULT_DIRECTORY+myFiles.getValue();
 		Configuration newConfiguration=new Configuration(myFile);
@@ -79,14 +81,40 @@ public class UserInterface {
 		int height=newConfiguration.getHeight();
 		ArrayList<String>states=new ArrayList<String>();
 		states=newConfiguration.getStates();
-		setGrid(root, width, height, states);
+		
+		Object simClass = null;
 		String name=newConfiguration.getName();
+		System.out.println(name);
+		try {
+			simClass = Class.forName(name+"Simulation").cast(simClass);
+		} catch (ClassNotFoundException e) {
+			System.out.println("ClassNotFound");
+			System.out.println("Please load another file.");
+		}
+		Simulation simCast = (Simulation) simClass;
+		setGrid(root, height, width, states);
+		setGrid(root, height, width, states);
 		Simulation newSimulation;
 		if(name.equals(myPossibilities[0])){
-			newSimulation=new GameOfLifeSimulation(myGrid.myCells);
+			newSimulation=new GameOfLifeSimulation(myGrid);
+		}
+		else if(name.equals(myPossibilities[1])){
+			System.out.println("Got here");
+			double threshold=newConfiguration.getThreshold();
+			newSimulation=new SegregationSimulation(myGrid, threshold);
+		}
+		else if(name.equals(myPossibilities[2])){
+			int predatorStarve=newConfiguration.getPredatorStarve();
+			int predatorBreed=newConfiguration.getPredatorBreed();
+			int preyBreed=newConfiguration.getPreyBreed();
+			newSimulation=new PredatorPreySimulation(myGrid,predatorStarve,predatorBreed,preyBreed);
+		}
+		else if(name.equals(myPossibilities[3])){
+			double prob=newConfiguration.getProbabilityCatch();
+			newSimulation=new FireSimulation(myGrid, prob);
 		}
 		else{
-			newSimulation=new SegregationSimulation(myGrid.myCells, 30);
+			newSimulation=null;
 		}
 		RunningSimulation=newSimulation;
 	}
@@ -137,8 +165,9 @@ public class UserInterface {
 			root.getChildren().add(newButtons[i]);
 		}
 		myFiles=new ComboBox<String>();
-		myFiles.getItems().addAll("test.xml", "test2.xml","test3.xml");
+		myFiles.getItems().addAll("test.xml", "test2.xml","test3.xml", "segregation.xml", "segregation2.xml", "cornerFire.xml", "centerFire.xml", "patchyFire.xml");
 		root.getChildren().add(myFiles);
+		firsttime=true;
 		Load.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
     		@Override
 			public void handle(MouseEvent event) {
@@ -197,12 +226,14 @@ public class UserInterface {
 		};
 		speedUpHandler=new EventHandler<MouseEvent>(){
 			public void handle(MouseEvent event){
-					animation.setRate(rate*2);
+					currentRate += 0.025;
+					animation.setRate(currentRate);
 			}
 		};
 		slowDownHandler=new EventHandler<MouseEvent>(){
 			public void handle(MouseEvent event){
-				animation.setRate(rate/2);
+				currentRate = Math.min(0, currentRate - 0.025);
+				animation.setRate(currentRate);
 			}
 		};
 		forwardHandler=new EventHandler<MouseEvent>(){

@@ -1,5 +1,5 @@
-package cellsociety_team11;
 
+package cellsociety_team11;
 import javax.xml.parsers.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
@@ -56,7 +56,7 @@ public class Configuration{
     private int predatorStarve;
     private int predatorBreed;
     private int preyBreed;
-    private int threshold;
+    private double threshold;
     
     
     public Configuration(String file){
@@ -162,7 +162,7 @@ public class Configuration{
      * 
      * @return The threshold number of neighboring cells that must be of the same state. - FOR SEGREGATION SIMULATION
      */
-    public int getThreshold(){
+    public double getThreshold(){
         return threshold;
     }
     
@@ -207,7 +207,7 @@ public class Configuration{
             if(localName.equals(PREDATOR_STARVE)) predatorStarve = Integer.parseInt(str.toString());
             if(localName.equals(PREDATOR_BREED)) predatorBreed = Integer.parseInt(str.toString());
             if(localName.equals(PREY_BREED)) preyBreed = Integer.parseInt(str.toString());
-            if(localName.equals(THRESHOLD)) threshold = Integer.parseInt(str.toString());
+            if(localName.equals(THRESHOLD)) threshold = Double.parseDouble(str.toString());
 
             str.setLength(0);
         }
@@ -219,4 +219,6 @@ public class Configuration{
         } 
         
     }
+
 }
+
