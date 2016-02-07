@@ -1,5 +1,3 @@
-
-package cellsociety_team11;
 import javax.xml.parsers.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
@@ -219,6 +217,4 @@ public class Configuration{
         } 
         
     }
-
 }
-

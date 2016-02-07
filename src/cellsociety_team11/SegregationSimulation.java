@@ -1,4 +1,4 @@
-package cellsociety_team11;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -73,7 +73,6 @@ public class SegregationSimulation extends Simulation {
 		}
 		return newState;
 	}
-	
 	
 	private String[][] getNextStates(String[][] nextCellStates) {
 		for(int i=0; i<myCells.length; i++) {

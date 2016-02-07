@@ -1,6 +1,7 @@
-package cellsociety_team11;
+//package cellsociety_team11;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -26,6 +27,7 @@ public class UserInterface {
     public static final String DEFAULT_DIRECTORY = "src/resources/";
     private ResourceBundle myResources;
     private ComboBox<String> myFiles;
+    private Button[] allButtons;
     private Button Load;
     private Button Start;
     private Button Resume;
@@ -42,7 +44,7 @@ public class UserInterface {
     private EventHandler<MouseEvent> slowDownHandler;
     private EventHandler<MouseEvent> pauseHandler;
     
-    private boolean firsttime;
+    private boolean firsttime=true;
     Grid myGrid;
 	Timeline animation = new Timeline();
 	Simulation newSimulation= null;
@@ -53,16 +55,19 @@ public class UserInterface {
 	        "PredatorPrey",
 	        "Fire"
 	    };
+	
 	public UserInterface(){
 		RunningSimulation=new Simulation();
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + "Buttons");
 	}
+	
 	public Scene setScene(){
 		Group root=new Group();
     	myScene=new Scene(root, HSIZE, VSIZE);
     	setButtons(root);
     	return myScene;
 	}
+	
 	public void setGrid(Group root, int height, int width, ArrayList<String> cellStates) {
 		Grid grid = new SquareGrid(root, height, width);
 		for(int i=0; i<height; i++) {
@@ -72,6 +77,7 @@ public class UserInterface {
 		}
 		myGrid = grid;
 	}
+	
 	public void setNewSimulation(Group root){
 		animation.setRate(STARTING_RATE);
 		active=true;
@@ -82,42 +88,22 @@ public class UserInterface {
 		ArrayList<String>states=new ArrayList<String>();
 		states=newConfiguration.getStates();
 		
-		Object simClass = null;
 		String name=newConfiguration.getName();
-		System.out.println(name);
-		try {
-			simClass = Class.forName(name+"Simulation").cast(simClass);
-		} catch (ClassNotFoundException e) {
-			System.out.println("ClassNotFound");
-			System.out.println("Please load another file.");
-		}
-		Simulation simCast = (Simulation) simClass;
-		setGrid(root, height, width, states);
+
 		setGrid(root, height, width, states);
 		Simulation newSimulation;
 		if(name.equals(myPossibilities[0])){
 			newSimulation=new GameOfLifeSimulation(myGrid);
 		}
-		else if(name.equals(myPossibilities[1])){
-			System.out.println("Got here");
-			double threshold=newConfiguration.getThreshold();
-			newSimulation=new SegregationSimulation(myGrid, threshold);
+		else if (name.equals(myPossibilities[1])){
+			newSimulation=new SegregationSimulation(myGrid, newConfiguration.getThreshold());
 		}
-		else if(name.equals(myPossibilities[2])){
-			int predatorStarve=newConfiguration.getPredatorStarve();
-			int predatorBreed=newConfiguration.getPredatorBreed();
-			int preyBreed=newConfiguration.getPreyBreed();
-			newSimulation=new PredatorPreySimulation(myGrid,predatorStarve,predatorBreed,preyBreed);
-		}
-		else if(name.equals(myPossibilities[3])){
-			double prob=newConfiguration.getProbabilityCatch();
-			newSimulation=new FireSimulation(myGrid, prob);
-		}
-		else{
-			newSimulation=null;
+		else {
+			newSimulation=new FireSimulation(myGrid, newConfiguration.getProbabilityCatch());			
 		}
 		RunningSimulation=newSimulation;
 	}
+	
 	public void clearMyGrid(Group root){
 		for(int i=0;i<myGrid.myCells.length;i++){
 			for( int j=0; j<myGrid.myCells[0].length;j++){
@@ -125,49 +111,52 @@ public class UserInterface {
 			}
 		}
 	}
-	public void setButtons(Group root){
-		Button[] newButtons=new Button[8];
-		Load=new Button(myResources.getString("LoadButton"));
-		newButtons[0]=Load;
-		Load.setWrapText(true);
-		Start=new Button(myResources.getString("StartButton"));
-		newButtons[1]=Start;
-		Start.setWrapText(true);
-		Stop=new Button(myResources.getString("StopButton"));
-		Stop.setWrapText(true);
-		newButtons[2]=Stop;
-		Resume=new Button(myResources.getString("ResumeButton"));
-		Resume.setWrapText(true);
-		newButtons[3]=Resume;
-		Pause=new Button(myResources.getString("PauseButton"));
-		Pause.setWrapText(true);
-		newButtons[4]=Pause;
-		Forward=new Button(myResources.getString("FastForwardButton"));
-		Forward.setWrapText(true);
-		newButtons[5]=Forward;
-		SpeedUp=new Button(myResources.getString("SpeedUpButton"));
-		SpeedUp.setWrapText(true);
-		newButtons[6]=SpeedUp;
-		SlowDown=new Button(myResources.getString("SlowDownButton"));
-		SlowDown.setWrapText(true);
-		newButtons[7]=SlowDown;
-		for(int i=0;i<newButtons.length;i++){
+	
+	public Button createButton(String buttonString, int buttonNum) {
+		Button myButton = new Button(myResources.getString(buttonString));
+		myButton.setWrapText(true);
+		allButtons[buttonNum] = myButton;
+		return myButton;
+	}
+	
+	public void createAllButtons() {
+		allButtons=new Button[8];
+		Load = createButton("LoadButton", 0);
+		Start = createButton("StartButton", 1);
+		Stop = createButton("StopButton", 2);
+		Resume = createButton("ResumeButton", 3);
+		Pause = createButton("PauseButton", 4);
+		Forward = createButton("FastForwardButton", 5);
+		SpeedUp = createButton ("SpeedUpButton", 6);
+		SlowDown = createButton("SlowDownButton", 7);
+	}
+	
+	public void placeButtons(Group root) {
+		for(int i=0;i<allButtons.length;i++){
 			if(i<4){
-				newButtons[i].setTranslateX(i*HSIZE/4);
-				newButtons[i].setTranslateY(8*VSIZE/10);
+				allButtons[i].setTranslateX(i*HSIZE/4);
+				allButtons[i].setTranslateY(8*VSIZE/10);
 			}
 			else{
-				newButtons[i].setTranslateX((i-4)*HSIZE/4);
-				newButtons[i].setTranslateY(9*VSIZE/10);
+				allButtons[i].setTranslateX((i-4)*HSIZE/4);
+				allButtons[i].setTranslateY(9*VSIZE/10);
 			}
-			newButtons[i].setPrefHeight(VSIZE/10);
-			newButtons[i].setPrefWidth(HSIZE/4);
-			root.getChildren().add(newButtons[i]);
+			allButtons[i].setPrefHeight(VSIZE/10);
+			allButtons[i].setPrefWidth(HSIZE/4);
+			root.getChildren().add(allButtons[i]);
 		}
+	}
+	
+	public void setButtons(Group root){
+		createAllButtons();
+		placeButtons(root);
 		myFiles=new ComboBox<String>();
-		myFiles.getItems().addAll("test.xml", "test2.xml","test3.xml", "segregation.xml", "segregation2.xml", "cornerFire.xml", "centerFire.xml", "patchyFire.xml");
+		myFiles.getItems().addAll("test.xml", "test2.xml", "test3.xml", "segregation.xml", "segregation2.xml", "cornerFire.xml", "centerFire.xml", "patchyFire.xml");
 		root.getChildren().add(myFiles);
-		firsttime=true;
+		loadHandler(root);
+		
+	}
+	private void loadHandler(Group root) {
 		Load.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
     		@Override
 			public void handle(MouseEvent event) {
@@ -181,15 +170,36 @@ public class UserInterface {
     			firsttime=false;
     			setNewSimulation(root);
     			setNewHandlers(root);
-    			
     		}
     	});
 	}
-	public Configuration setUpConfiguration(String file){
-		Configuration newCon= new Configuration(file);
-		return newCon;
-	}
+	
 	public void setNewHandlers(Group root){
+		setHandlers(root);
+		addHandlers();
+	}
+	
+	private void setHandlers(Group root) {
+		setStartHandler();
+		setStopHandler(root);
+		setPauseHandler();
+		setResumeHandler();
+		setSpeedUpHandler();
+		setSlowDownHandler();
+		setForwardHandler();
+	}
+	
+	private void addHandlers() {
+		Start.addEventHandler(ActionEvent.ACTION, startHandler);
+		Pause.addEventHandler(MouseEvent.MOUSE_CLICKED, pauseHandler);
+		Stop.addEventHandler(MouseEvent.MOUSE_CLICKED, stopHandler);
+		Resume.addEventHandler(MouseEvent.MOUSE_CLICKED, resumeHandler);
+		SpeedUp.addEventHandler(MouseEvent.MOUSE_CLICKED, speedUpHandler);
+		SlowDown.addEventHandler(MouseEvent.MOUSE_CLICKED, slowDownHandler);
+		Forward.addEventHandler(MouseEvent.MOUSE_CLICKED, forwardHandler);
+	}
+	
+	private void setStartHandler() {
 		startHandler=new EventHandler<ActionEvent>(){
 			public void handle(ActionEvent event) {
         	
@@ -204,38 +214,9 @@ public class UserInterface {
         	
         }
     };
-    
-		stopHandler=new EventHandler<MouseEvent>(){
-			public void handle(MouseEvent event){
-				animation.stop();
-				clearMyGrid(root);
-				active=false;
-			}
-		};
-		pauseHandler=new EventHandler<MouseEvent>(){
-			public void handle(MouseEvent event){
-				animation.stop();
-			}
-		};
-		resumeHandler=new EventHandler<MouseEvent>(){
-			public void handle(MouseEvent event){
-				if(active){
-					animation.play();
-				}
-			}
-		};
-		speedUpHandler=new EventHandler<MouseEvent>(){
-			public void handle(MouseEvent event){
-					currentRate += 0.025;
-					animation.setRate(currentRate);
-			}
-		};
-		slowDownHandler=new EventHandler<MouseEvent>(){
-			public void handle(MouseEvent event){
-				currentRate = Math.min(0, currentRate - 0.025);
-				animation.setRate(currentRate);
-			}
-		};
+	}
+	
+	private void setForwardHandler() {
 		forwardHandler=new EventHandler<MouseEvent>(){
 			public void handle(MouseEvent event){
 				if(active){
@@ -245,14 +226,54 @@ public class UserInterface {
 				}
 			}
 		};
-		Start.addEventHandler(ActionEvent.ACTION, startHandler);
-		Pause.addEventHandler(MouseEvent.MOUSE_CLICKED, pauseHandler);
-		Stop.addEventHandler(MouseEvent.MOUSE_CLICKED, stopHandler);
-		Resume.addEventHandler(MouseEvent.MOUSE_CLICKED, resumeHandler);
-		SpeedUp.addEventHandler(MouseEvent.MOUSE_CLICKED, speedUpHandler);
-		SlowDown.addEventHandler(MouseEvent.MOUSE_CLICKED, slowDownHandler);
-		Forward.addEventHandler(MouseEvent.MOUSE_CLICKED, forwardHandler);
 	}
+	
+	private void setSlowDownHandler() {
+		slowDownHandler=new EventHandler<MouseEvent>(){
+			public void handle(MouseEvent event){
+				currentRate = Math.min(0, currentRate - 0.025);
+				animation.setRate(currentRate);
+			}
+		};
+	}
+	
+	private void setSpeedUpHandler() {
+		speedUpHandler=new EventHandler<MouseEvent>(){
+			public void handle(MouseEvent event){
+					currentRate += 0.025;
+					animation.setRate(currentRate);
+			}
+		};
+	}
+	
+	private void setResumeHandler() {
+		resumeHandler=new EventHandler<MouseEvent>(){
+			public void handle(MouseEvent event){
+				if(active){
+					animation.play();
+				}
+			}
+		};
+	}
+	
+	private void setPauseHandler() {
+		pauseHandler=new EventHandler<MouseEvent>(){
+			public void handle(MouseEvent event){
+				animation.stop();
+			}
+		};
+	}
+	
+	private void setStopHandler(Group root) {
+		stopHandler=new EventHandler<MouseEvent>(){
+			public void handle(MouseEvent event){
+				animation.stop();
+				clearMyGrid(root);
+				active=false;
+			}
+		};
+	}
+	
 	public void removeHandlers(){
 		Pause.removeEventHandler(MouseEvent.MOUSE_CLICKED, pauseHandler);
 		Stop.removeEventHandler(MouseEvent.MOUSE_CLICKED, stopHandler);

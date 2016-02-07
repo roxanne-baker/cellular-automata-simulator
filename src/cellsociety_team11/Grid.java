@@ -1,4 +1,3 @@
-package cellsociety_team11;
 import java.util.function.BiConsumer;
 
 import javafx.scene.Group;

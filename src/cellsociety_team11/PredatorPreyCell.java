@@ -1,4 +1,4 @@
-package cellsociety_team11;
+
 import javafx.scene.shape.Shape;
 
 public class PredatorPreyCell extends Cell {

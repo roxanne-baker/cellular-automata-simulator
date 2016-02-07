@@ -1,4 +1,3 @@
-package cellsociety_team11;
 import java.util.HashMap;
 import java.util.Map;
 
