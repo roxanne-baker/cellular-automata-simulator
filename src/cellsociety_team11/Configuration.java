@@ -1,4 +1,3 @@
-package cellsociety_team11;
 import javax.xml.parsers.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
@@ -18,6 +17,12 @@ public class Configuration{
     public static final String WIDTH = "width";
     public static final String HEIGHT = "height";
     public static final String STATE = "state";
+    public static final String PROBABILITY_CATCH = "ProbabilityCatch";
+    public static final String PREDATOR_STARVE = "PredatorStarve";
+    public static final String PREDATOR_BREED = "PredatorBreed";
+    public static final String PREY_BREED = "PreyBreed";
+    public static final String THRESHOLD = "Threshold";
+    
     
     public static final String GAMEOFLIFE = "GameOfLife";
     public static final String SEGREGATION = "Segregation";
@@ -25,12 +30,31 @@ public class Configuration{
     public static final String FIRE = "Fire";
     
     /**
-     * This is the ArrayList of configuration values from the XML file to be returned.
-     */    
+     * The ArrayList of states to be returned.
+     */
     private ArrayList<String> stateList;
+    
+    /**
+     * The integer width of the grid to be returned.
+     */
     private int width;
+    
+    /**
+     * The integer height of the grid to be returned. 
+     */
     private int height;
+    
+    /**
+     * The String name of the grid to be returned.
+     */
     private String name;
+    
+    
+    private double probabilityCatch;
+    private int predatorStarve;
+    private int predatorBreed;
+    private int preyBreed;
+    private int threshold;
     
     
     public Configuration(String file){
@@ -71,7 +95,7 @@ public class Configuration{
      * 
      * @return The width (int) of the grid as specified by the XML file chosen.
      */
-    public int width(){
+    public int getWidth(){
         return width;
     }
     
@@ -79,7 +103,7 @@ public class Configuration{
      * 
      * @return The height (int) of the grid as specified by the XML file chosen.
      */
-    public int height(){
+    public int getHeight(){
         return height;
     }
     
@@ -87,17 +111,57 @@ public class Configuration{
      * 
      * @return The name (String) of the simulation as specified by the XML file chosen.
      */
-    public String name(){
+    public String getName(){
         return name;
     }
     
     /**
      * 
      * @return The states of the cells as an ArrayList
-     * 
      */
-    public ArrayList<String> states(){
+    public ArrayList<String> getStates(){
         return stateList;
+    }
+    
+    /**
+     * 
+     * @return The probability of the next cell catching fire for Fire simulation.
+     */
+    public double getProbabilityCatch(){
+        return probabilityCatch;
+        
+    }
+    
+    /**
+     * 
+     * @return The number of turns for which the predator can survive without eating.
+     */
+    public int getPredatorStarve(){
+        return predatorStarve;
+    }
+    
+    /**
+     * 
+     * @return The rate at which the predators will breed depending on the number of terms they survive.
+     */
+    public int getPredatorBreed(){
+        return predatorBreed;
+    }
+    
+    /**
+     * 
+     * @return The rate at which the preys will breed depending on the number of terms they survive. - FOR PREDATORPREY SIMULATION
+     */
+    public int getPreyBreed(){
+        return preyBreed;
+    }
+    
+    /**
+     * 
+     * @return The threshold number of neighboring cells that must be of the same state. - FOR SEGREGATION SIMULATION
+     */
+    public int getThreshold(){
+        return threshold;
     }
     
     
@@ -137,6 +201,12 @@ public class Configuration{
             if(localName.equals(WIDTH)) width = Integer.parseInt(str.toString());
             if(localName.equals(HEIGHT)) height = Integer.parseInt(str.toString());
             if(localName.equals(NAME)) name = str.toString();
+            if(localName.equals(PROBABILITY_CATCH)) probabilityCatch = Double.parseDouble(str.toString());
+            if(localName.equals(PREDATOR_STARVE)) predatorStarve = Integer.parseInt(str.toString());
+            if(localName.equals(PREDATOR_BREED)) predatorBreed = Integer.parseInt(str.toString());
+            if(localName.equals(PREY_BREED)) preyBreed = Integer.parseInt(str.toString());
+            if(localName.equals(THRESHOLD)) threshold = Integer.parseInt(str.toString());
+
             str.setLength(0);
         }
         
@@ -144,11 +214,7 @@ public class Configuration{
         public void characters(char[] ch, int start, int length){
             str.append(new String(ch, start, length));
         
-        }
+        } 
         
     }
-    
-
-    
-    
 }
