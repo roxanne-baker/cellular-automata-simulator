@@ -12,7 +12,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import javafx.event.*;
-
+/**
+ * Sets the user interface
+ * @author Zdravko Paskalev
+ *
+ */
 public class UserInterface {
 	public static final int HSIZE=400;
 	public static final int VSIZE=500;
@@ -55,19 +59,30 @@ public class UserInterface {
 	        "PredatorPrey",
 	        "Fire"
 	    };
-	
+	/**
+	 * Creates a new user interface and initializes the running simulation
+	 */
 	public UserInterface(){
 		RunningSimulation=new Simulation();
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + "Buttons");
 	}
-	
+	/**
+	 * Sets the scene and creates the method to set up the buttons
+	 * @return
+	 */
 	public Scene setScene(){
 		Group root=new Group();
     	myScene=new Scene(root, HSIZE, VSIZE);
     	setButtons(root);
     	return myScene;
 	}
-	
+	/**
+	 * Sets up the grid for a simulation
+	 * @param root Group to hold the grid cells
+	 * @param height number of rows in the grid
+	 * @param width number of columns in the grid
+	 * @param cellStates ArrayList with the states of the cells in the grid
+	 */
 	public void setGrid(Group root, int height, int width, ArrayList<String> cellStates) {
 		Grid grid = new SquareGrid(root, height, width);
 		for(int i=0; i<height; i++) {
