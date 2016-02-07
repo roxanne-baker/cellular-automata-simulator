@@ -21,7 +21,7 @@ public class UserInterface {
     private static final int MILLISECOND_DELAY = 1000 / FRAMES_PER_SECOND;
     private boolean active=true;
     private double currentRate=STARTING_RATE;
-    private Simulation RunningSimulation = null;
+    private Simulation RunningSimulation;
     public static final String DEFAULT_RESOURCE_PACKAGE = "resources/";
     public static final String DEFAULT_DIRECTORY = "src/resources/";
     private ResourceBundle myResources;
@@ -49,7 +49,7 @@ public class UserInterface {
 	KeyFrame myFrame;
 	private String[] myPossibilities = { 
 			"GameOfLife",
-	        "Segregation",
+	        "Seggregation",
 	        "PredatorPrey",
 	        "Fire"
 	    };
@@ -63,11 +63,12 @@ public class UserInterface {
     	setButtons(root);
     	return myScene;
 	}
-	public void setGrid(Group root, int height, int width, ArrayList<String> cellStates) {
-		Grid grid = new SquareGrid(root, height, width);
-		for(int i=0; i<height; i++) {
-			for (int j=0; j<width; j++) {
-				grid.myCells[i][j].setState(cellStates.get(i*width+j));
+	public void setGrid(Group root, int width, int height, ArrayList<String> cellStates, Simulation simName) {
+		Grid grid = new SquareGrid(root, width, height);
+		for(int i=0; i<width; i++) {
+			for (int j=0; j<height; j++) {
+				System.out.println(i+" "+j);
+				grid.myCells[i][j].setState(cellStates.get(i*height+j));
 			}
 		}
 		myGrid = grid;
@@ -82,18 +83,23 @@ public class UserInterface {
 		ArrayList<String>states=new ArrayList<String>();
 		states=newConfiguration.getStates();
 		
+		Object simClass = null;
 		String name=newConfiguration.getName();
-
-		setGrid(root, height, width, states);
+		System.out.println(name);
+		try {
+			simClass = Class.forName(name+"Simulation").cast(simClass);
+		} catch (ClassNotFoundException e) {
+			System.out.println("Class "+name+"Simulation NotFound");
+			System.out.println("Please load another file.");
+		}
+		Simulation simCast = (Simulation) simClass;
+		setGrid(root, width, height, states, simCast);
 		Simulation newSimulation;
 		if(name.equals(myPossibilities[0])){
 			newSimulation=new GameOfLifeSimulation(myGrid);
 		}
-		else if (name.equals(myPossibilities[1])){
+		else{
 			newSimulation=new SegregationSimulation(myGrid, newConfiguration.getThreshold());
-		}
-		else {
-			newSimulation=new FireSimulation(myGrid, newConfiguration.getProbabilityCatch());			
 		}
 		RunningSimulation=newSimulation;
 	}
@@ -144,7 +150,7 @@ public class UserInterface {
 			root.getChildren().add(newButtons[i]);
 		}
 		myFiles=new ComboBox<String>();
-		myFiles.getItems().addAll("test.xml", "test2.xml","test3.xml", "segregation.xml", "segregation2.xml", "cornerFire.xml", "centerFire.xml", "patchyFire.xml");
+		myFiles.getItems().addAll("test.xml", "test2.xml","test3.xml", "segregation.xml", "segregation2.xml");
 		root.getChildren().add(myFiles);
 		Load.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
     		@Override

@@ -14,14 +14,14 @@ public class SquareGrid extends Grid {
 		super(root,width,height);
 	}
 	
-	public void setGrid(int height, int width) {
+	public void setGrid(int width, int height) {
 		
-		myCells = new Cell[height][width];
+		myCells = new Cell[width][height];
 		int cellWidth = gridSideLength/width;
 		int cellHeight = gridSideLength/height;
-		for (int i=0; i<height; i++) {
-			for (int j=0; j<width; j++) {
-				Shape cellShape = getSquare(i*cellHeight+gridWidthBuffer, j*cellWidth+gridHeightBuffer, cellHeight, cellWidth);
+		for (int i=0; i<width; i++) {
+			for (int j=0; j<height; j++) {
+				Shape cellShape = getSquare(i*cellWidth+gridWidthBuffer, j*cellHeight+gridHeightBuffer, cellWidth, cellHeight);
 				myCells[i][j] = new Cell(cellShape);
 			}
 		}
