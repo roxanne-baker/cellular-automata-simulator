@@ -1,5 +1,6 @@
 //package cellsociety_team11;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
@@ -7,9 +8,13 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.event.*;
 /**
@@ -19,7 +24,8 @@ import javafx.event.*;
  */
 public class UserInterface {
 	public static final int HSIZE=400;
-	public static final int VSIZE=500;
+	public static final int VSIZE=650;
+	public static final int LSIZE=100;
 	public static final double STARTING_RATE = 0.075;
 	private Scene myScene;
 	public static final int FRAMES_PER_SECOND = 60;
@@ -47,6 +53,9 @@ public class UserInterface {
     private EventHandler<MouseEvent> speedUpHandler;
     private EventHandler<MouseEvent> slowDownHandler;
     private EventHandler<MouseEvent> pauseHandler;
+    private LineChart<Number,Number> myChart;
+    private XYChart.Series [] series;
+    private int iteration=0;
     
     private boolean firsttime=true;
     Grid myGrid;
@@ -128,6 +137,7 @@ public class UserInterface {
 			newSimulation=new FireSimulation(myGrid, newConfiguration.getProbabilityCatch());			
 		}
 		RunningSimulation=newSimulation;
+		setLineChart(root);
 	}
 	/**
 	 * Removes the cell nodes from the scene
@@ -139,6 +149,7 @@ public class UserInterface {
 				root.getChildren().remove(myGrid.myCells[i][j].shape);
 			}
 		}
+		root.getChildren().remove(myChart);
 	}
 	/**
 	 * Creates a Button given its name and initializes an array with all the Buttons
@@ -263,6 +274,7 @@ public class UserInterface {
         	myFrame = new KeyFrame(Duration.millis(MILLISECOND_DELAY),new EventHandler<ActionEvent>(){
         		public void handle(ActionEvent newEvent){
         			RunningSimulation.update();
+        			updateChart(RunningSimulation);
         		}
         	});
         	animation.setCycleCount(Timeline.INDEFINITE);
@@ -281,6 +293,7 @@ public class UserInterface {
 				if(active){
 					animation.play();
 					RunningSimulation.update();
+					updateChart(RunningSimulation);
 					animation.stop();
 				}
 			}
@@ -352,6 +365,40 @@ public class UserInterface {
 		SpeedUp.removeEventHandler(MouseEvent.MOUSE_CLICKED, speedUpHandler);
 		SlowDown.removeEventHandler(MouseEvent.MOUSE_CLICKED, slowDownHandler);
 		Forward.removeEventHandler(MouseEvent.MOUSE_CLICKED,forwardHandler);
+	}
+	public void setLineChart(Group root){
+		final NumberAxis xAxis = new NumberAxis();
+        final NumberAxis yAxis = new NumberAxis();
+        xAxis.setForceZeroInRange(true);
+        iteration=0;
+		myChart=new LineChart<Number, Number>(xAxis,yAxis);
+		int j=RunningSimulation.getNumberOfStates();
+		series = new XYChart.Series[j];
+		int i=0;
+		HashMap<Color, Number> newReturn=new HashMap<Color, Number>();
+		newReturn=RunningSimulation.returnProportion();
+		for(Color s:newReturn.keySet()){
+			series[i]=new XYChart.Series();
+			myChart.getData().add(series[i]);
+			i++;
+		}
+		myChart.setTranslateY(400);
+		myChart.setPrefHeight(100);
+		root.getChildren().add(myChart);
+	}
+	public void updateChart(Simulation newS){
+		int j=RunningSimulation.getNumberOfStates();
+		HashMap<Color,Number>newProportions=new HashMap<Color,Number>();
+		newProportions=RunningSimulation.returnProportion();
+		int i=0;
+		for(Color s:newProportions.keySet()){
+			double k=(double)newProportions.get(s);
+			series[i].getData().add(new XYChart.Data(iteration,k));
+			i++;
+			iteration++;
+		}
+		
+		
 	}
 }
 	

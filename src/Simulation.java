@@ -15,7 +15,7 @@ public class Simulation {
 	Cell[][] myCells;
 	// maps name of state to the color it fills a cell with
 	Map<String, Color> stateNameToColor;
-	
+	protected int numberOfStates;
 	
 	public Simulation(Grid newGrid) {
 		this();
@@ -80,6 +80,15 @@ public class Simulation {
 				myCells[i][j].justUpdated = false;
 			}
 		}
+	}
+	public int getNumberOfStates(){
+		return numberOfStates;
+	}
+	public HashMap<Color, Number> returnProportion(){
+		int countLive=0;
+		int countDead=0;
+		HashMap<Color, Number> proportions=new HashMap<Color, Number>();
+		return proportions;
 	}
 	
 }
