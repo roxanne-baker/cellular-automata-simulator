@@ -3,7 +3,7 @@ import java.util.Map;
 
 import javafx.scene.paint.Color;
 
-public class Simulation {
+public abstract class Simulation {
 	
 	/*
 	 * @author Roxanne Baker
@@ -84,11 +84,8 @@ public class Simulation {
 	public int getNumberOfStates(){
 		return numberOfStates;
 	}
-	public HashMap<Color, Number> returnProportion(){
-		int countLive=0;
-		int countDead=0;
-		HashMap<Color, Number> proportions=new HashMap<Color, Number>();
-		return proportions;
-	}
+	public abstract String returnStyleSheet();
+	public abstract HashMap<Color, Number> returnProportion();
+		
 	
 }

@@ -17,6 +17,7 @@ public class FireSimulation extends Simulation {
 	public static final String TREE = "TREE";
 	public static final String EMPTY = "EMPTY";
 	private int numberOfStates=3;
+	private static final String STYLESHEET= "fire.css";
 	
 	public FireSimulation(Grid myGrid, double probCatchDecimal) {
 		super(myGrid);
@@ -95,6 +96,9 @@ public class FireSimulation extends Simulation {
 		proportions.put(Color.FORESTGREEN, prop2);
 		proportions.put(Color.TAN, prop3);
 		return proportions;
+	}
+	public String returnStyleSheet(){
+		return STYLESHEET;
 	}
 	/*
 	 * (non-Javadoc)

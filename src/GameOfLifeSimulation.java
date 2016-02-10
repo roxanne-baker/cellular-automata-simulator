@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 public class GameOfLifeSimulation extends Simulation {
 
 	private int count=0;
+	private static final String STYLESHEET = "default.css";
 	public static final String ALIVE = "alive";
 	public static final String DEAD = "dead";
 	
@@ -138,6 +139,9 @@ public class GameOfLifeSimulation extends Simulation {
 		proportions.put(Color.BLACK, prop1);
 		proportions.put(Color.WHITE, prop2);
 		return proportions;
+	}
+	public String returnStyleSheet(){
+		return STYLESHEET;
 	}
 	/**
 	 * Calls methods to update the cells and set their colors

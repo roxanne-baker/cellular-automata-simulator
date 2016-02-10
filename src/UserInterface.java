@@ -56,6 +56,9 @@ public class UserInterface {
     private LineChart<Number,Number> myChart;
     private XYChart.Series [] series;
     private int iteration=0;
+   
+    
+    
     
     private boolean firsttime=true;
     Grid myGrid;
@@ -72,7 +75,7 @@ public class UserInterface {
 	 * Creates a new user interface and initializes the running simulation
 	 */
 	public UserInterface(){
-		RunningSimulation=new Simulation();
+		//RunningSimulation=new Simulation();
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + "Buttons");
 	}
 	/**
@@ -372,11 +375,13 @@ public class UserInterface {
         xAxis.setForceZeroInRange(true);
         iteration=0;
 		myChart=new LineChart<Number, Number>(xAxis,yAxis);
+		myChart.setCreateSymbols(false);
 		int j=RunningSimulation.getNumberOfStates();
 		series = new XYChart.Series[j];
 		int i=0;
 		HashMap<Color, Number> newReturn=new HashMap<Color, Number>();
 		newReturn=RunningSimulation.returnProportion();
+		myScene.getStylesheets().add(DEFAULT_RESOURCE_PACKAGE + RunningSimulation.returnStyleSheet());
 		for(Color s:newReturn.keySet()){
 			series[i]=new XYChart.Series();
 			myChart.getData().add(series[i]);

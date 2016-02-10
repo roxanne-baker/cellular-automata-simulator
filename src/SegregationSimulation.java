@@ -18,6 +18,7 @@ public class SegregationSimulation extends Simulation {
 	public static final String BLUE = "blue";
 	public static final String EMPTY = "empty";
 	private int numberOfStates=3;
+	private static final String STYLESHEET= "seggregation.css";
 	
 	public SegregationSimulation(Grid newGrid, double thresholdDecimal){
 		super(newGrid);
@@ -176,6 +177,9 @@ public class SegregationSimulation extends Simulation {
 		proportions.put(Color.BLUE, prop2);
 		proportions.put(Color.WHITE, prop3);
 		return proportions;
+	}
+	public String returnStyleSheet(){
+		return STYLESHEET;
 	}
 	
 	/*

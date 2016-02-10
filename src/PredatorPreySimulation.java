@@ -21,6 +21,7 @@ public class PredatorPreySimulation extends Simulation {
 	public static final String PREY = "prey";
 	public static final String EMPTY = "empty";
 	private int numberOfStates=3;
+	private static final String STYLESHEET= "predator.css";
 	
 	public PredatorPreySimulation(Grid newGrid, int predatorStarve, int predatorBreed, int preyBreed){
 		setMyCells(newGrid.myCells);
@@ -254,6 +255,9 @@ public class PredatorPreySimulation extends Simulation {
 	}	
 	public int getNumberOfStates(){
 		return numberOfStates;
+	}
+	public String returnStyleSheet(){
+		return STYLESHEET;
 	}
 	public HashMap<Color, Number> returnProportion(){
 		int countPredator=0;
