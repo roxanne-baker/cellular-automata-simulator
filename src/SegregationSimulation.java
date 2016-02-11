@@ -17,6 +17,8 @@ public class SegregationSimulation extends Simulation {
 	public static final String RED = "red";
 	public static final String BLUE = "blue";
 	public static final String EMPTY = "empty";
+	private int numberOfStates=3;
+	private static final String STYLESHEET= "seggregation.css";
 	
 	public SegregationSimulation(Grid newGrid, double thresholdDecimal){
 		super(newGrid);
@@ -144,6 +146,40 @@ public class SegregationSimulation extends Simulation {
 			myCells[emptyRow][emptyCol].justUpdated = true;
 		}
 		return nextCells;
+	}
+	public int getNumberOfStates(){
+		return numberOfStates;
+	}
+	public HashMap<Color, Number> returnProportion(){
+		int countRed=0;
+		int countBlue=0;
+		int countEmpty=0;
+		int total=0;
+		HashMap<Color, Number> proportions=new HashMap<Color, Number>();
+		for(int i=0;i<myCells.length;i++){
+			for(int j=0;j<myCells[0].length;j++){
+				if(myCells[i][j].getState().equals(RED)){
+					countRed++;
+				}
+				else if(myCells[i][j].getState().equals(BLUE)){
+					countBlue++;
+				}
+				else if(myCells[i][j].getState().equals(EMPTY)){
+					countEmpty++;
+				}
+				total++;
+			}
+		}
+		double prop1=(double)countRed/total;
+		double prop2=(double)countBlue/total;
+		double prop3=(double)countEmpty/total;
+		proportions.put(Color.RED, prop1);
+		proportions.put(Color.BLUE, prop2);
+		proportions.put(Color.WHITE, prop3);
+		return proportions;
+	}
+	public String returnStyleSheet(){
+		return STYLESHEET;
 	}
 	
 	/*
