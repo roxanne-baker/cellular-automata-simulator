@@ -85,7 +85,7 @@ public class Configuration{
     /**
      * The ArrayList of states to be returned.
      */
-    private ArrayList<String> stateList;
+    private List<String> stateList;
     
     /**
      * The integer width of the grid to be returned.
@@ -190,7 +190,7 @@ public class Configuration{
      * 
      * @return The states of the cells as an ArrayList
      */
-    public ArrayList<String> getStates(){
+    public List<String> getStates(){
         return stateList;
     }
     

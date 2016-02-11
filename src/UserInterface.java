@@ -1,4 +1,5 @@
 //package cellsociety_team11;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
@@ -76,13 +77,13 @@ public class UserInterface {
 	 * @param root Group to hold the grid cells
 	 * @param height number of rows in the grid
 	 * @param width number of columns in the grid
-	 * @param cellStates ArrayList with the states of the cells in the grid
+	 * @param states ArrayList with the states of the cells in the grid
 	 */
-	public void setGrid(Group root, int height, int width, ArrayList<String> cellStates) {
+	public void setGrid(Group root, int height, int width, List<String> states) {
 		Grid grid = new SquareGrid(root, height, width);
 		for(int i=0; i<height; i++) {
 			for (int j=0; j<width; j++) {
-				grid.myCells[i][j].setState(cellStates.get(i*width+j));
+				grid.myCells[i][j].setState(states.get(i*width+j));
 			}
 		}
 		myGrid = grid;
@@ -99,7 +100,7 @@ public class UserInterface {
 		Configuration newConfiguration=new Configuration(myFile);
 		int width=newConfiguration.getWidth();
 		int height=newConfiguration.getHeight();
-		ArrayList<String>states=new ArrayList<String>();
+		List<String> states = new ArrayList<String>();
 		states=newConfiguration.getStates();
 		
 		String name=newConfiguration.getName();
