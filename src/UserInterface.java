@@ -18,11 +18,11 @@ import javafx.event.*;
  *
  */
 public class UserInterface {
-	public static final int HSIZE=400;
-	public static final int VSIZE=500;
-	public static final double STARTING_RATE = 0.075;
-	private Scene myScene;
-	public static final int FRAMES_PER_SECOND = 60;
+    public static final int HSIZE=400;
+    public static final int VSIZE=500;
+    public static final double STARTING_RATE = 0.075;
+    private Scene myScene;
+    public static final int FRAMES_PER_SECOND = 60;
     private static final int MILLISECOND_DELAY = 1000 / FRAMES_PER_SECOND;
     private boolean active=true;
     private double currentRate=STARTING_RATE;
@@ -50,20 +50,15 @@ public class UserInterface {
     
     private boolean firsttime=true;
     Grid myGrid;
-	Timeline animation = new Timeline();
-	Simulation newSimulation= null;
-	KeyFrame myFrame;
-	private String[] myPossibilities = { 
-			"GameOfLife",
-	        "Segregation",
-	        "PredatorPrey",
-	        "Fire"
-	    };
+    Timeline animation = new Timeline();
+    Simulation newSimulation= null;
+    KeyFrame myFrame;
+    private String[] myPossibilities = {"GameOfLife", "Segregation", "PredatorPrey", "Fire"};
+    
 	/**
 	 * Creates a new user interface and initializes the running simulation
 	 */
 	public UserInterface(){
-		RunningSimulation=new Simulation();
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + "Buttons");
 	}
 	/**
@@ -71,7 +66,7 @@ public class UserInterface {
 	 * @return
 	 */
 	public Scene setScene(){
-		Group root=new Group();
+	Group root=new Group();
     	myScene=new Scene(root, HSIZE, VSIZE);
     	setButtons(root);
     	return myScene;

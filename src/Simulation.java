@@ -3,7 +3,7 @@ import java.util.Map;
 
 import javafx.scene.paint.Color;
 
-public class Simulation {
+public abstract class Simulation {
 	
 	/*
 	 * @author Roxanne Baker
@@ -30,6 +30,20 @@ public class Simulation {
 	public void setStateNameToColor() {
 		stateNameToColor = new HashMap<String, Color>();
 	}
+	
+	/**
+	 * returns a double array of strings with the initial states of the cells
+	 * @return newState
+	*/
+	protected String[][] getInitialStates() {
+	    String[][] newState=new String[myCells.length][myCells[0].length];
+	    for(int i=0; i<myCells.length; i++) {
+	        for (int j=0; j<myCells[0].length; j++) {
+	            newState[i][j]=myCells[i][j].getState();
+	            }
+	        }
+	    return newState;
+	    }
 	
 	/*
 	 * update method that takes care of
