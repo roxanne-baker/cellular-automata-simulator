@@ -2,7 +2,7 @@ dwy3 zap3
 
 #Duplicated Code
 ###My Suggested Changes For David
-- create another method inside step() that returns a Grid object. Call the method withthe cloned grid object in class Simlation and with new Grid object in class WaTorSimulation, then return.
+- Create another method inside step() that returns a Grid object. Call the method withthe cloned grid object in class Simlation and with new Grid object in class WaTorSimulation, then return.
 
 ###David's Suggestions
 - David suggested to move the methods getInitialStates() and setInitialStates() from classes SegregationSimulation and GameOfLifeSimulation to the parent class Simulation.
