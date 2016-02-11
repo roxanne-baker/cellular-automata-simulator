@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javafx.scene.paint.Color;
@@ -23,13 +24,12 @@ public class Simulation {
 		setCellColor(myCells);
 	}
 	
-	public Simulation(){
+	protected Simulation(){
 		setStateNameToColor();
 	}
 	
 	public void setStateNameToColor() {
-		stateNameToColor = new HashMap<String, Color>();
-	}
+	};
 	
 	/*
 	 * update method that takes care of
@@ -62,6 +62,14 @@ public class Simulation {
 			}
 		}
 	}
+	
+	public void setStateNameToColor(List<String> stateNames, List<Color> colorNames) {
+		stateNameToColor = new HashMap<String, Color>();
+		for (int i=0; i<stateNames.size(); i++) {
+			stateNameToColor.put(stateNames.get(i), colorNames.get(i));
+		}
+	}
+	
 	
 	/*
 	 * Given the name of a state as a String, returns

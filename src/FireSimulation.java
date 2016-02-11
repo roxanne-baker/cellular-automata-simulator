@@ -1,5 +1,8 @@
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -28,10 +31,9 @@ public class FireSimulation extends Simulation {
 	 * @see Simulation#setStateNameToColor()
 	 */
 	public void setStateNameToColor() {
-		stateNameToColor = new HashMap<String, Color>();
-		stateNameToColor.put(FIRE, Color.FIREBRICK);
-		stateNameToColor.put(TREE, Color.FORESTGREEN);
-		stateNameToColor.put(EMPTY, Color.TAN);
+		List<String> stateNames = new ArrayList<String>(Arrays.asList(FIRE, TREE, EMPTY));
+		List<Color> colorNames = new ArrayList<Color>(Arrays.asList(Color.FIREBRICK, Color.FORESTGREEN, Color.TAN));
+		setStateNameToColor(stateNames, colorNames);
 	}
 	
 	/*

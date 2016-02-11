@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -35,11 +36,12 @@ public class PredatorPreySimulation extends Simulation {
 	 * @see Simulation#setStateNameToColor()
 	 */
 	public void setStateNameToColor() {
-		stateNameToColor = new HashMap<String, Color>();
-		stateNameToColor.put(PREDATOR, Color.GRAY);
-		stateNameToColor.put(PREY, Color.ORANGE);
-		stateNameToColor.put(EMPTY, Color.WHITE);
+		List<String> stateNames = new ArrayList<String>(Arrays.asList(PREDATOR, PREY, EMPTY));
+		List<Color> colorNames = new ArrayList<Color>(Arrays.asList(Color.GRAY, Color.ORANGE, Color.BLUE));
+		setStateNameToColor(stateNames, colorNames);
 	}
+	
+
 
 	/*
 	 * Cells have additional properties that need
@@ -132,7 +134,6 @@ public class PredatorPreySimulation extends Simulation {
 	 */
 	public void updatePreyState(PredatorPreyCell cell) {
 		if (cell.justUpdated) return;
-
 		List<PredatorPreyCell> neighbours = getPredPreyNeighbours(cell);
 		List<Integer> openSpaces = getNeighboursOfState(EMPTY, neighbours);
 		int indexToSwitchWith = getPreyNeighbourToSwitch(openSpaces);

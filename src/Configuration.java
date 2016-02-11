@@ -12,74 +12,21 @@ import java.io.*;
  *
  */
 public class Configuration{
-    /**
-     * The constant for the XML tag for the root element of the XML file, which should be simulation.
-     */
     public static final String SIMULATION = "simulation";
-    
-    /**
-     * The constant for the XML tag of the "name" element.
-     */
     public static final String NAME = "name";
-    
-    /**
-     * The constant for the XML tag of the "width" element.
-     */
     public static final String WIDTH = "width";
-        
-    /**
-     * The constant for the XML tag of the height element.
-     */
     public static final String HEIGHT = "height";
-    
-    /**
-     * The constant for the XML tag of the state element.
-     */
     public static final String STATE = "state";
-    
-    /**
-     * The constant for the XML tag of the ProbabilityCatch element.
-     */
     public static final String PROBABILITY_CATCH = "ProbabilityCatch";
-    
-    /**
-     * The constant for the XML tag of the PredatorStarve element.
-     */
     public static final String PREDATOR_STARVE = "PredatorStarve";
-    
-    /**
-     * The constant for the XML tag of the PredatorBreed element.
-     */
     public static final String PREDATOR_BREED = "PredatorBreed";
-    
-    /**
-     * The constant for the XML tag of the PreyBreed element.
-     */
     public static final String PREY_BREED = "PreyBreed";
-    
-    /**
-     * The constant for the XML tag of the Threshold element.
-     */
     public static final String THRESHOLD = "Threshold";
     
-    /**
-     * The constant for the XML tag of the GameOfLife element.
-     */
+    
     public static final String GAMEOFLIFE = "GameOfLife";
-    
-    /**
-     * The constant for the XML tag of the Segregation element.
-     */
     public static final String SEGREGATION = "Segregation";
-    
-    /**
-     * The constant for the XML tag of the PredatorPrey element.
-     */
     public static final String PREDATORPREY = "PredatorPrey";
-    
-    /**
-     * The constant for the XML tag of the Fire element.
-     */
     public static final String FIRE = "Fire";
     
     /**
@@ -102,29 +49,11 @@ public class Configuration{
      */
     private String name;
     
-    /**
-     * The double value that determines the probability of catching fire for Fire simulation.
-     */
+    
     private double probabilityCatch;
-    
-    /**
-     * The integer value that determines the rate of starvation of predators.
-     */
     private int predatorStarve;
-    
-    /**
-     * The integer value that determines the breeding rate of predators.
-     */
     private int predatorBreed;
-    
-    /**
-     * The integer value that determines the breeding rate of preys.
-     */
     private int preyBreed;
-    
-    /**
-     * The double value that determines the threshold level for segregation simulations.
-     */
     private double threshold;
     
     
