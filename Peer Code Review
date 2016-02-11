@@ -1,0 +1,16 @@
+Duplicated code in "updatePreyState" and "updatePredatorState":
+
+* Written the current way because the rules for updating the two are fairly different
+Perhaps consolidate into a single "update" function that takes in the state as a parameter
+
+
+
+
+* Duplicated methods in SegregationSimulation and GameOfLifeSimulation:
+Written the current way due to uncertainties about putting the methods in the superclass when the other two Simulation types are handled differently
+Might put methods into superclass and modify the other two Simulations to be handled similarly to GameOfLife and Segregation
+
+
+* Similarities in addCardinalNeighbors and addDiagonalNeighbors
+Written the current way in order to make following code slightly more readable and avoid passing all booleans in as parameters (since that would be upwards of 10 parameters)
+Could not define variables since only slight difference in readability, or have an addAllNeighbors method instead of addDiagonalNeighbors that could reduce some of the duplicated code
