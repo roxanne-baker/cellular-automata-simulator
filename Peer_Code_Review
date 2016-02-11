@@ -5,3 +5,4 @@ dwy3 zap3
 
 ###David's Suggestions
 - David suggested to move the methods getInitialStates() and setInitialStates() from classes SegregationSimulation and GameOfLifeSimulation to the parent class Simulation.
+- David also suggested to split the method setNewSimulation() in UserInterface in two methods where the second one will get the name of Simulation to be created, create the proper type of simulation and rreturn it.
