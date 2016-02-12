@@ -16,6 +16,8 @@ public class FireSimulation extends Simulation {
 	public static final String FIRE = "FIRE";
 	public static final String TREE = "TREE";
 	public static final String EMPTY = "EMPTY";
+	private int numberOfStates=3;
+	private static final String STYLESHEET= "fire.css";
 	
 	public FireSimulation(Grid myGrid, double probCatchDecimal) {
 		super(myGrid);
@@ -64,7 +66,40 @@ public class FireSimulation extends Simulation {
 			}
 		}
 	}
-	
+	public int getNumberOfStates(){
+		return numberOfStates;
+	}
+	public HashMap<Color, Number> returnProportion(){
+		int countFire=0;
+		int countTree=0;
+		int countEmpty=0;
+		int total=0;
+		HashMap<Color, Number> proportions=new HashMap<Color, Number>();
+		for(int i=0;i<myCells.length;i++){
+			for(int j=0;j<myCells[0].length;j++){
+				if(myCells[i][j].getState().equals(FIRE)){
+					countFire++;
+				}
+				else if(myCells[i][j].getState().equals(TREE)){
+					countTree++;
+				}
+				else if(myCells[i][j].getState().equals(EMPTY)){
+					countEmpty++;
+				}
+				total++;
+			}
+		}
+		double prop1=(double)countFire/total;
+		double prop2=(double)countTree/total;
+		double prop3=(double)countEmpty/total;
+		proportions.put(Color.FIREBRICK, prop1);
+		proportions.put(Color.FORESTGREEN, prop2);
+		proportions.put(Color.TAN, prop3);
+		return proportions;
+	}
+	public String returnStyleSheet(){
+		return STYLESHEET;
+	}
 	/*
 	 * (non-Javadoc)
 	 * @see Simulation#update()
