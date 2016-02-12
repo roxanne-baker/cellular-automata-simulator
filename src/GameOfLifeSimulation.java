@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 public class GameOfLifeSimulation extends Simulation {
 
 	private int count=0;
+	private static final String STYLESHEET = "default.css";
 	public static final String ALIVE = "alive";
 	public static final String DEAD = "dead";
 	
@@ -16,7 +17,8 @@ public class GameOfLifeSimulation extends Simulation {
 	public GameOfLifeSimulation(Grid newGrid){
 		super(newGrid);
 		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
-		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addDiagonalNeighbors(grid, position));		
+		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addDiagonalNeighbors(grid, position));
+		numberOfStates=2;
 	}
 	
 	public void setStateNameToColor() {
@@ -90,7 +92,34 @@ public class GameOfLifeSimulation extends Simulation {
 			}
 		}
 	}
-	
+
+	public HashMap<Color, Number> returnProportion(){
+		int countLive=0;
+		int countDead=0;
+		HashMap<Color, Number> proportions=new HashMap<Color, Number>();
+		for(int i=0;i<myCells.length;i++){
+			for(int j=0;j<myCells[0].length;j++){
+				if(myCells[i][j].getState().equals(ALIVE)){
+					countLive++;
+				}
+				if(myCells[i][j].getState().equals(DEAD)){
+					countDead++;
+				}
+			}
+		}
+		double prop1=(double)countLive/(countLive+countDead);
+		double prop2=(double)countDead/(countLive+countDead);
+		proportions.put(Color.BLACK, prop1);
+		proportions.put(Color.WHITE, prop2);
+		return proportions;
+	}
+	public String returnStyleSheet(){
+		return STYLESHEET;
+	}
+	/**
+	 * Calls methods to update the cells and set their colors
+	 */
+
 	public void update() {
 		updateCellStates();
 		setCellColor(myCells);

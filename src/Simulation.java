@@ -4,7 +4,7 @@ import java.util.Map;
 
 import javafx.scene.paint.Color;
 
-public class Simulation {
+public abstract class Simulation {
 	
 	/*
 	 * @author Roxanne Baker
@@ -16,7 +16,7 @@ public class Simulation {
 	Cell[][] myCells;
 	// maps name of state to the color it fills a cell with
 	Map<String, Color> stateNameToColor;
-	
+	protected int numberOfStates;
 	
 	public Simulation(Grid newGrid) {
 		this();
@@ -89,5 +89,11 @@ public class Simulation {
 			}
 		}
 	}
+	public int getNumberOfStates(){
+		return numberOfStates;
+	}
+	public abstract String returnStyleSheet();
+	public abstract HashMap<Color, Number> returnProportion();
+		
 	
 }

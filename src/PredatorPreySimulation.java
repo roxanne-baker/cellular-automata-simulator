@@ -21,7 +21,9 @@ public class PredatorPreySimulation extends Simulation {
 	public static final String PREDATOR = "predator";
 	public static final String PREY = "prey";
 	public static final String EMPTY = "empty";
-
+	private int numberOfStates=3;
+	private static final String STYLESHEET= "predator.css";
+	
 	public PredatorPreySimulation(Grid newGrid, int predatorStarve, int predatorBreed, int preyBreed){
 		setMyCells(newGrid.myCells);
 		setCellColor(myCells);
@@ -252,4 +254,38 @@ public class PredatorPreySimulation extends Simulation {
 		}
 		return indexToSwitchWith;
 	}	
+	public int getNumberOfStates(){
+		return numberOfStates;
+	}
+	public String returnStyleSheet(){
+		return STYLESHEET;
+	}
+	public HashMap<Color, Number> returnProportion(){
+		int countPredator=0;
+		int countPrey=0;
+		int countEmpty=0;
+		int total=0;
+		HashMap<Color, Number> proportions=new HashMap<Color, Number>();
+		for(int i=0;i<myCells.length;i++){
+			for(int j=0;j<myCells[0].length;j++){
+				if(myCells[i][j].getState().equals(PREDATOR)){
+					countPredator++;
+				}
+				else if(myCells[i][j].getState().equals(PREY)){
+					countPrey++;
+				}
+				else if(myCells[i][j].getState().equals(EMPTY)){
+					countEmpty++;
+				}
+				total++;
+			}
+		}
+		double prop1=(double)countPredator/total;
+		double prop2=(double)countPrey/total;
+		double prop3=(double)countEmpty/total;
+		proportions.put(Color.GRAY, prop1);
+		proportions.put(Color.ORANGE, prop2);
+		proportions.put(Color.WHITE, prop3);
+		return proportions;
+	}
 }
