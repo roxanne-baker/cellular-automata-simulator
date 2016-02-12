@@ -1,0 +1,19 @@
+.axis {
+    -fx-font-size: 1.4em;    
+    -fx-tick-label-fill: #914800;
+    -fx-font-family: Tahoma;
+    -fx-tick-length: .1;
+    -fx-minor-tick-length: .1;
+}
+.chart-series-line {    
+    -fx-stroke-width: 2px;
+    -fx-effect: null;
+}
+.chart-plot-background {
+    -fx-background-color: #bfbfbf;
+}
+.default-color0.chart-series-line { -fx-stroke: #ffffff; }
+.default-color1.chart-series-line { -fx-stroke: #000000; }
+
+.default-color0.chart-series-area-fill { -fx-fill: #ffffff; }
+.default-color1.chart-series-area-fill { -fx-fill: #000000; }
