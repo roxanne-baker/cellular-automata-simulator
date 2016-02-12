@@ -124,20 +124,20 @@ public class UserInterface {
 		setGrid(root, height, width, states);
 		Simulation newSimulation;
 		if(name.equals(myPossibilities[0])){
-			newSimulation=new GameOfLifeSimulation(myGrid);
+			newSimulation=new GameOfLifeSimulation(myGrid,root, animation);
 		}
 		else if (name.equals(myPossibilities[1])){
-			newSimulation=new SegregationSimulation(myGrid, newConfiguration.getThreshold());
+			newSimulation=new SegregationSimulation(myGrid, newConfiguration.getThreshold(),root, animation);
 		}
 		
 		else if(name.equals(myPossibilities[2])){
 		    newSimulation=new PredatorPreySimulation(myGrid, newConfiguration.getPredatorStarve(), newConfiguration.getPredatorBreed(),
-		                                             newConfiguration.getPreyBreed());
+		                                             newConfiguration.getPreyBreed(),root, animation);
 		                                             
 		}
 		
 		else{
-			newSimulation=new FireSimulation(myGrid, newConfiguration.getProbabilityCatch());			
+			newSimulation=new FireSimulation(myGrid, newConfiguration.getProbabilityCatch(),root, animation);			
 		}
 		RunningSimulation=newSimulation;
 		setLineChart(root);

@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import javafx.animation.Timeline;
+import javafx.scene.Group;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 public class SegregationSimulation extends Simulation {
@@ -18,13 +21,16 @@ public class SegregationSimulation extends Simulation {
 	public static final String BLUE = "blue";
 	public static final String EMPTY = "empty";
 	private int numberOfStates=3;
+	private Timeline myTime;
 	private static final String STYLESHEET= "seggregation.css";
 	
-	public SegregationSimulation(Grid newGrid, double thresholdDecimal){
+	public SegregationSimulation(Grid newGrid, double thresholdDecimal, Group root, Timeline animation){
 		super(newGrid);
 		threshold = thresholdDecimal;
 		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
-		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addDiagonalNeighbors(grid, position));		
+		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addDiagonalNeighbors(grid, position));	
+		myTime=animation;
+		addListeners(myCells, root);
 	}
 	
 	/*
@@ -181,7 +187,30 @@ public class SegregationSimulation extends Simulation {
 	public String returnStyleSheet(){
 		return STYLESHEET;
 	}
-	
+	public void addListeners(Cell[][]myCells, Group root){
+		for(int i=0;i<myCells.length;i++){
+			for(int j=0;j<myCells[0].length;j++){
+				Cell newCell;
+				newCell=myCells[i][j];
+				myCells[i][j].returnNode().addEventHandler(MouseEvent.MOUSE_CLICKED, e->changeState(root,newCell));
+			}
+		}
+	}
+	public void changeState(Group root, Cell myCell){
+		myTime.stop();
+		if(myCell.getState().equals(RED)){
+			myCell.setState(BLUE);
+			myCell.shape.setFill(Color.BLUE);
+		}
+		else if(myCell.getState().equals(BLUE)){
+			myCell.setState(EMPTY);
+			myCell.shape.setFill(Color.WHITE);
+		}
+		else if(myCell.getState().equals(EMPTY)){
+			myCell.setState(RED);
+			myCell.shape.setFill(Color.RED);
+		}
+	}
 	/*
 	 * updates both the states and color of all cells in the grid
 	 */

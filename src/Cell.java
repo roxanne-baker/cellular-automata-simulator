@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
@@ -14,6 +15,9 @@ public class Cell {
 	public Cell (Shape myShape){
 		shape=myShape;
 		neighbours=new ArrayList<Cell>();
+	}
+	public Node returnNode(){
+		return (Node)shape;
 	}
 	public int getNeighbourCount(){
 		return countNeighbours;
