@@ -59,6 +59,7 @@ public class UserInterface {
     private EventHandler<MouseEvent> slowDownHandler;
     private EventHandler<MouseEvent> pauseHandler;
     private LineChart<Number,Number> myChart;
+    private Slider mySlider;
     private XYChart.Series [] series;
     private int iteration=0;
    
@@ -158,9 +159,10 @@ public class UserInterface {
 		Slider slider;
 		if (name.equals(myPossibilities[1]) || name.equals(myPossibilities[3])) {
 			slider = new Slider(0, 1, 0.3);
+			mySlider=slider;
 			slider.setMajorTickUnit(0.25f);
 			slider.setBlockIncrement(0.1f);
-			addSliderHandler(slider, root);
+			addSliderHandler(mySlider, root);
 		}
 	}
 	public void addSliderHandler(Slider slider, Group root){
@@ -175,6 +177,7 @@ public class UserInterface {
 				public void handle(MouseEvent event) {
 					while(slider.isValueChanging()==true){}
 						RunningSimulation.setValue(slider.getValue());
+						System.out.println(slider.getValue());
 				}
 			};
 		slider.addEventHandler(MouseEvent.MOUSE_CLICKED, sliderHandler);
@@ -190,6 +193,8 @@ public class UserInterface {
 			}
 		}
 		root.getChildren().remove(myChart);
+		root.getChildren().remove(mySlider);
+		myScene.getStylesheets().remove(DEFAULT_RESOURCE_PACKAGE + RunningSimulation.returnStyleSheet());
 	}
 	/**
 	 * Creates a Button given its name and initializes an array with all the Buttons
