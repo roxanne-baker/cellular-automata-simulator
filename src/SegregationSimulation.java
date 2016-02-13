@@ -24,11 +24,14 @@ public class SegregationSimulation extends Simulation {
 	private Timeline myTime;
 	private static final String STYLESHEET= "seggregation.css";
 	
-	public SegregationSimulation(Grid newGrid, double thresholdDecimal, Group root, Timeline animation){
+	public SegregationSimulation(Grid newGrid, double thresholdDecimal, Group root, Timeline animation, Border border){
 		super(newGrid);
 		threshold = thresholdDecimal;
+		border.setGridAndBorders(myCells, true);
+		/**
 		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
 		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addDiagonalNeighbors(grid, position));	
+		**/
 		myTime=animation;
 		addListeners(myCells, root);
 	}
@@ -38,10 +41,9 @@ public class SegregationSimulation extends Simulation {
 	 * @see Simulation#setStateNameToColor()
 	 */
 	public void setStateNameToColor() {
-		stateNameToColor = new HashMap<String, Color>();
-		stateNameToColor.put(this.RED, Color.RED);
-		stateNameToColor.put(this.BLUE, Color.BLUE);
-		stateNameToColor.put(this.EMPTY, Color.WHITE);
+		List<String> stateNames = new ArrayList<String>(Arrays.asList(RED, BLUE, EMPTY));
+		List<Color> colorNames = new ArrayList<Color>(Arrays.asList(Color.RED, Color.BLUE, Color.WHITE));
+		setStateNameToColor(stateNames, colorNames);
 	}
 	
 	/*

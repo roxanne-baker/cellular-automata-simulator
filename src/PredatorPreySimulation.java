@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -27,13 +28,14 @@ public class PredatorPreySimulation extends Simulation {
 	private Timeline myTime;
 	private static final String STYLESHEET= "predator.css";
 	
-	public PredatorPreySimulation(Grid newGrid, int predatorStarve, int predatorBreed, int preyBreed, Group root, Timeline animation){
+	public PredatorPreySimulation(Grid newGrid, int predatorStarve, int predatorBreed, int preyBreed, Group root, Timeline animation, Border border){
 		setMyCells(newGrid.myCells);
 		setCellColor(myCells);
 		turnsUntilPreyBreeds = preyBreed;
 		turnsUntilPredatorStarves = predatorStarve;
 		turnsUntilPredatorBreeds = predatorBreed;
-		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
+		border.setGridAndBorders(myCells, false);
+		//newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
 		myTime=animation;
 		addListeners(myCells,root);
 	}
@@ -43,10 +45,9 @@ public class PredatorPreySimulation extends Simulation {
 	 * @see Simulation#setStateNameToColor()
 	 */
 	public void setStateNameToColor() {
-		stateNameToColor = new HashMap<String, Color>();
-		stateNameToColor.put(PREDATOR, Color.GRAY);
-		stateNameToColor.put(PREY, Color.ORANGE);
-		stateNameToColor.put(EMPTY, Color.WHITE);
+		List<String> stateNames = new ArrayList<String>(Arrays.asList(PREDATOR, PREY, EMPTY));
+		List<Color> colorNames = new ArrayList<Color>(Arrays.asList(Color.GRAY, Color.ORANGE, Color.BLUE));
+		setStateNameToColor(stateNames, colorNames);
 	}
 
 	/*

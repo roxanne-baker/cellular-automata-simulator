@@ -21,6 +21,7 @@ public abstract class Grid {
 		}
 	}
 	
+	/**
 	public void resetJustUpdated() {
 		for (int i=0;i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
@@ -28,7 +29,7 @@ public abstract class Grid {
 			}
 		}
 	}
-	
+	**/
 	public void addAllNeighbors(Cell[][] myGrid, BiConsumer<Cell[][], int[]> addNeighborType) {
 		for(int i=0; i<myGrid.length; i++) {
 			for (int j=0; j<myGrid[0].length; j++) {
@@ -37,8 +38,9 @@ public abstract class Grid {
 		}
 	}
 	
+	/**
 	public abstract void addCardinalNeighbors(Cell[][] myGrid, int[] position);
 	
 	public abstract void addDiagonalNeighbors(Cell[][] myGrid, int[] position);
-	
+	**/
 }

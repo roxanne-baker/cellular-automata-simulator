@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javafx.scene.paint.Color;
@@ -27,8 +28,7 @@ public abstract class Simulation {
 		setStateNameToColor();
 	}
 	
-	public void setStateNameToColor() {
-		stateNameToColor = new HashMap<String, Color>();
+	public void setStateNameToColor(){
 	}
 	
 	/*
@@ -70,7 +70,12 @@ public abstract class Simulation {
 	public Color getColorFromStateName(String state) {
 		return stateNameToColor.get(state);
 	}
-	
+	public void setStateNameToColor(List<String> stateNames, List<Color> colorNames) {
+		stateNameToColor = new HashMap<String, Color>();
+		for (int i=0; i<stateNames.size(); i++) {
+			stateNameToColor.put(stateNames.get(i), colorNames.get(i));
+		}
+	}
 	/*
 	 * resets the value "justUpdated" for all cells
 	 */

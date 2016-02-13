@@ -1,5 +1,8 @@
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -23,10 +26,11 @@ public class FireSimulation extends Simulation {
 	private Timeline myTime;
 	private static final String STYLESHEET= "fire.css";
 	
-	public FireSimulation(Grid myGrid, double probCatchDecimal, Group root, Timeline animation) {
+	public FireSimulation(Grid myGrid, double probCatchDecimal, Group root, Timeline animation, Border border) {
 		super(myGrid);
 		probCatch = probCatchDecimal;
-		myGrid.addAllNeighbors(myCells, (grid, position) -> myGrid.addCardinalNeighbors(grid, position));
+		border.setGridAndBorders(myCells, false);
+		//myGrid.addAllNeighbors(myCells, (grid, position) -> myGrid.addCardinalNeighbors(grid, position));
 		myTime=animation;
 		addListeners(myCells, root);
 	}
@@ -36,10 +40,9 @@ public class FireSimulation extends Simulation {
 	 * @see Simulation#setStateNameToColor()
 	 */
 	public void setStateNameToColor() {
-		stateNameToColor = new HashMap<String, Color>();
-		stateNameToColor.put(FIRE, Color.FIREBRICK);
-		stateNameToColor.put(TREE, Color.FORESTGREEN);
-		stateNameToColor.put(EMPTY, Color.TAN);
+		List<String> stateNames = new ArrayList<String>(Arrays.asList(FIRE, TREE, EMPTY));
+		List<Color> colorNames = new ArrayList<Color>(Arrays.asList(Color.FIREBRICK, Color.FORESTGREEN, Color.TAN));
+		setStateNameToColor(stateNames, colorNames);
 	}
 	
 	/*

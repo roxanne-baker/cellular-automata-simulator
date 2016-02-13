@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,21 +24,30 @@ public class GameOfLifeSimulation extends Simulation {
 	 * 
 	 * @param newGrid
 	 */
-	public GameOfLifeSimulation(Grid newGrid, Group root, Timeline animation){
+	public GameOfLifeSimulation(Grid newGrid, Group root, Timeline animation, Border border){
 		super(newGrid);
+		/**
 		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
 		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addDiagonalNeighbors(grid, position));
+		**/
+		border.setGridAndBorders(myCells, true);
 		numberOfStates=2;
 		myTime=animation;
 		addListeners(myCells, root);
+		
 	}
 	/**
 	 * Associates the state with the color
 	 */
 	public void setStateNameToColor() {
+		/**
 		stateNameToColor = new HashMap<String, Color>();
 		stateNameToColor.put(this.ALIVE, Color.BLACK);
 		stateNameToColor.put(this.DEAD, Color.WHITE);
+		**/
+		List<String> stateNames = new ArrayList<String>(Arrays.asList(ALIVE, DEAD));
+		List<Color> colorNames = new ArrayList<Color>(Arrays.asList(Color.BLACK, Color.WHITE));
+		setStateNameToColor(stateNames, colorNames);
 	}
 	/**
 	 * Records the updated state of a cell

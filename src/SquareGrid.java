@@ -41,8 +41,9 @@ public class SquareGrid extends Grid {
 		
 		return r;
 	}	
+}
 
-
+/**
 	public void addCardinalNeighbors(Cell[][] myGrid, int[] position) {
 		int row = position[0];
 		int col = position[1];
@@ -86,3 +87,4 @@ public class SquareGrid extends Grid {
 	}
 	
 }
+	**/

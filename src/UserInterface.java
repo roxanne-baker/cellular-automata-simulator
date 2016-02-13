@@ -1,6 +1,7 @@
 //package cellsociety_team11;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
@@ -101,7 +102,7 @@ public class UserInterface {
 	 * @param width number of columns in the grid
 	 * @param cellStates ArrayList with the states of the cells in the grid
 	 */
-	public void setGrid(Group root, int height, int width, ArrayList<String> cellStates) {
+	public void setGrid(Group root, int height, int width, List<String> cellStates) {
 		Grid grid = new SquareGrid(root, height, width);
 		for(int i=0; i<height; i++) {
 			for (int j=0; j<width; j++) {
@@ -137,21 +138,22 @@ public class UserInterface {
 	}
 	public Simulation getNewSimulation(Grid myGrid, Group root, Configuration newConfiguration, String name){
 		Simulation newSimulation;
+		Border myBorder = new ToroidalBorder();
 		if(name.equals(myPossibilities[0])){
-			newSimulation=new GameOfLifeSimulation(myGrid,root, animation);
+			newSimulation=new GameOfLifeSimulation(myGrid,root, animation, myBorder);
 		}
 		else if (name.equals(myPossibilities[1])){
-			newSimulation=new SegregationSimulation(myGrid, newConfiguration.getThreshold(),root, animation);
+			newSimulation=new SegregationSimulation(myGrid, newConfiguration.getThreshold(),root, animation, myBorder);
 		}
 		
 		else if(name.equals(myPossibilities[2])){
 		    newSimulation=new PredatorPreySimulation(myGrid, newConfiguration.getPredatorStarve(), newConfiguration.getPredatorBreed(),
-		                                             newConfiguration.getPreyBreed(),root, animation);
+		                                             newConfiguration.getPreyBreed(),root, animation, myBorder);
 		                                             
 		}
 		
 		else{
-			newSimulation=new FireSimulation(myGrid, newConfiguration.getProbabilityCatch(),root, animation);			
+			newSimulation=new FireSimulation(myGrid, newConfiguration.getProbabilityCatch(),root, animation, myBorder);			
 		}
 		return newSimulation;
 	}
