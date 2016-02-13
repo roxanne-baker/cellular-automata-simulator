@@ -3,20 +3,29 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import javafx.animation.Timeline;
+import javafx.scene.Group;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 public class GameOfLifeSimulation extends Simulation {
 
 	private int count=0;
+	private Timeline myTime;
 	private static final String STYLESHEET = "default.css";
 	public static final String ALIVE = "alive";
 	public static final String DEAD = "dead";
 	
-	
-	// pass in Grid in order to set neighbors accordingly
-	public GameOfLifeSimulation(Grid newGrid, Border border){
+	/** pass in Grid in order to set neighbors accordingly
+	 * 
+	 * @param newGrid
+	 */
+	public GameOfLifeSimulation(Grid newGrid, Group root, Timeline animation, Border border){
 		super(newGrid);
-		border.setGridAndBorders(myCells, true);	
+		border.setGridAndBorders(myCells, true);
+		numberOfStates=2;
+		myTime=animation;
+		addListeners(myCells, root);
 	}
 	
 	public void setStateNameToColor() {
@@ -114,7 +123,30 @@ public class GameOfLifeSimulation extends Simulation {
 	public String returnStyleSheet(){
 		return STYLESHEET;
 	}
-	
+
+	public void addListeners(Cell[][]myCells, Group root){
+		for(int i=0;i<myCells.length;i++){
+			for(int j=0;j<myCells[0].length;j++){
+				Cell newCell;
+				newCell=myCells[i][j];
+				myCells[i][j].returnNode().addEventHandler(MouseEvent.MOUSE_CLICKED, e->changeState(root,newCell));
+			}
+		}
+	}
+	public void changeState(Group root, Cell myCell){
+		myTime.stop();
+		if(myCell.getState().equals(DEAD)){
+			myCell.setState(ALIVE);
+			myCell.shape.setFill(Color.BLACK);
+		}
+		else if(myCell.getState().equals(ALIVE)){
+			myCell.setState(DEAD);
+			myCell.shape.setFill(Color.WHITE);
+		}
+	}
+	/**
+	 * Calls methods to update the cells and set their colors
+	 */
 	public void update() {
 		updateCellStates();
 		setCellColor(myCells);

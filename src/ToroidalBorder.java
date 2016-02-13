@@ -22,7 +22,7 @@ public class ToroidalBorder extends Border{
 		}
 	}
 	
-	public int getNeighbourVal(int rowOrColVal, int edgeIndex, int borderVal, int normalVal) {
+	public int getNeighborVal(int rowOrColVal, int edgeIndex, int borderVal, int normalVal) {
 		if (rowOrColVal != edgeIndex) {
 		    return normalVal;
 		}
@@ -31,61 +31,61 @@ public class ToroidalBorder extends Border{
 		}
 	}
 	
-	public void addLeftNeighbour(int row, int col) {
-		int nextCol = getNeighbourVal(col, 0, myGrid[0].length-1, col-1);
-		myGrid[row][col].getMyNeighbours().add(myGrid[row][nextCol]);
+	public Cell getLeftNeighbor(Cell[][] grid, int row, int col) {
+		int nextCol = getNeighborVal(col, 0, myGrid[0].length-1, col-1);
+		return grid[row][nextCol];
 	}
 	
-	public void addRightNeighbour(int row, int col) {
-		int nextCol = getNeighbourVal(col, myGrid[0].length-1, 0, col+1);
-		myGrid[row][col].getMyNeighbours().add(myGrid[row][nextCol]);
+	public Cell getRightNeighbor(Cell[][] grid, int row, int col) {
+		int nextCol = getNeighborVal(col, myGrid[0].length-1, 0, col+1);
+		return grid[row][nextCol];
 	}	
 	
-	public void addTopNeighbour(int row, int col) {
-		int nextRow = getNeighbourVal(row, 0, myGrid.length-1, row-1);
-		myGrid[row][col].getMyNeighbours().add(myGrid[nextRow][col]);
+	public Cell getNorthNeighbor(Cell[][] grid, int row, int col) {
+		int nextRow = getNeighborVal(row, 0, myGrid.length-1, row-1);
+		return grid[nextRow][col];
 	}
 	
-	public void addBotNeighbour(int row, int col) {
-		int nextRow = getNeighbourVal(row, myGrid.length-1, 0, row+1);
-		myGrid[row][col].getMyNeighbours().add(myGrid[nextRow][col]);
+	public Cell getSouthNeighbor(Cell[][] grid, int row, int col) {
+		int nextRow = getNeighborVal(row, myGrid.length-1, 0, row+1);
+		return grid[nextRow][col];
 	}
 	
-	private void addLowerLeftNeighbour(int row, int col) {
-		int nextCol = getNeighbourVal(col, 0, myGrid[0].length-1, col-1);	
-		int nextRow = getNeighbourVal(row, myGrid.length-1, 0, row+1);
-		myGrid[row][col].getMyNeighbours().add(myGrid[nextRow][nextCol]);		
+	public Cell getLowerLeftNeighbor(Cell[][] grid, int row, int col) {
+		int nextCol = getNeighborVal(col, 0, myGrid[0].length-1, col-1);	
+		int nextRow = getNeighborVal(row, myGrid.length-1, 0, row+1);
+		return grid[nextRow][nextCol];	
 	}
 	
-	private void addUpperLeftNeighbour(int row, int col) {
-		int nextCol = getNeighbourVal(col, 0, myGrid[0].length-1, col-1);	
-		int nextRow = getNeighbourVal(row, 0, myGrid.length, row-1);
-		myGrid[row][col].getMyNeighbours().add(myGrid[nextRow][nextCol]);			
+	public Cell getUpperLeftNeighbor(Cell[][] grid, int row, int col) {
+		int nextCol = getNeighborVal(col, 0, myGrid[0].length-1, col-1);	
+		int nextRow = getNeighborVal(row, 0, myGrid.length-1, row-1);
+		return grid[nextRow][nextCol];				
 	}
 	
-	private void addLowerRightNeighbour(int row, int col) {
-		int nextCol = getNeighbourVal(col, myGrid[0].length-1, 0, col+1);
-		int nextRow = getNeighbourVal(row, myGrid.length-1, 0, row+1);
-		myGrid[row][col].getMyNeighbours().add(myGrid[nextRow][nextCol]);		
+	public Cell getLowerRightNeighbor(Cell[][] grid, int row, int col) {
+		int nextCol = getNeighborVal(col, myGrid[0].length-1, 0, col+1);
+		int nextRow = getNeighborVal(row, myGrid.length-1, 0, row+1);
+		return grid[nextRow][nextCol];		
 	}
 	
-	private void addUpperRightNeighbour(int row, int col) {
-		int nextCol = getNeighbourVal(col, myGrid[0].length-1, 0, col+1);
-		int nextRow = getNeighbourVal(row, 0, myGrid.length, row-1);
-		myGrid[row][col].getMyNeighbours().add(myGrid[nextRow][nextCol]);			
+	public Cell getUpperRightNeighbor(Cell[][] grid, int row, int col) {
+		int nextCol = getNeighborVal(col, myGrid[0].length-1, 0, col+1);
+		int nextRow = getNeighborVal(row, 0, myGrid.length-1, row-1);
+		return grid[nextRow][nextCol];				
 	}
 	
 	public void addCardinalNeighbors(Cell[][] myGrid, int row, int col) {
-		addLeftNeighbour(row, col);
-		addRightNeighbour(row, col);
-		addTopNeighbour(row, col);
-		addBotNeighbour(row, col);
+		myGrid[row][col].getMyNeighbours().add(getNorthNeighbor(myGrid, row, col));
+		myGrid[row][col].getMyNeighbours().add(getSouthNeighbor(myGrid, row, col));
+		myGrid[row][col].getMyNeighbours().add(getLeftNeighbor(myGrid, row, col));
+		myGrid[row][col].getMyNeighbours().add(getRightNeighbor(myGrid, row, col));
 	}
 	
 	public void addDiagonalNeighbors(Cell[][] myGrid, int row, int col) {
-		addLowerLeftNeighbour(row, col);
-		addLowerRightNeighbour(row, col);
-		addUpperLeftNeighbour(row, col);
-		addUpperRightNeighbour(row, col);
+		myGrid[row][col].getMyNeighbours().add(getUpperLeftNeighbor(myGrid, row, col));
+		myGrid[row][col].getMyNeighbours().add(getUpperRightNeighbor(myGrid, row, col));
+		myGrid[row][col].getMyNeighbours().add(getLowerLeftNeighbor(myGrid, row, col));
+		myGrid[row][col].getMyNeighbours().add(getLowerRightNeighbor(myGrid, row, col));
 	}
 }

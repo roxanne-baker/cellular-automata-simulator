@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
+import javafx.animation.Timeline;
+import javafx.scene.Group;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 public class PredatorPreySimulation extends Simulation {
@@ -22,13 +25,21 @@ public class PredatorPreySimulation extends Simulation {
 	public static final String PREY = "prey";
 	public static final String EMPTY = "empty";
 
-	public PredatorPreySimulation(Grid newGrid, Border border, int predatorStarve, int predatorBreed, int preyBreed){
+	private int numberOfStates=3;
+	private Timeline myTime;
+	private static final String STYLESHEET= "predator.css";
+	
+	public PredatorPreySimulation(Grid newGrid, int predatorStarve, int predatorBreed, int preyBreed, Group root, Timeline animation, Border border){
+
 		setMyCells(newGrid.myCells);
 		setCellColor(myCells);
 		turnsUntilPreyBreeds = preyBreed;
 		turnsUntilPredatorStarves = predatorStarve;
 		turnsUntilPredatorBreeds = predatorBreed;
 		border.setGridAndBorders(myCells, false);
+		myTime=animation;
+		addListeners(myCells,root);
+
 	}
 	
 	/*
@@ -252,4 +263,65 @@ public class PredatorPreySimulation extends Simulation {
 		}
 		return indexToSwitchWith;
 	}	
+
+	public int getNumberOfStates(){
+		return numberOfStates;
+	}
+	public String returnStyleSheet(){
+		return STYLESHEET;
+	}
+	
+	public HashMap<Color, Number> returnProportion(){
+		int countPredator=0;
+		int countPrey=0;
+		int countEmpty=0;
+		int total=0;
+		HashMap<Color, Number> proportions=new HashMap<Color, Number>();
+		for(int i=0;i<myCells.length;i++){
+			for(int j=0;j<myCells[0].length;j++){
+				if(myCells[i][j].getState().equals(PREDATOR)){
+					countPredator++;
+				}
+				else if(myCells[i][j].getState().equals(PREY)){
+					countPrey++;
+				}
+				else if(myCells[i][j].getState().equals(EMPTY)){
+					countEmpty++;
+				}
+				total++;
+			}
+		}
+		double prop1=(double)countPredator/total;
+		double prop2=(double)countPrey/total;
+		double prop3=(double)countEmpty/total;
+		proportions.put(Color.GRAY, prop1);
+		proportions.put(Color.ORANGE, prop2);
+		proportions.put(Color.WHITE, prop3);
+		return proportions;
+	}
+
+	public void addListeners(Cell[][] myCells, Group root) {
+		for (int i = 0; i < myCells.length; i++) {
+			for (int j = 0; j < myCells[0].length; j++) {
+				Cell newCell;
+				newCell = myCells[i][j];
+				myCells[i][j].returnNode().addEventHandler(MouseEvent.MOUSE_CLICKED, e -> changeState(root, newCell));
+			}
+		}
+	}
+
+	public void changeState(Group root, Cell myCell) {
+		myTime.stop();
+		if (myCell.getState().equals(PREDATOR)) {
+			myCell.setState(EMPTY);
+			myCell.shape.setFill(Color.WHITE);
+		} else if (myCell.getState().equals(PREY)) {
+			myCell.setState(PREDATOR);
+			myCell.shape.setFill(Color.GRAY);
+		} else if (myCell.getState().equals(EMPTY)) {
+			myCell.setState(PREY);
+			myCell.shape.setFill(Color.ORANGE);
+		}
+	}
 }
+
