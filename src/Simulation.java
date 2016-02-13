@@ -37,7 +37,7 @@ public abstract class Simulation {
 	 */
 	public void update(){};
 	
-	
+	public void setValue(double newd){};
 	/*
 	 * updates the state of all cells
 	 */

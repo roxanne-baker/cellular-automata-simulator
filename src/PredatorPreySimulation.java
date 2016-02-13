@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
+import javafx.animation.Timeline;
+import javafx.scene.Group;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 public class PredatorPreySimulation extends Simulation {
@@ -21,15 +24,18 @@ public class PredatorPreySimulation extends Simulation {
 	public static final String PREY = "prey";
 	public static final String EMPTY = "empty";
 	private int numberOfStates=3;
+	private Timeline myTime;
 	private static final String STYLESHEET= "predator.css";
 	
-	public PredatorPreySimulation(Grid newGrid, int predatorStarve, int predatorBreed, int preyBreed){
+	public PredatorPreySimulation(Grid newGrid, int predatorStarve, int predatorBreed, int preyBreed, Group root, Timeline animation){
 		setMyCells(newGrid.myCells);
 		setCellColor(myCells);
 		turnsUntilPreyBreeds = preyBreed;
 		turnsUntilPredatorStarves = predatorStarve;
 		turnsUntilPredatorBreeds = predatorBreed;
 		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
+		myTime=animation;
+		addListeners(myCells,root);
 	}
 	
 	/*
@@ -259,6 +265,7 @@ public class PredatorPreySimulation extends Simulation {
 	public String returnStyleSheet(){
 		return STYLESHEET;
 	}
+	
 	public HashMap<Color, Number> returnProportion(){
 		int countPredator=0;
 		int countPrey=0;
@@ -286,5 +293,29 @@ public class PredatorPreySimulation extends Simulation {
 		proportions.put(Color.ORANGE, prop2);
 		proportions.put(Color.WHITE, prop3);
 		return proportions;
+	}
+
+	public void addListeners(Cell[][] myCells, Group root) {
+		for (int i = 0; i < myCells.length; i++) {
+			for (int j = 0; j < myCells[0].length; j++) {
+				Cell newCell;
+				newCell = myCells[i][j];
+				myCells[i][j].returnNode().addEventHandler(MouseEvent.MOUSE_CLICKED, e -> changeState(root, newCell));
+			}
+		}
+	}
+
+	public void changeState(Group root, Cell myCell) {
+		myTime.stop();
+		if (myCell.getState().equals(PREDATOR)) {
+			myCell.setState(EMPTY);
+			myCell.shape.setFill(Color.WHITE);
+		} else if (myCell.getState().equals(PREY)) {
+			myCell.setState(PREDATOR);
+			myCell.shape.setFill(Color.GRAY);
+		} else if (myCell.getState().equals(EMPTY)) {
+			myCell.setState(PREY);
+			myCell.shape.setFill(Color.ORANGE);
+		}
 	}
 }
