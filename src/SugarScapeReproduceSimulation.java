@@ -20,7 +20,7 @@ public class SugarScapeReproduceSimulation extends Simulation{
 	
 	private int numberOfStates=3;
 	private Timeline myTime;
-	private static final String STYLESHEET= "predator.css";  // NEED TO CHANGE
+	private static final String STYLESHEET= "default.css";  // NEED TO CHANGE
 	
 	public SugarScapeReproduceSimulation(Grid newGrid, Border border, int predatorStarve, int predatorBreed, int preyBreed){
 		setMyCells(newGrid.myCells);
@@ -33,7 +33,7 @@ public class SugarScapeReproduceSimulation extends Simulation{
 		myCells = new SugarScapeCell[newCells.length][newCells[0].length];
 		for (int i=0; i<newCells.length; i++) {
 			for (int j=0; j<newCells[0].length; j++) {
-				myCells[i][j] = new SugarScapeCell(newCells[i][j].shape, i, j, 1);
+				myCells[i][j] = new SugarScapeCell(newCells[i][j].shape, i, j, 20, 1);
 				myCells[i][j].setState(newCells[i][j].getState());
 			}
 		}

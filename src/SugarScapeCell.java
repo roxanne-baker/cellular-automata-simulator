@@ -14,8 +14,10 @@ public class SugarScapeCell extends Cell{
 	int row;
 	int col;
 	
-	public SugarScapeCell(Shape shape, int row, int col, int sugarGrowBackRate) {
+	public SugarScapeCell(Shape shape, int row, int col, int sugarMax, int sugarGrowBackRate) {
 		super(shape);
+		this.sugarMax = sugarMax;
+		sugarAmount = sugarMax;
 		this.sugarGrowBackRate = sugarGrowBackRate;
 		this.row = row;
 		this.col = col;

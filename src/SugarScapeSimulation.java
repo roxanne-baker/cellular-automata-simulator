@@ -15,9 +15,9 @@ public class SugarScapeSimulation extends Simulation{
 	public static final String HAS_AGENT = "HAS AGENT";
 	public static final String NO_AGENT = "NO AGENT";
 	
-	private int numberOfStates=3;
+	private int numberOfStates = 2;
 	private Timeline myTime;
-	private static final String STYLESHEET= "predator.css";  // NEED TO CHANGE
+	private static final String STYLESHEET= "default.css";  // NEED TO CHANGE
 	private Border myBorder;
 	
 	public SugarScapeSimulation(Grid newGrid, Group root, Timeline animation, Border border){
@@ -34,7 +34,7 @@ public class SugarScapeSimulation extends Simulation{
 		myCells = new SugarScapeCell[newCells.length][newCells[0].length];
 		for (int i=0; i<newCells.length; i++) {
 			for (int j=0; j<newCells[0].length; j++) {
-				myCells[i][j] = new SugarScapeCell(newCells[i][j].shape, i, j, 1);
+				myCells[i][j] = new SugarScapeCell(newCells[i][j].shape, i, j, 20, 1);
 				myCells[i][j].setState(newCells[i][j].getState());
 			}
 		}
