@@ -265,6 +265,7 @@ public class PredatorPreySimulation extends Simulation {
 	public String returnStyleSheet(){
 		return STYLESHEET;
 	}
+	
 	public HashMap<Color, Number> returnProportion(){
 		int countPredator=0;
 		int countPrey=0;

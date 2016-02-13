@@ -82,6 +82,9 @@ public class SegregationSimulation extends Simulation {
 		}
 		return false;
 	}
+	public void setValue(double newThreshold){
+		threshold=newThreshold;
+	}
 	
 	/*
 	 * updates the state of all cells

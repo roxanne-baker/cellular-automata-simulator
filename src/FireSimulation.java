@@ -75,6 +75,9 @@ public class FireSimulation extends Simulation {
 	public int getNumberOfStates(){
 		return numberOfStates;
 	}
+	public void setValue(double threshold){
+		probCatch=threshold;
+	}
 	public HashMap<Color, Number> returnProportion(){
 		int countFire=0;
 		int countTree=0;

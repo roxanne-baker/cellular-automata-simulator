@@ -13,6 +13,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
@@ -24,8 +25,12 @@ import javafx.event.*;
  */
 public class UserInterface {
 	public static final int HSIZE=400;
-	public static final int VSIZE=650;
+	public static final int VSIZE=750;
 	public static final int LSIZE=100;
+	public static final int SWIDTH=300;
+	public static final int GWIDTH=350;
+	public static final int VSLIDER=550;
+	public static final int GHEIGHT=100;
 	public static final double STARTING_RATE = 0.075;
 	private Scene myScene;
 	public static final int FRAMES_PER_SECOND = 60;
@@ -123,6 +128,14 @@ public class UserInterface {
 
 		setGrid(root, height, width, states);
 		Simulation newSimulation;
+		newSimulation=getNewSimulation(myGrid,root,newConfiguration, name);
+		
+		RunningSimulation=newSimulation;
+		setLineChart(root);
+		setSlider(root, name);
+	}
+	public Simulation getNewSimulation(Grid myGrid, Group root, Configuration newConfiguration, String name){
+		Simulation newSimulation;
 		if(name.equals(myPossibilities[0])){
 			newSimulation=new GameOfLifeSimulation(myGrid,root, animation);
 		}
@@ -139,8 +152,32 @@ public class UserInterface {
 		else{
 			newSimulation=new FireSimulation(myGrid, newConfiguration.getProbabilityCatch(),root, animation);			
 		}
-		RunningSimulation=newSimulation;
-		setLineChart(root);
+		return newSimulation;
+	}
+	public void setSlider(Group root, String name){
+		Slider slider;
+		if (name.equals(myPossibilities[1]) || name.equals(myPossibilities[3])) {
+			slider = new Slider(0, 1, 0.3);
+			slider.setMajorTickUnit(0.25f);
+			slider.setBlockIncrement(0.1f);
+			addSliderHandler(slider, root);
+		}
+	}
+	public void addSliderHandler(Slider slider, Group root){
+		
+		slider.setShowTickMarks(true);
+		slider.setShowTickLabels(true);
+		slider.setPrefWidth(SWIDTH);
+		root.getChildren().add(slider);
+		slider.setTranslateY(VSLIDER);
+		slider.setTranslateX(HSIZE/2-SWIDTH/2);
+			EventHandler<MouseEvent>sliderHandler=new EventHandler<MouseEvent>(){
+				public void handle(MouseEvent event) {
+					while(slider.isValueChanging()==true){}
+						RunningSimulation.setValue(slider.getValue());
+				}
+			};
+		slider.addEventHandler(MouseEvent.MOUSE_CLICKED, sliderHandler);
 	}
 	/**
 	 * Removes the cell nodes from the scene
@@ -387,8 +424,9 @@ public class UserInterface {
 			myChart.getData().add(series[i]);
 			i++;
 		}
-		myChart.setTranslateY(400);
-		myChart.setPrefHeight(100);
+		myChart.setTranslateY(HSIZE);
+		myChart.setPrefHeight(GHEIGHT);
+		myChart.setPrefWidth(7*HSIZE/8);
 		root.getChildren().add(myChart);
 	}
 	public void updateChart(Simulation newS){
