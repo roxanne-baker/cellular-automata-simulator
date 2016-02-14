@@ -26,8 +26,8 @@ public class FireSimulation extends Simulation {
 	private Timeline myTime;
 	private static final String STYLESHEET= "fire.css";
 	
-	public FireSimulation(Grid myGrid, double probCatchDecimal, Group root, Timeline animation, Border border) {
-		super(myGrid);
+	public FireSimulation(Grid myGrid, double probCatchDecimal, Group root, Timeline animation, Border border, String myName) {
+		super(myGrid, myName);
 		probCatch = probCatchDecimal;
 		border.setGridAndBorders(myCells, false);
 		//myGrid.addAllNeighbors(myCells, (grid, position) -> myGrid.addCardinalNeighbors(grid, position));
@@ -135,6 +135,13 @@ public class FireSimulation extends Simulation {
 			myCell.setState(TREE);
 			myCell.shape.setFill(Color.FORESTGREEN);
 		}
+	}
+	public double[] returnParameters(){
+		double[]param =new double[3];
+		param[0]=myCells.length;
+		param[1]=myCells[0].length;
+		param[2]=probCatch;
+		return param;
 	}
 	/*
 	 * (non-Javadoc)

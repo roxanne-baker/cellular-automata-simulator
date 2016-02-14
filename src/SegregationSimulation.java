@@ -24,8 +24,8 @@ public class SegregationSimulation extends Simulation {
 	private Timeline myTime;
 	private static final String STYLESHEET= "seggregation.css";
 	
-	public SegregationSimulation(Grid newGrid, double thresholdDecimal, Group root, Timeline animation, Border border){
-		super(newGrid);
+	public SegregationSimulation(Grid newGrid, double thresholdDecimal, Group root, Timeline animation, Border border, String name){
+		super(newGrid, name);
 		threshold = thresholdDecimal;
 		border.setGridAndBorders(myCells, true);
 		/**
@@ -202,6 +202,14 @@ public class SegregationSimulation extends Simulation {
 			myCell.shape.setFill(Color.RED);
 		}
 	}
+	public double[] returnParameters(){
+		double[]param =new double[3];
+		param[0]=myCells.length;
+		param[1]=myCells[0].length;
+		param[2]=threshold;
+		return param;
+	}
+	
 	/*
 	 * updates both the states and color of all cells in the grid
 	 */

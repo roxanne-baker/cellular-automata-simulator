@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,12 +17,14 @@ public abstract class Simulation {
 	Cell[][] myCells;
 	// maps name of state to the color it fills a cell with
 	Map<String, Color> stateNameToColor;
+	protected String name;
 	protected int numberOfStates;
 	
-	public Simulation(Grid newGrid) {
+	public Simulation(Grid newGrid, String myName) {
 		this();
 		myCells = newGrid.myCells;
 		setCellColor(myCells);
+		name=myName;
 	}
 	
 	public Simulation(){
@@ -52,9 +55,7 @@ public abstract class Simulation {
 	public void update(){};
 	
 	public void setValue(double newd){};
-	public void setPreyBreeds(int number){};
-	public void setPredatorBreeds(int number){};
-	public void setPredatorStarves(int number){};
+	
 	/*
 	 * updates the state of all cells
 	 */
@@ -68,7 +69,21 @@ public abstract class Simulation {
 	public void setCellColor(Cell cell) {
 		cell.shape.setFill(getColorFromStateName(cell.getState()));
 	}
-	
+	public String returnName(){
+		return name;
+	}
+	public double[] returnParameters(){
+		return null;
+	}
+	public List<String> returnStates(){
+		List<String> states=new ArrayList<String>();
+		for(int i=0;i<myCells.length;i++){
+			for(int j=0;j<myCells[0].length;j++){
+				states.add(myCells[i][j].getState());
+			}
+		}
+		return states;
+	}
 	/*
 	 * sets the color of all cells in a grid
 	 */
