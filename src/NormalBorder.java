@@ -80,7 +80,7 @@ public class NormalBorder extends Border{
 	
 	public Cell getLowerRightNeighbor(Cell[][] grid, int row, int col) {
 		if (!isLastRow && !isLastCol) {
-			return grid[row-1][col-1];
+			return grid[row+1][col+1];
 		}
 		return null;
 	}
