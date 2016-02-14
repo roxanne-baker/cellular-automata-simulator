@@ -1,6 +1,8 @@
 //package cellsociety_team11;
 import java.util.List;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -29,23 +31,26 @@ import javafx.event.*;
  *
  */
 public class UserInterface {
-
-	public static final int HSIZE=400;
-	public static final int VSIZE=750;
-	public static final int LSIZE=100;
-	public static final int SWIDTH=300;
-	public static final int GWIDTH=350;
-	public static final int VSLIDER=550;
-	public static final int GHEIGHT=100;
-	public static final double STARTING_RATE = 0.075;
-	private Scene myScene;
-	public static final int FRAMES_PER_SECOND = 60;
+    public static final int HSIZE=400;
+    public static final int VSIZE=750;
+    public static final int LSIZE=100;
+    public static final int SWIDTH=300;
+    public static final int GWIDTH=350;
+    public static final int VSLIDER=550;
+    public static final int GHEIGHT=100;
+    public static final double STARTING_RATE = 0.075;
+    public static final int FRAMES_PER_SECOND = 60;
     private static final int MILLISECOND_DELAY = 1000 / FRAMES_PER_SECOND;
-    private boolean active=true;
     private double currentRate=STARTING_RATE;
-    private Simulation RunningSimulation = null;
     public static final String DEFAULT_RESOURCE_PACKAGE = "resources/";
     public static final String DEFAULT_DIRECTORY = "src/resources/";
+    public static final String TRIANGLE = "triangle";
+    public static final String SQUARE = "square";
+    public static final String HEXAGON = "hexagon";
+    
+    private Simulation RunningSimulation = null;
+    private boolean active=true;
+    private Scene myScene;
     private ResourceBundle myResources;
     private ComboBox<String> myFiles;
     private Button[] allButtons;
@@ -68,6 +73,7 @@ public class UserInterface {
     private Slider mySlider;
     private XYChart.Series [] series;
     private int iteration=0;
+    private Jaxbconfiguration jxb;
     
    
     
@@ -88,6 +94,7 @@ public class UserInterface {
 		//RunningSimulation=new Simulation();
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + "Buttons");
 	}
+	
 	/**
 	 * Sets the scene and creates the method to set up the buttons
 	 * @return
@@ -98,6 +105,7 @@ public class UserInterface {
     	setButtons(root);
     	return myScene;
 	}
+	
 	/**
 	 * Sets up the grid for a simulation
 	 * @param root Group to hold the grid cells
@@ -105,16 +113,28 @@ public class UserInterface {
 	 * @param width number of columns in the grid
 	 * @param states ArrayList with the states of the cells in the grid
 	 */
-
 	public void setGrid(Group root, int height, int width, List<String> cellStates) {
-		Grid grid = new SquareGrid(root, height, width);
-		for(int i=0; i<height; i++) {
-			for (int j=0; j<width; j++) {
-				grid.myCells[i][j].setState(cellStates.get(i*width+j));
-			}
-		}
-		myGrid = grid;
-	}
+	    Grid grid;
+	    if(jxb.getParameters().getShape().equals(TRIANGLE)){
+	        grid = new TriangleGrid(root, height, width);
+	    }
+	    
+	    else if(jxb.getParameters().getShape().equals(HEXAGON)){
+	        grid = new HexagonGrid(root, height, width);
+	    }
+	
+	    else{
+	        grid = new SquareGrid(root, height, width);
+	    }
+
+	    for(int i=0; i<height; i++) {
+	        for (int j=0; j<width; j++) {
+	            grid.myCells[i][j].setState(cellStates.get(i*width+j));
+	            }
+	        }
+	    myGrid = grid;
+	    }
+	
 	/**
 	 * Sets up a new simulation by calling a configuration to read the simulation parameters and type 
 	 * from a file
@@ -125,7 +145,6 @@ public class UserInterface {
 		active=true;
 		String myFile=DEFAULT_DIRECTORY+myFiles.getValue();
 		JAXBConfig newConfiguration = new JAXBConfig(myFile);
-		Jaxbconfiguration jxb = null;
         try {
             jxb = newConfiguration.unmarshal(Class.forName("jaxbconfiguration.Jaxbconfiguration"), new InputSource(myFile));
         }
@@ -271,8 +290,10 @@ public class UserInterface {
 		createAllButtons();
 		placeButtons(root);
 		myFiles=new ComboBox<String>();
+		
+		
 		myFiles.getItems().addAll("gameoflife.xml", "gameoflife2.xml", "gameoflife3.xml", "segregation.xml", "segregation2.xml", "cornerFire.xml", "centerFire.xml", 
-		                          "patchyFire.xml", "segregation3.xml", "predatorprey.xml", "predatorprey2.xml", "predatorprey3.xml");
+		                          "patchyFire.xml", "segregation3.xml", "predatorprey.xml", "predatorprey2.xml", "predatorprey3.xml", "gameoflife_triangle.xml");
 		root.getChildren().add(myFiles);
 		loadHandler(root);
 		
@@ -331,6 +352,7 @@ public class UserInterface {
 		SlowDown.addEventHandler(MouseEvent.MOUSE_CLICKED, slowDownHandler);
 		Forward.addEventHandler(MouseEvent.MOUSE_CLICKED, forwardHandler);
 	}
+	
 	/**
 	 * Sets up the eventhandler for the start button
 	 */
@@ -456,6 +478,7 @@ public class UserInterface {
 		myChart.setPrefWidth(7*HSIZE/8);
 		root.getChildren().add(myChart);
 	}
+	
 	public void updateChart(Simulation newS){
 		int j=RunningSimulation.getNumberOfStates();
 		HashMap<Color,Number>newProportions=new HashMap<Color,Number>();
