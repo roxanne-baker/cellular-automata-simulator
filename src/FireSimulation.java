@@ -23,13 +23,13 @@ public class FireSimulation extends Simulation {
 	public static final String TREE = "TREE";
 	public static final String EMPTY = "EMPTY";
 	private int numberOfStates=3;
-	private Timeline myTime;
 	private static final String STYLESHEET= "fire.css";
 	
 	public FireSimulation(Grid myGrid, double probCatchDecimal, Group root, Timeline animation, Border border, String myName) {
 		super(myGrid, myName);
 		probCatch = probCatchDecimal;
 		border.setGridAndBorders(myCells, false);
+		//myGrid.addAllNeighbors(myCells, (grid, position) -> myGrid.addCardinalNeighbors(grid, position));
 		myTime=animation;
 		addListeners(myCells, root);
 	}
@@ -39,7 +39,7 @@ public class FireSimulation extends Simulation {
 	 * @see Simulation#setStateNameToColor()
 	 */
 	public void setStateNameToColor() {
-		List<String> stateNames = new ArrayList<String>(Arrays.asList(FIRE, TREE, EMPTY));
+		stateNames = new ArrayList<String>(Arrays.asList(FIRE, TREE, EMPTY));
 		List<Color> colorNames = new ArrayList<Color>(Arrays.asList(Color.FIREBRICK, Color.FORESTGREEN, Color.TAN));
 		setStateNameToColor(stateNames, colorNames);
 	}
@@ -74,7 +74,6 @@ public class FireSimulation extends Simulation {
 			}
 		}
 	}
-
 	public int getNumberOfStates(){
 		return numberOfStates;
 	}
@@ -95,7 +94,6 @@ public class FireSimulation extends Simulation {
 		}
 	}
 
-
 	public double[] returnParameters(){
 		double[]param =new double[3];
 		param[0]=myCells.length;
@@ -103,7 +101,6 @@ public class FireSimulation extends Simulation {
 		param[2]=probCatch;
 		return param;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * @see Simulation#update()

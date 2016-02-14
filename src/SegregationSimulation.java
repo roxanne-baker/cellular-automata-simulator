@@ -21,13 +21,17 @@ public class SegregationSimulation extends Simulation {
 	public static final String BLUE = "blue";
 	public static final String EMPTY = "empty";
 	private int numberOfStates=3;
-	private Timeline myTime;
+
 	private static final String STYLESHEET= "seggregation.css";
 	
 	public SegregationSimulation(Grid newGrid, double thresholdDecimal, Group root, Timeline animation, Border border, String name){
 		super(newGrid, name);
 		threshold = thresholdDecimal;
-		border.setGridAndBorders(myCells, true);	
+		border.setGridAndBorders(myCells, true);
+		/**
+		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
+		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addDiagonalNeighbors(grid, position));	
+		**/
 		myTime=animation;
 		addListeners(myCells, root);
 	}
@@ -37,10 +41,9 @@ public class SegregationSimulation extends Simulation {
 	 * @see Simulation#setStateNameToColor()
 	 */
 	public void setStateNameToColor() {
-		stateNameToColor = new HashMap<String, Color>();
-		stateNameToColor.put(this.RED, Color.RED);
-		stateNameToColor.put(this.BLUE, Color.BLUE);
-		stateNameToColor.put(this.EMPTY, Color.WHITE);
+		stateNames = new ArrayList<String>(Arrays.asList(RED, BLUE, EMPTY));
+		List<Color> colorNames = new ArrayList<Color>(Arrays.asList(Color.RED, Color.BLUE, Color.WHITE));
+		setStateNameToColor(stateNames, colorNames);
 	}
 	
 	/*
@@ -141,7 +144,6 @@ public class SegregationSimulation extends Simulation {
 		}
 		return nextCells;
 	}
-
 	public int getNumberOfStates(){
 		return numberOfStates;
 	}
@@ -166,7 +168,7 @@ public class SegregationSimulation extends Simulation {
 		param[2]=threshold;
 		return param;
 	}
-
+	
 	/*
 	 * updates both the states and color of all cells in the grid
 	 */

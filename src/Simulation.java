@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javafx.animation.Timeline;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
@@ -20,6 +21,8 @@ public abstract class Simulation {
 	Map<String, Color> stateNameToColor;
 	protected String name;
 	protected int numberOfStates;
+	protected Timeline myTime;
+	protected List<String> stateNames;
 	
 	public Simulation(Grid newGrid, String myName) {
 		this();
@@ -28,12 +31,12 @@ public abstract class Simulation {
 		name=myName;
 	}
 	
-	protected Simulation(){
+	public Simulation(){
 		setStateNameToColor();
 	}
 	
-	public void setStateNameToColor() {
-	};
+	public void setStateNameToColor(){
+	}
 	
 	/**
 	 * returns a double array of strings with the initial states of the cells
@@ -56,14 +59,7 @@ public abstract class Simulation {
 	public void update(){};
 	
 	public void setValue(double newd){};
-<<<<<<< HEAD
-	public void setPreyBreeds(int number){};
-	public void setPredatorBreeds(int number){};
-	public void setPredatorStarves(int number){};
-
-=======
 	
->>>>>>> c6bc429b063e5074d230a944bec42a35ebf86f04
 	/*
 	 * updates the state of all cells
 	 */
@@ -103,14 +99,6 @@ public abstract class Simulation {
 		}
 	}
 	
-	public void setStateNameToColor(List<String> stateNames, List<Color> colorNames) {
-		stateNameToColor = new HashMap<String, Color>();
-		for (int i=0; i<stateNames.size(); i++) {
-			stateNameToColor.put(stateNames.get(i), colorNames.get(i));
-		}
-	}
-	
-	
 	/*
 	 * Given the name of a state as a String, returns
 	 * the color that it corresponds to in stateNameToColor
@@ -118,7 +106,12 @@ public abstract class Simulation {
 	public Color getColorFromStateName(String state) {
 		return stateNameToColor.get(state);
 	}
-	
+	public void setStateNameToColor(List<String> stateNames, List<Color> colorNames) {
+		stateNameToColor = new HashMap<String, Color>();
+		for (int i=0; i<stateNames.size(); i++) {
+			stateNameToColor.put(stateNames.get(i), colorNames.get(i));
+		}
+	}
 	/*
 	 * resets the value "justUpdated" for all cells
 	 */
@@ -129,7 +122,6 @@ public abstract class Simulation {
 			}
 		}
 	}
-	
 	public int getNumberOfStates(){
 		return numberOfStates;
 	}
@@ -181,5 +173,6 @@ public abstract class Simulation {
 			}
 		}
 	}
+		
 	
 }

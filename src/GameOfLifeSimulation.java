@@ -7,11 +7,14 @@ import javafx.animation.Timeline;
 import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-
+/**
+ * Creates a Game of Life Simulation
+ * @author Zdravko Paskalev
+ *
+ */
 public class GameOfLifeSimulation extends Simulation {
 
 	private int count=0;
-	private Timeline myTime;
 	private static final String STYLESHEET = "default.css";
 	public static final String ALIVE = "alive";
 	public static final String DEAD = "dead";
@@ -20,29 +23,34 @@ public class GameOfLifeSimulation extends Simulation {
 	 * 
 	 * @param newGrid
 	 */
-<<<<<<< HEAD
-	public GameOfLifeSimulation(Grid newGrid, Group root, Timeline animation, Border border){
-		super(newGrid);
-=======
 	public GameOfLifeSimulation(Grid newGrid, Group root, Timeline animation, Border border, String myName){
 		super(newGrid, myName);
-		/**
-		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
-		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addDiagonalNeighbors(grid, position));
-		**/
->>>>>>> c6bc429b063e5074d230a944bec42a35ebf86f04
 		border.setGridAndBorders(myCells, true);
 		numberOfStates=2;
 		myTime=animation;
 		addListeners(myCells, root);
+		
 	}
-	
+	/**
+	 * Associates the state with the color
+	 */
 	public void setStateNameToColor() {
-		List<String> stateNames = new ArrayList<String>(Arrays.asList(ALIVE, DEAD));
+		/**
+		stateNameToColor = new HashMap<String, Color>();
+		stateNameToColor.put(this.ALIVE, Color.BLACK);
+		stateNameToColor.put(this.DEAD, Color.WHITE);
+		**/
+		stateNames = new ArrayList<String>(Arrays.asList(ALIVE, DEAD));
 		List<Color> colorNames = new ArrayList<Color>(Arrays.asList(Color.BLACK, Color.WHITE));
 		setStateNameToColor(stateNames, colorNames);
 	}
-	
+	/**
+	 * Records the updated state of a cell
+	 * @param cell
+	 * @param position
+	 * @param newState
+	 * @return
+	 */
 	public String[][] updateCell(Cell cell, int[] position, String[][] newState) {
 		int row = position[0];
 		int col = position[1];
@@ -55,7 +63,11 @@ public class GameOfLifeSimulation extends Simulation {
 		}
 		return newState;
 	}
-	
+	/**
+	 * Returns the number of live neighbours
+	 * @param cell
+	 * @return
+	 */
 	public int getNumLiveNeighbours(Cell cell) {
 		int k = cell.getMyNeighbours().size();
 		int numLiveNeighbours=0;
@@ -67,7 +79,9 @@ public class GameOfLifeSimulation extends Simulation {
 		}
 		return numLiveNeighbours;
 	}
-	
+	/**
+	 * Calls methods to update the cell states
+	 */
 	public void updateCellStates() {
 		System.out.println("Count:" + count);
 		count++;
@@ -75,7 +89,11 @@ public class GameOfLifeSimulation extends Simulation {
 		newState = getNextStates(newState);
 		setNextStates(newState);
 	}
-	
+	/**
+	 * Keeps track of the new states
+	 * @param newState
+	 * @return
+	 */
 	private String[][] getNextStates(String[][] newState) {
 		for(int i=0;i<myCells.length;i++){
 			for(int j=0;j<myCells[0].length;j++){
@@ -91,11 +109,11 @@ public class GameOfLifeSimulation extends Simulation {
 		return newState;
 	}
 
+
 	/**
 	 * Updates the cells with their new states
 	 * @param newState Double array of strings holding the new states of the cells
 	 */
-
 	public void setNextStates(String[][] newState) {
 		for(int i=0;i<myCells.length;i++){
 			for(int j=0;j<myCells[0].length;j++){
@@ -103,11 +121,10 @@ public class GameOfLifeSimulation extends Simulation {
 			}
 		}
 	}
-	
+
 	public String returnStyleSheet(){
 		return STYLESHEET;
 	}
-
 	public void addListeners(Cell[][]myCells, Group root){
 		for(int i=0;i<myCells.length;i++){
 			for(int j=0;j<myCells[0].length;j++){
