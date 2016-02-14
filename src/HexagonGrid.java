@@ -50,7 +50,7 @@ public class HexagonGrid extends Grid {
 		}
 	}
 	
-	public Double[] getNextRowStartingCoords(double cellWidth, double cellHeight, int rowInt) {
+	private Double[] getNextRowStartingCoords(double cellWidth, double cellHeight, int rowInt) {
 		double row = (double) rowInt;
 		double[] coords = new double[]{
 				gridWidthBuffer, gridHeightBuffer+row*(cellHeight*0.75),
@@ -92,7 +92,7 @@ public class HexagonGrid extends Grid {
 	 * given width and height
 	 * Default fill is white with a black border
 	 */
-	public Polygon getHexagon(Double[] coords) {
+	private Polygon getHexagon(Double[] coords) {
 		System.out.println(Arrays.toString(coords));
 		Polygon hexagon = new Polygon();
 		hexagon.getPoints().addAll(coords);
@@ -103,50 +103,5 @@ public class HexagonGrid extends Grid {
 		hexagon.setStrokeWidth(1);
 		
 		return hexagon;
-	}	
-
-	/*
-	 * (non-Javadoc)
-	 * @see Grid#addCardinalNeighbors(Cell[][], int[])
-	 */
-	public void addCardinalNeighbors(Cell[][] myGrid, int[] position) {
-		int row = position[0];
-		int col = position[1];
-		boolean isFirstRow = (row == 0);
-		boolean isLastRow = (row == myGrid.length-1);
-		boolean isFirstCol = (col == 0);
-		boolean isLastCol = (col == myGrid[0].length-1);
-		if (!isFirstRow) {
-			myGrid[row][col].getMyNeighbours().add(myGrid[row-1][col]);
-		}
-		if (!isFirstCol) {
-			myGrid[row][col].getMyNeighbours().add(myGrid[row][col-1]);
-		}
-		if (!isLastCol) {
-			myGrid[row][col].getMyNeighbours().add(myGrid[row][col+1]);
-		}
-		if (!isLastRow) {
-			myGrid[row][col].getMyNeighbours().add(myGrid[row+1][col]);
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see Grid#addDiagonalNeighbors(Cell[][], int[])
-	 */
-	public void addDiagonalNeighbors(Cell[][] myGrid, int[] position) {
-		int row = position[0];
-		int col = position[1];
-		boolean isFirstRow = (row == 0);
-		boolean isLastRow = (row == myGrid.length-1);
-		boolean isFirstCol = (col == 0);
-		if (!isFirstRow && !isFirstCol) {
-			myGrid[row][col].getMyNeighbours().add(myGrid[row-1][col-1]);
-		}
-		if (!isLastRow && !isFirstCol) {
-			myGrid[row][col].getMyNeighbours().add(myGrid[row+1][col-1]);
-		}
-	}
-	
+	}		
 }
-

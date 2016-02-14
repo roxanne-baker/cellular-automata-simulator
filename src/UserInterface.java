@@ -1,5 +1,6 @@
 //package cellsociety_team11;
 import java.util.List;
+import java.util.Map;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -531,8 +532,7 @@ public class UserInterface {
 		int j=RunningSimulation.getNumberOfStates();
 		series = new XYChart.Series[j];
 		int i=0;
-		HashMap<Color, Number> newReturn=new HashMap<Color, Number>();
-		newReturn=RunningSimulation.returnProportion();
+		Map<Color, Number> newReturn=RunningSimulation.returnProportion();
 		myScene.getStylesheets().add(DEFAULT_RESOURCE_PACKAGE + RunningSimulation.returnStyleSheet());
 		for(Color s:newReturn.keySet()){
 			series[i]=new XYChart.Series();
@@ -551,8 +551,7 @@ public class UserInterface {
 	 */
 	public void updateChart(Simulation newS){
 		int j=RunningSimulation.getNumberOfStates();
-		HashMap<Color,Number>newProportions=new HashMap<Color,Number>();
-		newProportions=RunningSimulation.returnProportion();
+		Map<Color,Number>newProportions=RunningSimulation.returnProportion();
 		int i=0;
 		for(Color s:newProportions.keySet()){
 			double k=(double)newProportions.get(s);
@@ -562,5 +561,3 @@ public class UserInterface {
 		}
 	}
 }
-	
-

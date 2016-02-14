@@ -10,7 +10,6 @@ public abstract class Border {
 	
 	public abstract void addDiagonalNeighbors(Cell[][] grid, int row, int col);
 	
-	
 	public abstract Cell getNorthNeighbor(Cell[][] grid, int row, int col);
 	
 	public abstract Cell getSouthNeighbor(Cell[][] grid, int row, int col);
