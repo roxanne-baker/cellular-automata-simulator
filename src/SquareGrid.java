@@ -29,7 +29,7 @@ public class SquareGrid extends Grid {
 		int cellHeight = gridSideLength/height;
 		for (int i=0; i<height; i++) {
 			for (int j=0; j<width; j++) {
-				Shape cellShape = getSquare(i*cellHeight+gridWidthBuffer, j*cellWidth+gridHeightBuffer, cellHeight, cellWidth);
+				Shape cellShape = getSquare(j*cellWidth+gridWidthBuffer, i*cellHeight+gridHeightBuffer, cellWidth, cellHeight);
 				myCells[i][j] = new Cell(cellShape);
 			}
 		}
@@ -40,19 +40,18 @@ public class SquareGrid extends Grid {
 	 * given width and height
 	 * Default fill is white with a black border
 	 */
-	public Rectangle getSquare(int leftX, int topY, int width, int height) {
-		Rectangle r = new Rectangle();
-		r.setX(leftX);
-		r.setY(topY);
-		r.setWidth(width);
-		r.setHeight(height);
+	private Rectangle getSquare(int leftX, int topY, int width, int height) {
+		Rectangle rectangle = new Rectangle();
+		rectangle.setX(leftX);
+		rectangle.setY(topY);
+		rectangle.setWidth(width);
+		rectangle.setHeight(height);
 		
-		r.setFill(Color.WHITE);
-		r.setStroke(Color.BLACK);
-		r.setStrokeType(StrokeType.INSIDE);
-		r.setStrokeWidth(1);
+		rectangle.setFill(Color.WHITE);
+		rectangle.setStroke(Color.BLACK);
+		rectangle.setStrokeType(StrokeType.INSIDE);
+		rectangle.setStrokeWidth(1);
 		
-		return r;
+		return rectangle;
 	}	
 }
-

@@ -47,7 +47,7 @@ public class TriangleGrid extends Grid {
 		}
 	}
 	
-	public Double[] getNextRowStartingCoords(Double[] yCoords, double cellWidth, double cellHeight, int row, boolean oddWidth) {
+	private Double[] getNextRowStartingCoords(Double[] yCoords, double cellWidth, double cellHeight, int row, boolean oddWidth) {
 		if (oddWidth) {
 			yCoords[0] += cellHeight;
 			yCoords[1] += cellHeight;
@@ -73,7 +73,7 @@ public class TriangleGrid extends Grid {
 	 * given width and height
 	 * Default fill is white with a black border
 	 */
-	public Polygon getTriangle(Double[] coords) {
+	private Polygon getTriangle(Double[] coords) {
 		Polygon triangle = new Polygon();
 		triangle.getPoints().addAll(coords);
 		
@@ -83,31 +83,5 @@ public class TriangleGrid extends Grid {
 		triangle.setStrokeWidth(1);
 		
 		return triangle;
-	}	
-	
-	/*
-	 * (non-Javadoc)
-	 * @see Grid#addDiagonalNeighbors(Cell[][], int[])
-	 */
-	public void addDiagonalNeighbors(Cell[][] myGrid, int[] position) {
-		int row = position[0];
-		int col = position[1];
-		boolean isFirstRow = (row == 0);
-		boolean isLastRow = (row == myGrid.length-1);
-		boolean isFirstCol = (col == 0);
-		boolean isLastCol = (col == myGrid[0].length-1);
-		if (!isFirstRow && !isFirstCol) {
-			myGrid[row][col].getMyNeighbours().add(myGrid[row-1][col-1]);
-		}
-		if (!isFirstRow && !isLastCol) {
-			myGrid[row][col].getMyNeighbours().add(myGrid[row-1][col+1]);
-		}
-		if (!isLastRow && !isFirstCol) {
-			myGrid[row][col].getMyNeighbours().add(myGrid[row+1][col-1]);
-		if (!isLastRow && !isLastCol) {
-			myGrid[row][col].getMyNeighbours().add(myGrid[row+1][col+1]);
-		}
-		}
-	}
-	
+	}		
 }

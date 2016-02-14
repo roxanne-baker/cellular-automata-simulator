@@ -15,7 +15,6 @@ import javafx.scene.paint.Color;
 public class GameOfLifeSimulation extends Simulation {
 
 	private int count=0;
-	private Timeline myTime;
 	private static final String STYLESHEET = "default.css";
 	public static final String ALIVE = "alive";
 	public static final String DEAD = "dead";
@@ -26,10 +25,6 @@ public class GameOfLifeSimulation extends Simulation {
 	 */
 	public GameOfLifeSimulation(Grid newGrid, Group root, Timeline animation, Border border, String myName){
 		super(newGrid, myName);
-		/**
-		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
-		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addDiagonalNeighbors(grid, position));
-		**/
 		border.setGridAndBorders(myCells, true);
 		numberOfStates=2;
 		myTime=animation;
@@ -45,7 +40,7 @@ public class GameOfLifeSimulation extends Simulation {
 		stateNameToColor.put(this.ALIVE, Color.BLACK);
 		stateNameToColor.put(this.DEAD, Color.WHITE);
 		**/
-		List<String> stateNames = new ArrayList<String>(Arrays.asList(ALIVE, DEAD));
+		stateNames = new ArrayList<String>(Arrays.asList(ALIVE, DEAD));
 		List<Color> colorNames = new ArrayList<Color>(Arrays.asList(Color.BLACK, Color.WHITE));
 		setStateNameToColor(stateNames, colorNames);
 	}
@@ -126,26 +121,7 @@ public class GameOfLifeSimulation extends Simulation {
 			}
 		}
 	}
-	public HashMap<Color, Number> returnProportion(){
-		int countLive=0;
-		int countDead=0;
-		HashMap<Color, Number> proportions=new HashMap<Color, Number>();
-		for(int i=0;i<myCells.length;i++){
-			for(int j=0;j<myCells[0].length;j++){
-				if(myCells[i][j].getState().equals(ALIVE)){
-					countLive++;
-				}
-				if(myCells[i][j].getState().equals(DEAD)){
-					countDead++;
-				}
-			}
-		}
-		double prop1=(double)countLive/(countLive+countDead);
-		double prop2=(double)countDead/(countLive+countDead);
-		proportions.put(Color.BLACK, prop1);
-		proportions.put(Color.WHITE, prop2);
-		return proportions;
-	}
+
 	public String returnStyleSheet(){
 		return STYLESHEET;
 	}
@@ -158,17 +134,7 @@ public class GameOfLifeSimulation extends Simulation {
 			}
 		}
 	}
-	public void changeState(Group root, Cell myCell){
-		myTime.stop();
-		if(myCell.getState().equals(DEAD)){
-			myCell.setState(ALIVE);
-			myCell.shape.setFill(Color.BLACK);
-		}
-		else if(myCell.getState().equals(ALIVE)){
-			myCell.setState(DEAD);
-			myCell.shape.setFill(Color.WHITE);
-		}
-	}
+
 	public double[] returnParameters(){
 		double[]param =new double[2];
 		param[0]=myCells.length;

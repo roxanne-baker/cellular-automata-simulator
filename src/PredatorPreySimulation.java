@@ -24,21 +24,27 @@ public class PredatorPreySimulation extends Simulation {
 	public static final String PREDATOR = "predator";
 	public static final String PREY = "prey";
 	public static final String EMPTY = "empty";
+
 	private int numberOfStates=3;
 	private Timeline myTime;
 	private static final String STYLESHEET= "predator.css";
 	
+<<<<<<< HEAD
+	public PredatorPreySimulation(Grid newGrid, int predatorStarve, int predatorBreed, int preyBreed, Group root, Timeline animation, Border border){
+
+=======
 	public PredatorPreySimulation(Grid newGrid, int predatorStarve, int predatorBreed, int preyBreed, Group root, Timeline animation, Border border, String myName){
+>>>>>>> c6bc429b063e5074d230a944bec42a35ebf86f04
 		setMyCells(newGrid.myCells);
 		setCellColor(myCells);
 		turnsUntilPreyBreeds = preyBreed;
 		turnsUntilPredatorStarves = predatorStarve;
 		turnsUntilPredatorBreeds = predatorBreed;
 		border.setGridAndBorders(myCells, false);
-		//newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
 		myTime=animation;
 		name=myName;
 		addListeners(myCells,root);
+
 	}
 	
 	/*
@@ -50,6 +56,8 @@ public class PredatorPreySimulation extends Simulation {
 		List<Color> colorNames = new ArrayList<Color>(Arrays.asList(Color.GRAY, Color.ORANGE, Color.BLUE));
 		setStateNameToColor(stateNames, colorNames);
 	}
+	
+
 
 	/*
 	 * Cells have additional properties that need
@@ -142,7 +150,6 @@ public class PredatorPreySimulation extends Simulation {
 	 */
 	public void updatePreyState(PredatorPreyCell cell) {
 		if (cell.justUpdated) return;
-
 		List<PredatorPreyCell> neighbours = getPredPreyNeighbours(cell);
 		List<Integer> openSpaces = getNeighboursOfState(EMPTY, neighbours);
 		int indexToSwitchWith = getPreyNeighbourToSwitch(openSpaces);
@@ -261,6 +268,7 @@ public class PredatorPreySimulation extends Simulation {
 		}
 		return indexToSwitchWith;
 	}	
+
 	public int getNumberOfStates(){
 		return numberOfStates;
 	}
@@ -315,19 +323,6 @@ public class PredatorPreySimulation extends Simulation {
 		}
 	}
 
-	public void changeState(Group root, Cell myCell) {
-		myTime.stop();
-		if (myCell.getState().equals(PREDATOR)) {
-			myCell.setState(EMPTY);
-			myCell.shape.setFill(Color.WHITE);
-		} else if (myCell.getState().equals(PREY)) {
-			myCell.setState(PREDATOR);
-			myCell.shape.setFill(Color.GRAY);
-		} else if (myCell.getState().equals(EMPTY)) {
-			myCell.setState(PREY);
-			myCell.shape.setFill(Color.ORANGE);
-		}
-	}
 	public double[] returnParameters(){
 		double[]param =new double[5];
 		param[0]=myCells.length;
@@ -338,3 +333,4 @@ public class PredatorPreySimulation extends Simulation {
 		return param;
 	}
 }
+
