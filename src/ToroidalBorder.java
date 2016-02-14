@@ -26,7 +26,7 @@ public class ToroidalBorder extends Border{
 	private void setIsHexagonal() {
 		if (myGrid[0][0].shape.getClass().equals(new Polygon().getClass())) {
 			Polygon gridShape = (Polygon) myGrid[0][0].shape;
-			if (gridShape.getPoints().size() == 6) {
+			if (gridShape.getPoints().size() == 12) {
 				isHexagonal = true;
 			}
 		}
