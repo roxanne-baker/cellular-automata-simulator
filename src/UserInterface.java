@@ -150,7 +150,7 @@ public class UserInterface {
 		active=true;
 		String myFile=DEFAULT_DIRECTORY+myFiles.getValue();
 
-		newConfiguration = new JAXBConfig(myFile);
+		newConfiguration = new JAXBConfig();
 		
         try {
             jxb = newConfiguration.unmarshal(Class.forName("jaxbconfiguration.Jaxbconfiguration"), new InputSource(myFile));

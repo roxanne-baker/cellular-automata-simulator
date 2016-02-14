@@ -12,33 +12,10 @@ public class JAXBConfig {
     private static String packageName;
 
 
-/*
-    public static void main (String[] args) {
-        ObjectFactory objFact = new ObjectFactory();
-        Jaxbconfiguration jaxbconfig = objFact.createJaxbconfiguration();
-        JAXBConfig jxb = new JAXBConfig("test.xml");
-        Class<?> cls = null;
-        try {
-            cls = Class.forName("jaxbconfiguration.Jaxbconfiguration");
-        }
-        catch (ClassNotFoundException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-        InputSource inp = new InputSource("src/resources/test.xml");
-        try {
-            jaxbconfig = jxb.unmarshal(cls, inp);
-        }
-        catch (JAXBException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-        System.out.println();
-    } */
+
   
     
-    public JAXBConfig(String file){
+    public JAXBConfig(){
         
     }
     
@@ -54,7 +31,7 @@ public class JAXBConfig {
             m.marshal(jax, new FileOutputStream("src/resources/saved_result.xml"));
         }
         catch (FileNotFoundException e) {
-            e.printStackTrace(); //bad!
+            System.out.println("Save file was not specified correctly");
         }
     }
 
