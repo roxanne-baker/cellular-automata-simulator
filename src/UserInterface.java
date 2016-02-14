@@ -3,7 +3,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
-
+import javax.xml.bind.JAXBException;
+import org.xml.sax.InputSource;
+import jaxbconfiguration.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Group;
@@ -13,6 +15,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import javafx.event.*;
+
+
 /**
  * Sets the user interface
  * @author Zdravko Paskalev
@@ -80,6 +84,9 @@ public class UserInterface {
 	 * @param states ArrayList with the states of the cells in the grid
 	 */
 	public void setGrid(Group root, int height, int width, List<String> states) {
+	    System.out.println(height);
+	    System.out.println(width);
+
 		Grid grid = new SquareGrid(root, height, width);
 		for(int i=0; i<height; i++) {
 			for (int j=0; j<width; j++) {
@@ -97,13 +104,26 @@ public class UserInterface {
 		animation.setRate(STARTING_RATE);
 		active=true;
 		String myFile=DEFAULT_DIRECTORY+myFiles.getValue();
-		Configuration newConfiguration=new Configuration(myFile);
-		int width=newConfiguration.getWidth();
-		int height=newConfiguration.getHeight();
+		JAXBConfig newConfiguration = new JAXBConfig(myFile);
+		Jaxbconfiguration jxb = null;
+        try {
+            jxb = newConfiguration.unmarshal(Class.forName("jaxbconfiguration.Jaxbconfiguration"), new InputSource(myFile));
+        }
+        catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch (JAXBException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+            System.out.println(myFile.toString());
+		int width = jxb.getParameters().getWidth();
+		int height= jxb.getParameters().getHeight();
 		List<String> states = new ArrayList<String>();
-		states=newConfiguration.getStates();
+		states = jxb.getStateMatrix().getState();
 		
-		String name=newConfiguration.getName();
+		String name=jxb.getParameters().getName();
 
 		setGrid(root, height, width, states);
 		Simulation newSimulation;
@@ -111,17 +131,17 @@ public class UserInterface {
 			newSimulation=new GameOfLifeSimulation(myGrid);
 		}
 		else if (name.equals(myPossibilities[1])){
-			newSimulation=new SegregationSimulation(myGrid, newConfiguration.getThreshold());
+			newSimulation=new SegregationSimulation(myGrid, jxb.getParameters().getThreshold());
 		}
 		
 		else if(name.equals(myPossibilities[2])){
-		    newSimulation=new PredatorPreySimulation(myGrid, newConfiguration.getPredatorStarve(), newConfiguration.getPredatorBreed(),
-		                                             newConfiguration.getPreyBreed());
+		    newSimulation=new PredatorPreySimulation(myGrid, jxb.getParameters().getPredatorStarve(), jxb.getParameters().getPredatorBreed(),
+		                                             jxb.getParameters().getPreyBreed());
 		                                             
 		}
 		
 		else{
-			newSimulation=new FireSimulation(myGrid, newConfiguration.getProbabilityCatch());			
+			newSimulation=new FireSimulation(myGrid, jxb.getParameters().getProbabilityCatch());			
 		}
 		RunningSimulation=newSimulation;
 	}

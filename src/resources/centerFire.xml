@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<simulation>
+<jaxbconfiguration>
 	<name>Fire</name>
 	<width>9</width>
 	<height>9</height>
@@ -85,4 +85,4 @@
 	<state>EMPTY</state>
 	<state>EMPTY</state>
 	<state>EMPTY</state>
-</simulation>
+</jaxbconfiguration>
