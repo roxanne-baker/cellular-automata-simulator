@@ -40,44 +40,18 @@ public class SquareGrid extends Grid {
 	 * given width and height
 	 * Default fill is white with a black border
 	 */
-	public Rectangle getSquare(int leftX, int topY, int width, int height) {
-		Rectangle r = new Rectangle();
-		r.setX(leftX);
-		r.setY(topY);
-		r.setWidth(width);
-		r.setHeight(height);
+	private Rectangle getSquare(int leftX, int topY, int width, int height) {
+		Rectangle rectangle = new Rectangle();
+		rectangle.setX(leftX);
+		rectangle.setY(topY);
+		rectangle.setWidth(width);
+		rectangle.setHeight(height);
 		
-		r.setFill(Color.WHITE);
-		r.setStroke(Color.BLACK);
-		r.setStrokeType(StrokeType.INSIDE);
-		r.setStrokeWidth(1);
+		rectangle.setFill(Color.WHITE);
+		rectangle.setStroke(Color.BLACK);
+		rectangle.setStrokeType(StrokeType.INSIDE);
+		rectangle.setStrokeWidth(1);
 		
-		return r;
+		return rectangle;
 	}	
-	
-	/*
-	 * (non-Javadoc)
-	 * @see Grid#addDiagonalNeighbors(Cell[][], int[])
-	 */
-//	public void addDiagonalNeighbors(Cell[][] myGrid, int[] position) {
-//		int row = position[0];
-//		int col = position[1];
-//		boolean isFirstRow = (row == 0);
-//		boolean isLastRow = (row == myGrid.length-1);
-//		boolean isFirstCol = (col == 0);
-//		boolean isLastCol = (col == myGrid[0].length-1);
-//		if (!isFirstRow && !isFirstCol) {
-//			myGrid[row][col].getMyNeighbours().add(myGrid[row-1][col-1]);
-//		}
-//		if (!isFirstRow && !isLastCol) {
-//			myGrid[row][col].getMyNeighbours().add(myGrid[row-1][col+1]);
-//		}
-//		if (!isLastRow && !isFirstCol) {
-//			myGrid[row][col].getMyNeighbours().add(myGrid[row+1][col-1]);
-//		if (!isLastRow && !isLastCol) {
-//			myGrid[row][col].getMyNeighbours().add(myGrid[row+1][col+1]);
-//		}
-//		}
-//	}
-	
 }

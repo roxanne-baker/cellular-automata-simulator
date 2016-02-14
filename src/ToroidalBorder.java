@@ -1,17 +1,17 @@
+import javafx.scene.shape.Polygon;
 
 public class ToroidalBorder extends Border{
 
 	public ToroidalBorder() {
 	}
 	
-	Cell[][] myGrid;
-	int row;
-	int col;
-	boolean isHexagonal = false;
+	private Cell[][] myGrid;
+	private boolean isHexagonal = false;
 	
 	
 	public void setGridAndBorders(Cell[][] grid, boolean addDiagonals) {
 		myGrid = grid;
+		setIsHexagonal();
 		for (int i=0; i<grid.length; i++) {
 			for (int j=0; j<grid[0].length; j++) {
 				addCardinalNeighbors(grid, i, j);
@@ -20,9 +20,20 @@ public class ToroidalBorder extends Border{
 				}
 			}
 		}
+		
 	}
 	
-	public int getNeighborVal(int rowOrColVal, int edgeIndex, int borderVal, int normalVal) {
+	private void setIsHexagonal() {
+		if (myGrid[0][0].shape.getClass().equals(new Polygon().getClass())) {
+			Polygon gridShape = (Polygon) myGrid[0][0].shape;
+			if (gridShape.getPoints().size() == 6) {
+				isHexagonal = true;
+			}
+		}
+	}
+	
+	
+	private int getNeighborVal(int rowOrColVal, int edgeIndex, int borderVal, int normalVal) {
 		if (rowOrColVal != edgeIndex) {
 		    return normalVal;
 		}
@@ -84,8 +95,10 @@ public class ToroidalBorder extends Border{
 	
 	public void addDiagonalNeighbors(Cell[][] myGrid, int row, int col) {
 		myGrid[row][col].getMyNeighbours().add(getUpperLeftNeighbor(myGrid, row, col));
-		myGrid[row][col].getMyNeighbours().add(getUpperRightNeighbor(myGrid, row, col));
 		myGrid[row][col].getMyNeighbours().add(getLowerLeftNeighbor(myGrid, row, col));
-		myGrid[row][col].getMyNeighbours().add(getLowerRightNeighbor(myGrid, row, col));
+		if (!isHexagonal) {
+			myGrid[row][col].getMyNeighbours().add(getUpperRightNeighbor(myGrid, row, col));
+			myGrid[row][col].getMyNeighbours().add(getLowerRightNeighbor(myGrid, row, col));
+		}
 	}
 }
