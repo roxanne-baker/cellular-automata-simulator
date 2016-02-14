@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import javafx.animation.Timeline;
+import javafx.scene.Group;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 public class SegregationSimulation extends Simulation {
@@ -17,12 +20,20 @@ public class SegregationSimulation extends Simulation {
 	public static final String RED = "red";
 	public static final String BLUE = "blue";
 	public static final String EMPTY = "empty";
+	private int numberOfStates=3;
+	private Timeline myTime;
+	private static final String STYLESHEET= "seggregation.css";
 	
-	public SegregationSimulation(Grid newGrid, double thresholdDecimal){
+	public SegregationSimulation(Grid newGrid, double thresholdDecimal, Group root, Timeline animation, Border border){
 		super(newGrid);
 		threshold = thresholdDecimal;
+		border.setGridAndBorders(myCells, true);
+		/**
 		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
-		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addDiagonalNeighbors(grid, position));		
+		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addDiagonalNeighbors(grid, position));	
+		**/
+		myTime=animation;
+		addListeners(myCells, root);
 	}
 	
 	/*
@@ -30,10 +41,9 @@ public class SegregationSimulation extends Simulation {
 	 * @see Simulation#setStateNameToColor()
 	 */
 	public void setStateNameToColor() {
-		stateNameToColor = new HashMap<String, Color>();
-		stateNameToColor.put(this.RED, Color.RED);
-		stateNameToColor.put(this.BLUE, Color.BLUE);
-		stateNameToColor.put(this.EMPTY, Color.WHITE);
+		List<String> stateNames = new ArrayList<String>(Arrays.asList(RED, BLUE, EMPTY));
+		List<Color> colorNames = new ArrayList<Color>(Arrays.asList(Color.RED, Color.BLUE, Color.WHITE));
+		setStateNameToColor(stateNames, colorNames);
 	}
 	
 	/*
@@ -73,6 +83,9 @@ public class SegregationSimulation extends Simulation {
 			return true;
 		}
 		return false;
+	}
+	public void setValue(double newThreshold){
+		threshold=newThreshold;
 	}
 	
 	/*
@@ -131,7 +144,64 @@ public class SegregationSimulation extends Simulation {
 		}
 		return nextCells;
 	}
-	
+	public int getNumberOfStates(){
+		return numberOfStates;
+	}
+	public HashMap<Color, Number> returnProportion(){
+		int countRed=0;
+		int countBlue=0;
+		int countEmpty=0;
+		int total=0;
+		HashMap<Color, Number> proportions=new HashMap<Color, Number>();
+		for(int i=0;i<myCells.length;i++){
+			for(int j=0;j<myCells[0].length;j++){
+				if(myCells[i][j].getState().equals(RED)){
+					countRed++;
+				}
+				else if(myCells[i][j].getState().equals(BLUE)){
+					countBlue++;
+				}
+				else if(myCells[i][j].getState().equals(EMPTY)){
+					countEmpty++;
+				}
+				total++;
+			}
+		}
+		double prop1=(double)countRed/total;
+		double prop2=(double)countBlue/total;
+		double prop3=(double)countEmpty/total;
+		proportions.put(Color.RED, prop1);
+		proportions.put(Color.BLUE, prop2);
+		proportions.put(Color.WHITE, prop3);
+		return proportions;
+	}
+	public String returnStyleSheet(){
+		return STYLESHEET;
+	}
+	public void addListeners(Cell[][]myCells, Group root){
+		for(int i=0;i<myCells.length;i++){
+			for(int j=0;j<myCells[0].length;j++){
+				Cell newCell;
+				newCell=myCells[i][j];
+				myCells[i][j].returnNode().addEventHandler(MouseEvent.MOUSE_CLICKED, e->changeState(root,newCell));
+			}
+		}
+	}
+	public void changeState(Group root, Cell myCell){
+		myTime.stop();
+		if(myCell.getState().equals(RED)){
+			myCell.setState(BLUE);
+			myCell.shape.setFill(Color.BLUE);
+		}
+		else if(myCell.getState().equals(BLUE)){
+			myCell.setState(EMPTY);
+			myCell.shape.setFill(Color.WHITE);
+		}
+		else if(myCell.getState().equals(EMPTY)){
+			myCell.setState(RED);
+			myCell.shape.setFill(Color.RED);
+		}
+	}
 	/*
 	 * updates both the states and color of all cells in the grid
 	 */

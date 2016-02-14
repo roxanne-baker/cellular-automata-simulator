@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <jaxbconfiguration>
+<parameters>
 	<name>Fire</name>
 	<width>9</width>
 	<height>9</height>
+</parameters>
+<stateMatrix>
 	<ProbabilityCatch>0.75</ProbabilityCatch>
 	<state>EMPTY</state>
 	<state>EMPTY</state>
@@ -85,4 +88,5 @@
 	<state>EMPTY</state>
 	<state>EMPTY</state>
 	<state>EMPTY</state>
+</stateMatrix>
 </jaxbconfiguration>

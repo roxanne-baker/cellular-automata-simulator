@@ -1,6 +1,8 @@
 //package cellsociety_team11;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import javax.xml.bind.JAXBException;
@@ -10,9 +12,14 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.event.*;
 
@@ -23,11 +30,17 @@ import javafx.event.*;
  *
  */
 public class UserInterface {
-    public static final int HSIZE=400;
-    public static final int VSIZE=500;
-    public static final double STARTING_RATE = 0.075;
-    private Scene myScene;
-    public static final int FRAMES_PER_SECOND = 60;
+
+	public static final int HSIZE=400;
+	public static final int VSIZE=750;
+	public static final int LSIZE=100;
+	public static final int SWIDTH=300;
+	public static final int GWIDTH=350;
+	public static final int VSLIDER=550;
+	public static final int GHEIGHT=100;
+	public static final double STARTING_RATE = 0.075;
+	private Scene myScene;
+	public static final int FRAMES_PER_SECOND = 60;
     private static final int MILLISECOND_DELAY = 1000 / FRAMES_PER_SECOND;
     private boolean active=true;
     private double currentRate=STARTING_RATE;
@@ -52,6 +65,13 @@ public class UserInterface {
     private EventHandler<MouseEvent> speedUpHandler;
     private EventHandler<MouseEvent> slowDownHandler;
     private EventHandler<MouseEvent> pauseHandler;
+    private LineChart<Number,Number> myChart;
+    private Slider mySlider;
+    private XYChart.Series [] series;
+    private int iteration=0;
+   
+    
+    
     
     private boolean firsttime=true;
     Grid myGrid;
@@ -64,6 +84,8 @@ public class UserInterface {
 	 * Creates a new user interface and initializes the running simulation
 	 */
 	public UserInterface(){
+
+		//RunningSimulation=new Simulation();
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + "Buttons");
 	}
 	/**
@@ -83,14 +105,12 @@ public class UserInterface {
 	 * @param width number of columns in the grid
 	 * @param states ArrayList with the states of the cells in the grid
 	 */
-	public void setGrid(Group root, int height, int width, List<String> states) {
-	    System.out.println(height);
-	    System.out.println(width);
 
+	public void setGrid(Group root, int height, int width, List<String> cellStates) {
 		Grid grid = new SquareGrid(root, height, width);
 		for(int i=0; i<height; i++) {
 			for (int j=0; j<width; j++) {
-				grid.myCells[i][j].setState(states.get(i*width+j));
+				grid.myCells[i][j].setState(cellStates.get(i*width+j));
 			}
 		}
 		myGrid = grid;
@@ -127,23 +147,60 @@ public class UserInterface {
 
 		setGrid(root, height, width, states);
 		Simulation newSimulation;
+		newSimulation = getNewSimulation(myGrid, root, jxb, name);
+		
+		RunningSimulation=newSimulation;
+		setLineChart(root);
+		setSlider(root, name);
+	}
+	
+	
+	public Simulation getNewSimulation(Grid myGrid, Group root, Jaxbconfiguration jxb, String name){
+		Simulation newSimulation;
+		Border myBorder = new ToroidalBorder();
 		if(name.equals(myPossibilities[0])){
-			newSimulation=new GameOfLifeSimulation(myGrid);
+			newSimulation=new GameOfLifeSimulation(myGrid,root, animation, myBorder);
 		}
 		else if (name.equals(myPossibilities[1])){
-			newSimulation=new SegregationSimulation(myGrid, jxb.getParameters().getThreshold());
+			newSimulation=new SegregationSimulation(myGrid, jxb.getParameters().getThreshold(),root, animation, myBorder);
 		}
 		
 		else if(name.equals(myPossibilities[2])){
 		    newSimulation=new PredatorPreySimulation(myGrid, jxb.getParameters().getPredatorStarve(), jxb.getParameters().getPredatorBreed(),
-		                                             jxb.getParameters().getPreyBreed());
-		                                             
+		                                             jxb.getParameters().getPreyBreed(),root, animation, myBorder);		                                             
 		}
 		
 		else{
-			newSimulation=new FireSimulation(myGrid, jxb.getParameters().getProbabilityCatch());			
+			newSimulation=new FireSimulation(myGrid, jxb.getParameters().getProbabilityCatch(),root, animation, myBorder);			
 		}
-		RunningSimulation=newSimulation;
+		return newSimulation;
+	}
+	public void setSlider(Group root, String name){
+		Slider slider;
+		if (name.equals(myPossibilities[1]) || name.equals(myPossibilities[3])) {
+			slider = new Slider(0, 1, 0.3);
+			mySlider=slider;
+			slider.setMajorTickUnit(0.25f);
+			slider.setBlockIncrement(0.1f);
+			addSliderHandler(mySlider, root);
+		}
+	}
+	public void addSliderHandler(Slider slider, Group root){
+		
+		slider.setShowTickMarks(true);
+		slider.setShowTickLabels(true);
+		slider.setPrefWidth(SWIDTH);
+		root.getChildren().add(slider);
+		slider.setTranslateY(VSLIDER);
+		slider.setTranslateX(HSIZE/2-SWIDTH/2);
+			EventHandler<MouseEvent>sliderHandler=new EventHandler<MouseEvent>(){
+				public void handle(MouseEvent event) {
+					while(slider.isValueChanging()==true){}
+						RunningSimulation.setValue(slider.getValue());
+						System.out.println(slider.getValue());
+				}
+			};
+		slider.addEventHandler(MouseEvent.MOUSE_CLICKED, sliderHandler);
 	}
 	/**
 	 * Removes the cell nodes from the scene
@@ -155,6 +212,9 @@ public class UserInterface {
 				root.getChildren().remove(myGrid.myCells[i][j].shape);
 			}
 		}
+		root.getChildren().remove(myChart);
+		root.getChildren().remove(mySlider);
+		myScene.getStylesheets().remove(DEFAULT_RESOURCE_PACKAGE + RunningSimulation.returnStyleSheet());
 	}
 	/**
 	 * Creates a Button given its name and initializes an array with all the Buttons
@@ -279,6 +339,7 @@ public class UserInterface {
         	myFrame = new KeyFrame(Duration.millis(MILLISECOND_DELAY),new EventHandler<ActionEvent>(){
         		public void handle(ActionEvent newEvent){
         			RunningSimulation.update();
+        			updateChart(RunningSimulation);
         		}
         	});
         	animation.setCycleCount(Timeline.INDEFINITE);
@@ -297,6 +358,7 @@ public class UserInterface {
 				if(active){
 					animation.play();
 					RunningSimulation.update();
+					updateChart(RunningSimulation);
 					animation.stop();
 				}
 			}
@@ -368,6 +430,41 @@ public class UserInterface {
 		SpeedUp.removeEventHandler(MouseEvent.MOUSE_CLICKED, speedUpHandler);
 		SlowDown.removeEventHandler(MouseEvent.MOUSE_CLICKED, slowDownHandler);
 		Forward.removeEventHandler(MouseEvent.MOUSE_CLICKED,forwardHandler);
+	}
+	public void setLineChart(Group root){
+		final NumberAxis xAxis = new NumberAxis();
+        final NumberAxis yAxis = new NumberAxis();
+        xAxis.setForceZeroInRange(true);
+        iteration=0;
+		myChart=new LineChart<Number, Number>(xAxis,yAxis);
+		myChart.setCreateSymbols(false);
+		int j=RunningSimulation.getNumberOfStates();
+		series = new XYChart.Series[j];
+		int i=0;
+		HashMap<Color, Number> newReturn=new HashMap<Color, Number>();
+		newReturn=RunningSimulation.returnProportion();
+		myScene.getStylesheets().add(DEFAULT_RESOURCE_PACKAGE + RunningSimulation.returnStyleSheet());
+		for(Color s:newReturn.keySet()){
+			series[i]=new XYChart.Series();
+			myChart.getData().add(series[i]);
+			i++;
+		}
+		myChart.setTranslateY(HSIZE);
+		myChart.setPrefHeight(GHEIGHT);
+		myChart.setPrefWidth(7*HSIZE/8);
+		root.getChildren().add(myChart);
+	}
+	public void updateChart(Simulation newS){
+		int j=RunningSimulation.getNumberOfStates();
+		HashMap<Color,Number>newProportions=new HashMap<Color,Number>();
+		newProportions=RunningSimulation.returnProportion();
+		int i=0;
+		for(Color s:newProportions.keySet()){
+			double k=(double)newProportions.get(s);
+			series[i].getData().add(new XYChart.Data(iteration,k));
+			i++;
+			iteration++;
+		}
 	}
 }
 	
