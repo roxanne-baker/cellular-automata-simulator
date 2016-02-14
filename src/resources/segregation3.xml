@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<simulation>
+<jaxbconfiguration>
+<parameters>
 	<name>Segregation</name>
 	<width>6</width>
 	<height>5</height>
 	<Threshold>0.4</Threshold>
+</parameters>
+<stateMatrix>
 	<state>red</state>
 	<state>red</state>
 	<state>empty</state>
@@ -34,4 +37,5 @@
 	<state>blue</state>
 	<state>red</state>
 	<state>blue</state>
-</simulation>
+</stateMatrix>
+</jaxbconfiguration>

@@ -5,6 +5,8 @@
 	<width>20</width>
 	<height>20</height>
 	<ProbabilityCatch>0.3</ProbabilityCatch>
+</parameters>
+<stateMatrix>
 	<state>TREE</state>
 	<state>TREE</state>
 	<state>TREE</state>
@@ -445,5 +447,5 @@
 	<state>TREE</state>
 	<state>TREE</state>
 	<state>TREE</state>
-
+</stateMatrix>
 </jaxbconfiguration>

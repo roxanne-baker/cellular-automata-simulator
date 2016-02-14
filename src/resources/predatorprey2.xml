@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<simulation>
+<jaxbconfiguration>
+<parameters>
 	<name>PredatorPrey</name>
 	<width>5</width>
 	<height>5</height>
 	<PredatorStarve>1</PredatorStarve>
 	<PredatorBreed>1</PredatorBreed>
 	<PreyBreed>1</PreyBreed>
+</parameters>
+<stateMatrix>
 	<state>predator</state>
 	<state>prey</state>
 	<state>empty</state>
@@ -31,4 +34,5 @@
 	<state>prey</state>
 	<state>empty</state>
 	<state>empty</state>
-</simulation>
+</stateMatrix>
+</jaxbconfiguration>
