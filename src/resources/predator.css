@@ -12,7 +12,7 @@
 .chart-plot-background {
     -fx-background-color: #bfbfbf;
 }
-.default-color0.chart-series-line { -fx-stroke: #FFFFFF; }
+.default-color0.chart-series-line { -fx-stroke: #0000FF; }
 .default-color1.chart-series-line { -fx-stroke: #FFA500; }
 .default-color2.chart-series-line { -fx-stroke: #696969; }
 
