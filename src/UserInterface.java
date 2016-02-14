@@ -31,6 +31,7 @@ import javafx.event.*;
  *
  */
 public class UserInterface {
+
     public static final int HSIZE=400;
     public static final int VSIZE=750;
     public static final int LSIZE=100;
@@ -38,6 +39,7 @@ public class UserInterface {
     public static final int GWIDTH=350;
     public static final int VSLIDER=550;
     public static final int GHEIGHT=100;
+    public static final int SAVEW=140;
     public static final double STARTING_RATE = 0.075;
     public static final int FRAMES_PER_SECOND = 60;
     private static final int MILLISECOND_DELAY = 1000 / FRAMES_PER_SECOND;
@@ -62,6 +64,7 @@ public class UserInterface {
     private Button SlowDown;
     private Button Stop;
     private Button Pause;
+    private Button Save;
     private EventHandler<MouseEvent> forwardHandler;
     private EventHandler<MouseEvent> stopHandler;
     private EventHandler<MouseEvent> resumeHandler;
@@ -74,6 +77,8 @@ public class UserInterface {
     private XYChart.Series [] series;
     private int iteration=0;
     private Jaxbconfiguration jxb;
+
+    private JAXBConfig newConfiguration;
     
    
     
@@ -144,7 +149,9 @@ public class UserInterface {
 		animation.setRate(STARTING_RATE);
 		active=true;
 		String myFile=DEFAULT_DIRECTORY+myFiles.getValue();
-		JAXBConfig newConfiguration = new JAXBConfig(myFile);
+
+		newConfiguration = new JAXBConfig(myFile);
+		
         try {
             jxb = newConfiguration.unmarshal(Class.forName("jaxbconfiguration.Jaxbconfiguration"), new InputSource(myFile));
         }
@@ -179,22 +186,27 @@ public class UserInterface {
 		Simulation newSimulation;
 		Border myBorder = new ToroidalBorder();
 		if(name.equals(myPossibilities[0])){
-			newSimulation=new GameOfLifeSimulation(myGrid,root, animation, myBorder);
+			newSimulation=new GameOfLifeSimulation(myGrid,root, animation, myBorder, myPossibilities[0]);
 		}
 		else if (name.equals(myPossibilities[1])){
-			newSimulation=new SegregationSimulation(myGrid, jxb.getParameters().getThreshold(),root, animation, myBorder);
+			newSimulation=new SegregationSimulation(myGrid, jxb.getParameters().getThreshold(),root, animation, myBorder, myPossibilities[1]);
 		}
 		
 		else if(name.equals(myPossibilities[2])){
 		    newSimulation=new PredatorPreySimulation(myGrid, jxb.getParameters().getPredatorStarve(), jxb.getParameters().getPredatorBreed(),
-		                                             jxb.getParameters().getPreyBreed(),root, animation, myBorder);		                                             
+		                                             jxb.getParameters().getPreyBreed(),root, animation, myBorder, myPossibilities[2]);		                                             
 		}
 		
 		else{
-			newSimulation=new FireSimulation(myGrid, jxb.getParameters().getProbabilityCatch(),root, animation, myBorder);			
+			newSimulation=new FireSimulation(myGrid, jxb.getParameters().getProbabilityCatch(),root, animation, myBorder, myPossibilities[3]);			
 		}
 		return newSimulation;
 	}
+	/**
+	 * Sets Sliders for Segregation and Fire Simulations
+	 * @param root
+	 * @param name
+	 */
 	public void setSlider(Group root, String name){
 		Slider slider;
 		if (name.equals(myPossibilities[1]) || name.equals(myPossibilities[3])) {
@@ -207,6 +219,10 @@ public class UserInterface {
 			addSliderHandler(root);
 		}
 	}
+	/**
+	 * Adds slider handler
+	 * @param root
+	 */
 	public void addSliderHandler(Group root){
 			mySlider.setShowTickMarks(true);
 			mySlider.setShowTickLabels(true);
@@ -294,8 +310,13 @@ public class UserInterface {
 		
 		myFiles.getItems().addAll("gameoflife.xml", "gameoflife2.xml", "gameoflife3.xml", "segregation.xml", "segregation2.xml", "cornerFire.xml", "centerFire.xml", 
 		                          "patchyFire.xml", "segregation3.xml", "predatorprey.xml", "predatorprey2.xml", "predatorprey3.xml", "gameoflife_triangle.xml");
+
 		root.getChildren().add(myFiles);
 		loadHandler(root);
+		Save = new Button(myResources.getString("SaveButton"));
+		Save.setTranslateX(SAVEW);
+		root.getChildren().add(Save);
+		saveHandler(root);
 		
 	}
 	/**
@@ -316,6 +337,47 @@ public class UserInterface {
     			firsttime=false;
     			setNewSimulation(root);
     			setNewHandlers(root);
+    		}
+    	});
+	}
+	/**
+	 * Creates a Save Button to save a file into the current saved_result file;
+	 * @param root
+	 */
+	private void saveHandler(Group root) {
+		Save.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+    		@Override
+			public void handle(MouseEvent event) {
+    			String name=RunningSimulation.returnName();
+    			jxb.getParameters().setName(name);
+    			double [] mysize=RunningSimulation.returnParameters();
+				jxb.getParameters().setHeight((int)mysize[0]);
+    			jxb.getParameters().setWidth((int)mysize[1]);
+    			if(name.equals(myPossibilities[1])){
+    				jxb.getParameters().setThreshold(mysize[2]);
+    			}
+    			else if(name.equals(myPossibilities[2])){
+    				jxb.getParameters().setPreyBreed((int)mysize[2]);
+    				jxb.getParameters().setPredatorBreed((int)mysize[3]);
+    				jxb.getParameters().setPredatorStarve((int)mysize[4]);
+    			}
+    			if(name.equals(myPossibilities[1])){
+    				jxb.getParameters().setProbabilityCatch(mysize[2]);
+    			}
+    			jxb.getStateMatrix().getState().clear();
+    			System.out.println(RunningSimulation.returnStates().toString());
+    			jxb.getStateMatrix().getState().addAll(RunningSimulation.returnStates());
+    			try {
+					newConfiguration.marshal(Class.forName("jaxbconfiguration.Jaxbconfiguration"), jxb);
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JAXBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+    			
     		}
     	});
 	}
@@ -455,6 +517,10 @@ public class UserInterface {
 		SlowDown.removeEventHandler(MouseEvent.MOUSE_CLICKED, slowDownHandler);
 		Forward.removeEventHandler(MouseEvent.MOUSE_CLICKED,forwardHandler);
 	}
+	/**
+	 * Sets up the graph to display the proportion of different types of cells
+	 * @param root
+	 */
 	public void setLineChart(Group root){
 		final NumberAxis xAxis = new NumberAxis();
         final NumberAxis yAxis = new NumberAxis();
@@ -478,7 +544,11 @@ public class UserInterface {
 		myChart.setPrefWidth(7*HSIZE/8);
 		root.getChildren().add(myChart);
 	}
-	
+
+	/**
+	 * Updates the chart with new data when the next iteration comes
+	 * @param newS
+	 */
 	public void updateChart(Simulation newS){
 		int j=RunningSimulation.getNumberOfStates();
 		HashMap<Color,Number>newProportions=new HashMap<Color,Number>();

@@ -28,7 +28,7 @@ public class PredatorPreySimulation extends Simulation {
 	private Timeline myTime;
 	private static final String STYLESHEET= "predator.css";
 	
-	public PredatorPreySimulation(Grid newGrid, int predatorStarve, int predatorBreed, int preyBreed, Group root, Timeline animation, Border border){
+	public PredatorPreySimulation(Grid newGrid, int predatorStarve, int predatorBreed, int preyBreed, Group root, Timeline animation, Border border, String myName){
 		setMyCells(newGrid.myCells);
 		setCellColor(myCells);
 		turnsUntilPreyBreeds = preyBreed;
@@ -37,6 +37,7 @@ public class PredatorPreySimulation extends Simulation {
 		border.setGridAndBorders(myCells, false);
 		//newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
 		myTime=animation;
+		name=myName;
 		addListeners(myCells,root);
 	}
 	
@@ -326,5 +327,14 @@ public class PredatorPreySimulation extends Simulation {
 			myCell.setState(PREY);
 			myCell.shape.setFill(Color.ORANGE);
 		}
+	}
+	public double[] returnParameters(){
+		double[]param =new double[5];
+		param[0]=myCells.length;
+		param[1]=myCells[0].length;
+		param[2]= turnsUntilPreyBreeds;
+		param[3]= turnsUntilPredatorBreeds;
+		param[4]= turnsUntilPredatorStarves;
+		return param;
 	}
 }

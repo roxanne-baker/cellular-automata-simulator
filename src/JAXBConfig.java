@@ -51,7 +51,7 @@ public class JAXBConfig {
     public void marshal(Class<?> docClass, Jaxbconfiguration jax) throws JAXBException{
         Marshaller m = createJAXBContext(docClass).createMarshaller();
         try {
-            m.marshal(jax, new FileOutputStream("src/saves/test_result.xml"));
+            m.marshal(jax, new FileOutputStream("src/resources/saved_result.xml"));
         }
         catch (FileNotFoundException e) {
             e.printStackTrace(); //bad!

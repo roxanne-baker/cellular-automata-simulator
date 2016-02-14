@@ -24,8 +24,8 @@ public class GameOfLifeSimulation extends Simulation {
 	 * 
 	 * @param newGrid
 	 */
-	public GameOfLifeSimulation(Grid newGrid, Group root, Timeline animation, Border border){
-		super(newGrid);
+	public GameOfLifeSimulation(Grid newGrid, Group root, Timeline animation, Border border, String myName){
+		super(newGrid, myName);
 		/**
 		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
 		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addDiagonalNeighbors(grid, position));
@@ -169,6 +169,13 @@ public class GameOfLifeSimulation extends Simulation {
 			myCell.shape.setFill(Color.WHITE);
 		}
 	}
+	public double[] returnParameters(){
+		double[]param =new double[2];
+		param[0]=myCells.length;
+		param[1]=myCells[0].length;
+		return param;
+	}
+	
 	/**
 	 * Calls methods to update the cells and set their colors
 	 */
