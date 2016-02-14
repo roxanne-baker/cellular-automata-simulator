@@ -270,7 +270,15 @@ public class PredatorPreySimulation extends Simulation {
 	public String returnStyleSheet(){
 		return STYLESHEET;
 	}
-	
+	public void setPreyBreeds(int number){
+		turnsUntilPreyBreeds=number;
+	}
+	public void setPredatorBreeds(int number){
+		turnsUntilPredatorBreeds=number;
+	}
+	public void setPredatorStarves(int number){
+		turnsUntilPredatorStarves=number;
+	}
 	public HashMap<Color, Number> returnProportion(){
 		int countPredator=0;
 		int countPrey=0;

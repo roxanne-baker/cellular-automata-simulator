@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<simulation>
+<jaxbconfiguration>
+<parameters>
 	<name>Fire</name>
 	<width>10</width>
 	<height>8</height>
 	<ProbabilityCatch>0.6</ProbabilityCatch>
+</parameters>
+<stateMatrix>
 	<state>TREE</state>
 	<state>TREE</state>
 	<state>TREE</state>
@@ -94,4 +97,5 @@
 	<state>TREE</state>
 	<state>TREE</state>
 	<state>TREE</state>
-</simulation>
+</stateMatrix>
+</jaxbconfiguration>

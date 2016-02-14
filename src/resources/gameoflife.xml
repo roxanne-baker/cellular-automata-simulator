@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<simulation>
+<jaxbconfiguration>
+<parameters>
 	<name>GameOfLife</name>
 	<width>6</width>
 	<height>6</height>
+</parameters>
+<stateMatrix>
 	<state>dead</state>
 	<state>dead</state>
 	<state>dead</state>
@@ -39,5 +42,6 @@
 	<state>dead</state>
 	<state>dead</state>
 	<state>dead</state>
-</simulation>
+</stateMatrix>
+</jaxbconfiguration>
 

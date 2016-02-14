@@ -81,17 +81,12 @@ public class GameOfLifeSimulation extends Simulation {
 		}
 		return newState;
 	}
-	
-	private String[][] getInitialStates() {
-		String[][] newState=new String[myCells.length][myCells[0].length];
-		for(int i=0; i<myCells.length; i++) {
-			for (int j=0; j<myCells[0].length; j++) {
-				newState[i][j]=myCells[i][j].getState();
-			}
-		}
-		return newState;
-	}
-	
+
+	/**
+	 * Updates the cells with their new states
+	 * @param newState Double array of strings holding the new states of the cells
+	 */
+
 	public void setNextStates(String[][] newState) {
 		for(int i=0;i<myCells.length;i++){
 			for(int j=0;j<myCells[0].length;j++){
