@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jaxbconfiguration>
+<parameters>
+	<shape>triangle</shape>
+	<name>PredatorPrey</name>
+	<width>4</width>
+	<height>4</height>
+	<PredatorStarve>1</PredatorStarve>
+	<PredatorBreed>1</PredatorBreed>
+	<PreyBreed>1</PreyBreed>
+</parameters>
+<stateMatrix>
+	<state>predator</state>
+	<state>prey</state>
+	<state>empty</state>
+	<state>predator</state>
+	<state>empty</state>
+	<state>prey</state>
+	<state>prey</state>
+	<state>prey</state>
+	<state>empty</state>
+	<state>prey</state>
+	<state>prey</state>
+	<state>prey</state>
+	<state>prey</state>
+	<state>prey</state>
+	<state>prey</state>
+	<state>prey</state>
+</stateMatrix>
+</jaxbconfiguration>
