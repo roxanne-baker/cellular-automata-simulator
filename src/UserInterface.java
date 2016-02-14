@@ -120,8 +120,8 @@ public class UserInterface {
 	 */
 	public void setGrid(Group root, int height, int width, List<String> cellStates) {
 	    Grid grid;
-	    if(jxb.getParameters().getShape().equals(TRIANGLE)){
-	        grid = new TriangleGrid(root, height, width);
+	    if(jxb.getParameters().getShape() == null){
+	        grid = new SquareGrid(root, height, width);
 	    }
 	    
 	    else if(jxb.getParameters().getShape().equals(HEXAGON)){
@@ -129,7 +129,7 @@ public class UserInterface {
 	    }
 	
 	    else{
-	        grid = new SquareGrid(root, height, width);
+	        grid = new TriangleGrid(root, height, width);
 	    }
 
 	    for(int i=0; i<height; i++) {
