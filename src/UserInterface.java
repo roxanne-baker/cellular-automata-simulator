@@ -39,7 +39,7 @@ public class UserInterface {
     public static final int GWIDTH=350;
     public static final int VSLIDER=550;
     public static final int GHEIGHT=100;
-    public static final int SAVEW=140;
+    public static final int SAVEW=190;
     public static final double STARTING_RATE = 0.075;
     public static final int FRAMES_PER_SECOND = 60;
     private static final int MILLISECOND_DELAY = 1000 / FRAMES_PER_SECOND;
@@ -309,7 +309,7 @@ public class UserInterface {
 		
 		
 		myFiles.getItems().addAll("gameoflife.xml", "gameoflife2.xml", "gameoflife3.xml", "segregation.xml", "segregation2.xml", "cornerFire.xml", "centerFire.xml", 
-		                          "patchyFire.xml", "segregation3.xml", "predatorprey.xml", "predatorprey2.xml", "predatorprey3.xml", "gameoflife_triangle.xml");
+		                          "patchyFire.xml", "segregation3.xml", "predatorprey.xml", "predatorprey2.xml", "predatorprey3.xml", "gameoflife_triangle.xml","predatorprey_triangle.xml", "segregation_hexagon.xml", "saved_result.xml");
 
 		root.getChildren().add(myFiles);
 		loadHandler(root);
