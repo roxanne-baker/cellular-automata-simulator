@@ -36,6 +36,7 @@ public class UserInterface {
 	public static final int GWIDTH=350;
 	public static final int VSLIDER=550;
 	public static final int GHEIGHT=100;
+	public static final int SAVEW=140;
 	public static final double STARTING_RATE = 0.075;
 	private Scene myScene;
 	public static final int FRAMES_PER_SECOND = 60;
@@ -69,6 +70,7 @@ public class UserInterface {
     private XYChart.Series [] series;
     private int iteration=0;
     private Jaxbconfiguration jxb;
+    private JAXBConfig newConfiguration;
     
    
     
@@ -125,7 +127,7 @@ public class UserInterface {
 		animation.setRate(STARTING_RATE);
 		active=true;
 		String myFile=DEFAULT_DIRECTORY+myFiles.getValue();
-		JAXBConfig newConfiguration = new JAXBConfig(myFile);
+		newConfiguration = new JAXBConfig(myFile);
 		
         try {
             jxb = newConfiguration.unmarshal(Class.forName("jaxbconfiguration.Jaxbconfiguration"), new InputSource(myFile));
@@ -178,6 +180,11 @@ public class UserInterface {
 		}
 		return newSimulation;
 	}
+	/**
+	 * Sets Sliders for Segregation and Fire Simulations
+	 * @param root
+	 * @param name
+	 */
 	public void setSlider(Group root, String name){
 		Slider slider;
 		if (name.equals(myPossibilities[1]) || name.equals(myPossibilities[3])) {
@@ -190,6 +197,10 @@ public class UserInterface {
 			addSliderHandler(root);
 		}
 	}
+	/**
+	 * Adds slider handler
+	 * @param root
+	 */
 	public void addSliderHandler(Group root){
 			mySlider.setShowTickMarks(true);
 			mySlider.setShowTickLabels(true);
@@ -274,11 +285,11 @@ public class UserInterface {
 		placeButtons(root);
 		myFiles=new ComboBox<String>();
 		myFiles.getItems().addAll("gameoflife.xml", "gameoflife2.xml", "gameoflife3.xml", "segregation.xml", "segregation2.xml", "cornerFire.xml", "centerFire.xml", 
-		                          "patchyFire.xml", "segregation3.xml", "predatorprey.xml", "predatorprey2.xml", "predatorprey3.xml");
+		                          "patchyFire.xml", "segregation3.xml", "predatorprey.xml", "predatorprey2.xml", "predatorprey3.xml","saved_result.xml");
 		root.getChildren().add(myFiles);
 		loadHandler(root);
 		Save = new Button(myResources.getString("SaveButton"));
-		Save.setTranslateX(140);
+		Save.setTranslateX(SAVEW);
 		root.getChildren().add(Save);
 		saveHandler(root);
 		
@@ -304,6 +315,10 @@ public class UserInterface {
     		}
     	});
 	}
+	/**
+	 * Creates a Save Button to save a file into the current saved_result file;
+	 * @param root
+	 */
 	private void saveHandler(Group root) {
 		Save.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
     		@Override
@@ -325,7 +340,17 @@ public class UserInterface {
     				jxb.getParameters().setProbabilityCatch(mysize[2]);
     			}
     			jxb.getStateMatrix().getState().clear();
+    			System.out.println(RunningSimulation.returnStates().toString());
     			jxb.getStateMatrix().getState().addAll(RunningSimulation.returnStates());
+    			try {
+					newConfiguration.marshal(Class.forName("jaxbconfiguration.Jaxbconfiguration"), jxb);
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JAXBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
     			
     		}
@@ -466,6 +491,10 @@ public class UserInterface {
 		SlowDown.removeEventHandler(MouseEvent.MOUSE_CLICKED, slowDownHandler);
 		Forward.removeEventHandler(MouseEvent.MOUSE_CLICKED,forwardHandler);
 	}
+	/**
+	 * Sets up the graph to display the proportion of different types of cells
+	 * @param root
+	 */
 	public void setLineChart(Group root){
 		final NumberAxis xAxis = new NumberAxis();
         final NumberAxis yAxis = new NumberAxis();
@@ -489,6 +518,10 @@ public class UserInterface {
 		myChart.setPrefWidth(7*HSIZE/8);
 		root.getChildren().add(myChart);
 	}
+	/**
+	 * Updates the chart with new data when the next iteration comes
+	 * @param newS
+	 */
 	public void updateChart(Simulation newS){
 		int j=RunningSimulation.getNumberOfStates();
 		HashMap<Color,Number>newProportions=new HashMap<Color,Number>();
