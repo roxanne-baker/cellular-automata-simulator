@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jaxbconfiguration>
+<parameters>
+	<shape>triangle</shape>
+	<name>GameOfLife</name>
+	<width>6</width>
+	<height>6</height>
+</parameters>
+<stateMatrix>
+	<state>dead</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>alive</state>
+	<state>alive</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>alive</state>
+	<state>alive</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>alive</state>
+	<state>alive</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>alive</state>
+	<state>alive</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>dead</state>
+	<state>dead</state>
+</stateMatrix>
+</jaxbconfiguration>
+
