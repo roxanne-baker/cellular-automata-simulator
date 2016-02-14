@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:complexType name="jaxbconfiguration">
+	<xs:all>
+		<xs:element name="width" type="xs:int"/>
+		<xs:element name="heigth" type="xs:int"/>
+		<xs:element name="predatorStarve" type="xs:int"/>
+		<xs:element name="predatorBreed" type="xs:int"/>
+		<xs:element name="preyBreed" type="xs:int"/>
+		<xs:element name="probabilityCatch" type="xs:double"/>
+		<xs:element name="threshold" type="xs:double"/>
+	</xs:all>
+	<xs:sequence>
+		<xs:element name="state" type="xs:string"/>
+	</xs:sequence>
+</xs:complexType>
+</xs:schema>
+
+	
+
+

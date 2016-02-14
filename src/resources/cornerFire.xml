@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<simulation>
+<jaxbconfiguration>
+<parameters>
 	<name>Fire</name>
 	<width>20</width>
 	<height>20</height>
@@ -445,4 +446,4 @@
 	<state>TREE</state>
 	<state>TREE</state>
 
-</simulation>
+</jaxbconfiguration>

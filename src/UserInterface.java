@@ -1,10 +1,13 @@
 //package cellsociety_team11;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
-
+import javax.xml.bind.JAXBException;
+import org.xml.sax.InputSource;
+import jaxbconfiguration.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Group;
@@ -19,13 +22,14 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.event.*;
-import jaxbconfiguration.*;
+
 /**
  * Sets the user interface
  * @author Zdravko Paskalev
  *
  */
 public class UserInterface {
+
 	public static final int HSIZE=400;
 	public static final int VSIZE=750;
 	public static final int LSIZE=100;
@@ -71,19 +75,16 @@ public class UserInterface {
     
     private boolean firsttime=true;
     Grid myGrid;
-	Timeline animation = new Timeline();
-	Simulation newSimulation= null;
-	KeyFrame myFrame;
-	private String[] myPossibilities = { 
-			"GameOfLife",
-	        "Segregation",
-	        "PredatorPrey",
-	        "Fire"
-	    };
+    Timeline animation = new Timeline();
+    Simulation newSimulation= null;
+    KeyFrame myFrame;
+    private String[] myPossibilities = {"GameOfLife", "Segregation", "PredatorPrey", "Fire"};
+    
 	/**
 	 * Creates a new user interface and initializes the running simulation
 	 */
 	public UserInterface(){
+
 		//RunningSimulation=new Simulation();
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + "Buttons");
 	}
@@ -92,7 +93,7 @@ public class UserInterface {
 	 * @return
 	 */
 	public Scene setScene(){
-		Group root=new Group();
+	Group root=new Group();
     	myScene=new Scene(root, HSIZE, VSIZE);
     	setButtons(root);
     	return myScene;
@@ -102,8 +103,9 @@ public class UserInterface {
 	 * @param root Group to hold the grid cells
 	 * @param height number of rows in the grid
 	 * @param width number of columns in the grid
-	 * @param cellStates ArrayList with the states of the cells in the grid
+	 * @param states ArrayList with the states of the cells in the grid
 	 */
+
 	public void setGrid(Group root, int height, int width, List<String> cellStates) {
 		Grid grid = new SquareGrid(root, height, width);
 		for(int i=0; i<height; i++) {
@@ -122,41 +124,55 @@ public class UserInterface {
 		animation.setRate(STARTING_RATE);
 		active=true;
 		String myFile=DEFAULT_DIRECTORY+myFiles.getValue();
-		JAXBConfig newConfiguration=new JAXBConfig(myFile);
+		JAXBConfig newConfiguration = new JAXBConfig(myFile);
 		Jaxbconfiguration jxb = null;
-		int width=newConfiguration.getWidth();
-		int height=newConfiguration.getHeight();
-		ArrayList<String>states=new ArrayList<String>();
-		states=newConfiguration.getStates();
+        try {
+            jxb = newConfiguration.unmarshal(Class.forName("jaxbconfiguration.Jaxbconfiguration"), new InputSource(myFile));
+        }
+        catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch (JAXBException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+            System.out.println(myFile.toString());
+		int width = jxb.getParameters().getWidth();
+		int height= jxb.getParameters().getHeight();
+		List<String> states = new ArrayList<String>();
+		states = jxb.getStateMatrix().getState();
+
 		
-		String name=newConfiguration.getName();
+		String name=jxb.getParameters().getName();
 
 		setGrid(root, height, width, states);
 		Simulation newSimulation;
-		newSimulation=getNewSimulation(myGrid,root,newConfiguration, name);
+		newSimulation = getNewSimulation(myGrid, root, jxb, name);
 		
 		RunningSimulation=newSimulation;
 		setLineChart(root);
 		setSlider(root, name);
 	}
-	public Simulation getNewSimulation(Grid myGrid, Group root, Configuration newConfiguration, String name){
+	
+	
+	public Simulation getNewSimulation(Grid myGrid, Group root, Jaxbconfiguration jxb, String name){
 		Simulation newSimulation;
 		Border myBorder = new ToroidalBorder();
 		if(name.equals(myPossibilities[0])){
 			newSimulation=new GameOfLifeSimulation(myGrid,root, animation, myBorder);
 		}
 		else if (name.equals(myPossibilities[1])){
-			newSimulation=new SegregationSimulation(myGrid, newConfiguration.getThreshold(),root, animation, myBorder);
+			newSimulation=new SegregationSimulation(myGrid, jxb.getParameters().getThreshold(),root, animation, myBorder);
 		}
 		
 		else if(name.equals(myPossibilities[2])){
-		    newSimulation=new PredatorPreySimulation(myGrid, newConfiguration.getPredatorStarve(), newConfiguration.getPredatorBreed(),
-		                                             newConfiguration.getPreyBreed(),root, animation, myBorder);
-		                                             
+		    newSimulation=new PredatorPreySimulation(myGrid, jxb.getParameters().getPredatorStarve(), jxb.getParameters().getPredatorBreed(),
+		                                             jxb.getParameters().getPreyBreed(),root, animation, myBorder);		                                             
 		}
 		
 		else{
-			newSimulation=new FireSimulation(myGrid, newConfiguration.getProbabilityCatch(),root, animation, myBorder);			
+			newSimulation=new FireSimulation(myGrid, jxb.getParameters().getProbabilityCatch(),root, animation, myBorder);			
 		}
 		return newSimulation;
 	}
@@ -451,8 +467,6 @@ public class UserInterface {
 			i++;
 			iteration++;
 		}
-		
-		
 	}
 }
 	

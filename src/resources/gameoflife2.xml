@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<simulation>
+<jaxbconfiguration>
 	<name>GameOfLife</name>
 	<width>11</width>
 	<height>18</height>
@@ -201,6 +201,4 @@
 	<state>dead</state>
 	<state>dead</state>
 	<state>dead</state>
-
-
-</simulation>
+</jaxbconfiguration>
