@@ -38,6 +38,9 @@ public abstract class Simulation {
 	public void update(){};
 	
 	public void setValue(double newd){};
+	public void setPreyBreeds(int number){};
+	public void setPredatorBreeds(int number){};
+	public void setPredatorStarves(int number){};
 	/*
 	 * updates the state of all cells
 	 */

@@ -19,6 +19,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.event.*;
+import jaxbconfiguration.*;
 /**
  * Sets the user interface
  * @author Zdravko Paskalev
@@ -63,6 +64,7 @@ public class UserInterface {
     private Slider mySlider;
     private XYChart.Series [] series;
     private int iteration=0;
+    
    
     
     
@@ -120,7 +122,8 @@ public class UserInterface {
 		animation.setRate(STARTING_RATE);
 		active=true;
 		String myFile=DEFAULT_DIRECTORY+myFiles.getValue();
-		Configuration newConfiguration=new Configuration(myFile);
+		JAXBConfig newConfiguration=new JAXBConfig(myFile);
+		Jaxbconfiguration jxb = null;
 		int width=newConfiguration.getWidth();
 		int height=newConfiguration.getHeight();
 		ArrayList<String>states=new ArrayList<String>();
@@ -160,30 +163,31 @@ public class UserInterface {
 	public void setSlider(Group root, String name){
 		Slider slider;
 		if (name.equals(myPossibilities[1]) || name.equals(myPossibilities[3])) {
+			Slider[]slides= new Slider[1];
 			slider = new Slider(0, 1, 0.3);
-			mySlider=slider;
 			slider.setMajorTickUnit(0.25f);
 			slider.setBlockIncrement(0.1f);
-			addSliderHandler(mySlider, root);
+			mySlider=slider;
+			slides[0]=slider;
+			addSliderHandler(root);
 		}
 	}
-	public void addSliderHandler(Slider slider, Group root){
-		
-		slider.setShowTickMarks(true);
-		slider.setShowTickLabels(true);
-		slider.setPrefWidth(SWIDTH);
-		root.getChildren().add(slider);
-		slider.setTranslateY(VSLIDER);
-		slider.setTranslateX(HSIZE/2-SWIDTH/2);
-			EventHandler<MouseEvent>sliderHandler=new EventHandler<MouseEvent>(){
+	public void addSliderHandler(Group root){
+			mySlider.setShowTickMarks(true);
+			mySlider.setShowTickLabels(true);
+			mySlider.setPrefWidth(SWIDTH);
+			root.getChildren().add(mySlider);
+			mySlider.setTranslateY(VSLIDER);
+			mySlider.setTranslateX(HSIZE / 2 - SWIDTH / 2);
+			EventHandler<MouseEvent>sliderHandler=new EventHandler<MouseEvent>() {
 				public void handle(MouseEvent event) {
-					while(slider.isValueChanging()==true){}
-						RunningSimulation.setValue(slider.getValue());
-						System.out.println(slider.getValue());
-				}
+					while (mySlider.isValueChanging() == true) {}
+					RunningSimulation.setValue(mySlider.getValue());
+					}
 			};
-		slider.addEventHandler(MouseEvent.MOUSE_CLICKED, sliderHandler);
+			mySlider.addEventHandler(MouseEvent.MOUSE_CLICKED, sliderHandler);
 	}
+	
 	/**
 	 * Removes the cell nodes from the scene
 	 * @param root
