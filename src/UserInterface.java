@@ -56,6 +56,7 @@ public class UserInterface {
     private Button SlowDown;
     private Button Stop;
     private Button Pause;
+    private Button Save;
     private EventHandler<MouseEvent> forwardHandler;
     private EventHandler<MouseEvent> stopHandler;
     private EventHandler<MouseEvent> resumeHandler;
@@ -67,6 +68,7 @@ public class UserInterface {
     private Slider mySlider;
     private XYChart.Series [] series;
     private int iteration=0;
+    private Jaxbconfiguration jxb;
     
    
     
@@ -124,7 +126,7 @@ public class UserInterface {
 		active=true;
 		String myFile=DEFAULT_DIRECTORY+myFiles.getValue();
 		JAXBConfig newConfiguration = new JAXBConfig(myFile);
-		Jaxbconfiguration jxb = null;
+		
         try {
             jxb = newConfiguration.unmarshal(Class.forName("jaxbconfiguration.Jaxbconfiguration"), new InputSource(myFile));
         }
@@ -160,19 +162,19 @@ public class UserInterface {
 		// ADD BORDER TYPE
 		Border myBorder = new ToroidalBorder();
 		if(name.equals(myPossibilities[0])){
-			newSimulation=new GameOfLifeSimulation(myGrid,root, animation, myBorder);
+			newSimulation=new GameOfLifeSimulation(myGrid,root, animation, myBorder, myPossibilities[0]);
 		}
 		else if (name.equals(myPossibilities[1])){
-			newSimulation=new SegregationSimulation(myGrid, jxb.getParameters().getThreshold(),root, animation, myBorder);
+			newSimulation=new SegregationSimulation(myGrid, jxb.getParameters().getThreshold(),root, animation, myBorder, myPossibilities[1]);
 		}
 		
 		else if(name.equals(myPossibilities[2])){
 		    newSimulation=new PredatorPreySimulation(myGrid, jxb.getParameters().getPredatorStarve(), jxb.getParameters().getPredatorBreed(),
-		                                             jxb.getParameters().getPreyBreed(),root, animation, myBorder);		                                             
+		                                             jxb.getParameters().getPreyBreed(),root, animation, myBorder, myPossibilities[2]);		                                             
 		}
 		
 		else{
-			newSimulation=new FireSimulation(myGrid, jxb.getParameters().getProbabilityCatch(),root, animation, myBorder);			
+			newSimulation=new FireSimulation(myGrid, jxb.getParameters().getProbabilityCatch(),root, animation, myBorder, myPossibilities[3]);			
 		}
 		return newSimulation;
 	}
@@ -275,6 +277,10 @@ public class UserInterface {
 		                          "patchyFire.xml", "segregation3.xml", "predatorprey.xml", "predatorprey2.xml", "predatorprey3.xml");
 		root.getChildren().add(myFiles);
 		loadHandler(root);
+		Save = new Button(myResources.getString("SaveButton"));
+		Save.setTranslateX(140);
+		root.getChildren().add(Save);
+		saveHandler(root);
 		
 	}
 	/**
@@ -295,6 +301,33 @@ public class UserInterface {
     			firsttime=false;
     			setNewSimulation(root);
     			setNewHandlers(root);
+    		}
+    	});
+	}
+	private void saveHandler(Group root) {
+		Save.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+    		@Override
+			public void handle(MouseEvent event) {
+    			String name=RunningSimulation.returnName();
+    			jxb.getParameters().setName(name);
+    			double [] mysize=RunningSimulation.returnParameters();
+				jxb.getParameters().setHeight((int)mysize[0]);
+    			jxb.getParameters().setWidth((int)mysize[1]);
+    			if(name.equals(myPossibilities[1])){
+    				jxb.getParameters().setThreshold(mysize[2]);
+    			}
+    			else if(name.equals(myPossibilities[2])){
+    				jxb.getParameters().setPreyBreed((int)mysize[2]);
+    				jxb.getParameters().setPredatorBreed((int)mysize[3]);
+    				jxb.getParameters().setPredatorStarve((int)mysize[4]);
+    			}
+    			if(name.equals(myPossibilities[1])){
+    				jxb.getParameters().setProbabilityCatch(mysize[2]);
+    			}
+    			jxb.getStateMatrix().getState().clear();
+    			jxb.getStateMatrix().getState().addAll(RunningSimulation.returnStates());
+
+    			
     		}
     	});
 	}

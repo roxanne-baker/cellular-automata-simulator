@@ -26,8 +26,8 @@ public class FireSimulation extends Simulation {
 	private Timeline myTime;
 	private static final String STYLESHEET= "fire.css";
 	
-	public FireSimulation(Grid myGrid, double probCatchDecimal, Group root, Timeline animation, Border border) {
-		super(myGrid);
+	public FireSimulation(Grid myGrid, double probCatchDecimal, Group root, Timeline animation, Border border, String myName) {
+		super(myGrid, myName);
 		probCatch = probCatchDecimal;
 		border.setGridAndBorders(myCells, false);
 		myTime=animation;
@@ -81,34 +81,7 @@ public class FireSimulation extends Simulation {
 	public void setValue(double threshold){
 		probCatch=threshold;
 	}
-	public HashMap<Color, Number> returnProportion(){
-		int countFire=0;
-		int countTree=0;
-		int countEmpty=0;
-		int total=0;
-		HashMap<Color, Number> proportions=new HashMap<Color, Number>();
-		for(int i=0;i<myCells.length;i++){
-			for(int j=0;j<myCells[0].length;j++){
-				if(myCells[i][j].getState().equals(FIRE)){
-					countFire++;
-				}
-				else if(myCells[i][j].getState().equals(TREE)){
-					countTree++;
-				}
-				else if(myCells[i][j].getState().equals(EMPTY)){
-					countEmpty++;
-				}
-				total++;
-			}
-		}
-		double prop1=(double)countFire/total;
-		double prop2=(double)countTree/total;
-		double prop3=(double)countEmpty/total;
-		proportions.put(Color.FIREBRICK, prop1);
-		proportions.put(Color.FORESTGREEN, prop2);
-		proportions.put(Color.TAN, prop3);
-		return proportions;
-	}
+
 	public String returnStyleSheet(){
 		return STYLESHEET;
 	}
@@ -121,20 +94,14 @@ public class FireSimulation extends Simulation {
 			}
 		}
 	}
-	public void changeState(Group root, Cell myCell){
-		myTime.stop();
-		if(myCell.getState().equals(FIRE)){
-			myCell.setState(EMPTY);
-			myCell.shape.setFill(Color.TAN);
-		}
-		else if(myCell.getState().equals(TREE)){
-			myCell.setState(FIRE);
-			myCell.shape.setFill(Color.FIREBRICK);
-		}
-		else if(myCell.getState().equals(EMPTY)){
-			myCell.setState(TREE);
-			myCell.shape.setFill(Color.FORESTGREEN);
-		}
+
+
+	public double[] returnParameters(){
+		double[]param =new double[3];
+		param[0]=myCells.length;
+		param[1]=myCells[0].length;
+		param[2]=probCatch;
+		return param;
 	}
 
 	/*

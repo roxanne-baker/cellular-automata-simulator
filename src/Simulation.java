@@ -1,7 +1,9 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
 public abstract class Simulation {
@@ -16,13 +18,14 @@ public abstract class Simulation {
 	Cell[][] myCells;
 	// maps name of state to the color it fills a cell with
 	Map<String, Color> stateNameToColor;
+	protected String name;
 	protected int numberOfStates;
 	
-	
-	public Simulation(Grid newGrid) {
+	public Simulation(Grid newGrid, String myName) {
 		this();
 		myCells = newGrid.myCells;
 		setCellColor(myCells);
+		name=myName;
 	}
 	
 	protected Simulation(){
@@ -53,10 +56,14 @@ public abstract class Simulation {
 	public void update(){};
 	
 	public void setValue(double newd){};
+<<<<<<< HEAD
 	public void setPreyBreeds(int number){};
 	public void setPredatorBreeds(int number){};
 	public void setPredatorStarves(int number){};
 
+=======
+	
+>>>>>>> c6bc429b063e5074d230a944bec42a35ebf86f04
 	/*
 	 * updates the state of all cells
 	 */
@@ -70,7 +77,21 @@ public abstract class Simulation {
 	public void setCellColor(Cell cell) {
 		cell.shape.setFill(getColorFromStateName(cell.getState()));
 	}
-	
+	public String returnName(){
+		return name;
+	}
+	public double[] returnParameters(){
+		return null;
+	}
+	public List<String> returnStates(){
+		List<String> states=new ArrayList<String>();
+		for(int i=0;i<myCells.length;i++){
+			for(int j=0;j<myCells[0].length;j++){
+				states.add(myCells[i][j].getState());
+			}
+		}
+		return states;
+	}
 	/*
 	 * sets the color of all cells in a grid
 	 */
@@ -113,6 +134,52 @@ public abstract class Simulation {
 		return numberOfStates;
 	}
 	public abstract String returnStyleSheet();
-	public abstract HashMap<Color, Number> returnProportion();
+
+	public Map<Color, Double> changeMapWithCell(Map<Color, Double> numerator, Cell cell) {
+		boolean hasEquivalent = false;
+		for (Color stateColor : numerator.keySet()) {
+			Color myStateColor = stateNameToColor.get(cell.getState());
+			if (stateColor.equals(myStateColor)) {
+				hasEquivalent = true;
+			}
+		}
+		if(!hasEquivalent) {
+			Color stateColor = stateNameToColor.get(cell.getState());
+			numerator.put(stateColor, 0.0);
+		}
+		else {
+			Color stateColor = stateNameToColor.get(cell.getState());
+			numerator.put(stateColor, numerator.get(stateColor)+1);
+		}
+		return numerator;
+	}
+	
+	public Map<Color, Number> returnProportion() {
+		int total=0;
+		Map<Color, Double> numerator=new HashMap<Color, Double>();		
+		for(int i=0;i<myCells.length;i++){
+			for(int j=0;j<myCells[0].length;j++){
+				numerator = changeMapWithCell(numerator, myCells[i][j]);
+				total++;
+			}
+		}
+		Map<Color, Number> proportions=new HashMap<Color, Number>();
+		for (Color stateColor : numerator.keySet()) {
+			proportions.put(stateColor, numerator.get(stateColor)/((double) total));
+		}
+		return proportions;
+	}
+	
+	public void changeState(Group root, Cell myCell){
+		myTime.stop();
+		for (int i=0; i < stateNames.size(); i++) {
+			if (myCell.getState().equals(stateNames.get(i))) {
+				String nextState = stateNames.get((i+1) % stateNames.size());
+				myCell.setState(nextState);
+				myCell.shape.setFill(stateNameToColor.get(nextState));
+				break;
+			}
+		}
+	}
 	
 }

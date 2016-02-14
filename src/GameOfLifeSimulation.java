@@ -20,8 +20,17 @@ public class GameOfLifeSimulation extends Simulation {
 	 * 
 	 * @param newGrid
 	 */
+<<<<<<< HEAD
 	public GameOfLifeSimulation(Grid newGrid, Group root, Timeline animation, Border border){
 		super(newGrid);
+=======
+	public GameOfLifeSimulation(Grid newGrid, Group root, Timeline animation, Border border, String myName){
+		super(newGrid, myName);
+		/**
+		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addCardinalNeighbors(grid, position));
+		newGrid.addAllNeighbors(myCells, (grid, position) -> newGrid.addDiagonalNeighbors(grid, position));
+		**/
+>>>>>>> c6bc429b063e5074d230a944bec42a35ebf86f04
 		border.setGridAndBorders(myCells, true);
 		numberOfStates=2;
 		myTime=animation;
@@ -95,26 +104,6 @@ public class GameOfLifeSimulation extends Simulation {
 		}
 	}
 	
-	public HashMap<Color, Number> returnProportion(){
-		int countLive=0;
-		int countDead=0;
-		HashMap<Color, Number> proportions=new HashMap<Color, Number>();
-		for(int i=0;i<myCells.length;i++){
-			for(int j=0;j<myCells[0].length;j++){
-				if(myCells[i][j].getState().equals(ALIVE)){
-					countLive++;
-				}
-				if(myCells[i][j].getState().equals(DEAD)){
-					countDead++;
-				}
-			}
-		}
-		double prop1=(double)countLive/(countLive+countDead);
-		double prop2=(double)countDead/(countLive+countDead);
-		proportions.put(Color.BLACK, prop1);
-		proportions.put(Color.WHITE, prop2);
-		return proportions;
-	}
 	public String returnStyleSheet(){
 		return STYLESHEET;
 	}
@@ -128,17 +117,14 @@ public class GameOfLifeSimulation extends Simulation {
 			}
 		}
 	}
-	public void changeState(Group root, Cell myCell){
-		myTime.stop();
-		if(myCell.getState().equals(DEAD)){
-			myCell.setState(ALIVE);
-			myCell.shape.setFill(Color.BLACK);
-		}
-		else if(myCell.getState().equals(ALIVE)){
-			myCell.setState(DEAD);
-			myCell.shape.setFill(Color.WHITE);
-		}
+
+	public double[] returnParameters(){
+		double[]param =new double[2];
+		param[0]=myCells.length;
+		param[1]=myCells[0].length;
+		return param;
 	}
+	
 	/**
 	 * Calls methods to update the cells and set their colors
 	 */
