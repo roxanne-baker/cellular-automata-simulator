@@ -29,12 +29,7 @@ public class PredatorPreySimulation extends Simulation {
 	private Timeline myTime;
 	private static final String STYLESHEET= "predator.css";
 	
-<<<<<<< HEAD
-	public PredatorPreySimulation(Grid newGrid, int predatorStarve, int predatorBreed, int preyBreed, Group root, Timeline animation, Border border){
-
-=======
 	public PredatorPreySimulation(Grid newGrid, int predatorStarve, int predatorBreed, int preyBreed, Group root, Timeline animation, Border border, String myName){
->>>>>>> c6bc429b063e5074d230a944bec42a35ebf86f04
 		setMyCells(newGrid.myCells);
 		setCellColor(myCells);
 		turnsUntilPreyBreeds = preyBreed;
