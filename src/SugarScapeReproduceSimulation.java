@@ -1,3 +1,6 @@
+// This entire file is part of my masterpiece.
+// ROXANNE BAKER
+
 import java.util.function.Consumer;
 import javafx.scene.paint.Color;
 
