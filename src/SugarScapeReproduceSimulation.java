@@ -1,34 +1,57 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.function.Consumer;
-
-import javafx.animation.Timeline;
-import javafx.scene.Group;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 public class SugarScapeReproduceSimulation extends Simulation{
-
+	/**
+	 * represents the grid of the simulation
+	 */
 	public SugarScapeCell[][] myCells;
+	
+	/**
+	 * state when cell has a male agent
+	 */
 	public static final String MALE_AGENT = "MALE";
+	
+	/**
+	 * state when cell has a female agent
+	 */
 	public static final String FEMALE_AGENT = "FEMALE";
+	
+	/**
+	 * state when cell has no agent
+	 */
 	public static final String NO_AGENT = "NONE";
 	
+	/**
+	 * instance of border used in this simulation
+	 */
 	private Border myBorder;
 	
-	private int numberOfStates=3;
-	private Timeline myTime;
+	/**
+	 * String form of name of stylesheet that 
+	 * would be used to display graph of concentrations
+	 * of different states
+	 */
 	private static final String STYLESHEET= "default.css";  // NEED TO CHANGE
 	
-	public SugarScapeReproduceSimulation(Grid newGrid, Border border, int predatorStarve, int predatorBreed, int preyBreed){
+	/**
+	 * 
+	 * @param newGrid - the grid being passed in to the simulation
+	 * @param border - the border being used for the simulation
+	 */
+	public SugarScapeReproduceSimulation(Grid newGrid, Border border){
 		setMyCells(newGrid.myCells);
 		setCellColor(myCells);
 		myBorder = border;
 		myBorder.setGridAndBorders(myCells, false);
 	}
 	
+	/**
+	 * converts double array of Cell to double
+	 * array of SugarScapeCell so extra attributes
+	 * can be referred to
+	 * @param newCells
+	 */
 	public void setMyCells(Cell[][] newCells) {
 		myCells = new SugarScapeCell[newCells.length][newCells[0].length];
 		for (int i=0; i<newCells.length; i++) {
@@ -39,146 +62,97 @@ public class SugarScapeReproduceSimulation extends Simulation{
 		}
 	}
 	
-	
-	public void reproduceAgentAtCell(SugarAgentReproduce reproduceAgent) {
-		reproduceAgent.reproduce();		
-	}
-	
-	public void incrementAgentAgeAtCell(SugarAgentReproduce reproduceAgent) {
-		reproduceAgent.incrementAge();		
-	}
-	
-	public void updateAgentSugarAtCell(SugarAgentReproduce reproduceAgent) {
-		reproduceAgent.updateSugar();
-	}
-	
-	public void killAgentAtCell(SugarAgentReproduce reproduceAgent) {
-		reproduceAgent.killAgentIfNeeded();
-	}
-	
-	
-	public void actionOnAllCells(Consumer<SugarAgentReproduce> action) {
+	/**
+	 * Performs given action on all agents in grid
+	 * @param action
+	 */
+	public void actionOnAllAgents(Consumer<SugarAgentReproduce> agentAction) {
 		for (int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
-				if (myCells[i][j].agent != null) {
-					SugarAgentReproduce reproduceAgent = (SugarAgentReproduce) myCells[i][j].agent;
-					action.accept(reproduceAgent);
+				if (myCells[i][j].getAgent() != null) {
+					SugarAgentReproduce reproduceAgent = (SugarAgentReproduce) myCells[i][j].getAgent();
+					agentAction.accept(reproduceAgent);
 				}
 			}
 		}		
 	}
-
-	public void updateGroundPatches() {
+	
+	/**
+	 * Performs cellAction on all cells in grid
+	 * @param cellAction
+	 */
+	public void actionOnAllCells(Consumer<SugarScapeCell> cellAction) {
 		for (int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
-				if (myCells[i][j].agent != null) {
-					myCells[i][j].update();
-				}
+				cellAction.accept(myCells[i][j]);
 			}
-		}
+		}		
 	}
 	
+	/**
+	 * Performs series of actions on the agents
+	 * and cells within the grid
+	 */
 	public void update() {
-		actionOnAllCells((SugarAgentReproduce agent) -> agent.reproduce());
-		actionOnAllCells((SugarAgentReproduce agent) -> agent.incrementAge());
-		actionOnAllCells((SugarAgentReproduce agent) -> agent.updateSugar());
-		actionOnAllCells((SugarAgentReproduce agent) -> agent.killAgentIfNeeded());
-		updateGroundPatches();
-		setAllStates();
-		setCellColor(myCells);
+		actionOnAllAgents((SugarAgentReproduce agent) -> agent.reproduce());
+		actionOnAllAgents((SugarAgentReproduce agent) -> agent.incrementAge());
+		actionOnAllAgents((SugarAgentReproduce agent) -> agent.updateSugar());
+		actionOnAllAgents((SugarAgentReproduce agent) -> agent.killAgentIfNeeded());
+		actionOnAllCells((SugarScapeCell cell) -> cell.update());		// would change to 'updateSugarLevels'
+		actionOnAllCells((SugarScapeCell cell) -> setStateCell(cell));
+		actionOnAllCells((SugarScapeCell cell) -> setCellColor(cell));
 	}
 	
-	
-	
-	public void setStateNameToColor() {		
-		List<String> stateNames = new ArrayList<String>(Arrays.asList(MALE_AGENT, FEMALE_AGENT, NO_AGENT));
-		List<Color> colorNames = new ArrayList<Color>(Arrays.asList(Color.BLUE, Color.RED, Color.GREEN));
-		setStateNameToColor(stateNames, colorNames);
-	}
-	
-	public void setCellColor(SugarScapeCell[][] myGrid) {
-		for (int i=0; i<myGrid.length; i++) {
-			for (int j=0; j<myGrid[0].length; j++) {
-				myGrid[i][j].shape.setFill(getColor(myGrid[i][j]));
-			}
-		}
-	}
-	
-	public void setAllStates() {
-		for (int i=0; i<myCells.length; i++) {
-			for (int j=0; j<myCells[0].length; j++) {
-				setStateCell(myCells[i][j]);
-			}
-		}		
-	}
-	
+	/**
+	 * sets the state of the cell based on
+	 * the presence/sex of agent there
+	 * @param cell
+	 */
 	public void setStateCell(SugarScapeCell cell) {
-		if (cell.agent == null) {
+		if (cell.getAgent() == null) {
 			cell.setState(NO_AGENT);
 		}
 		else {
-			SugarAgentReproduce agent = (SugarAgentReproduce) cell.agent;
-			if (agent.isMale == 0) {
-				cell.setState(FEMALE_AGENT);
+			SugarAgentReproduce agent = (SugarAgentReproduce) cell.getAgent();
+			if (agent.isMale()) {
+				cell.setState(MALE_AGENT);
 			}
 			else {
-				cell.setState(MALE_AGENT);
+				cell.setState(FEMALE_AGENT);
 			}
 		}		
 	}
 	
+	/**
+	 * sets the color for a given cell
+	 * @param cell
+	 */
+	public void setCellColor(SugarScapeCell cell) {
+		cell.shape.setFill(getColor(cell));		// would ideally change to 'getShape()'
+	}
+	
+	/**
+	 * the method that would actually be used to 
+	 * determine the color to fill in the cell
+	 * Accounts for concentration of sugar at cell
+	 * @param cell
+	 * @return Color
+	 */
 	public Color getColor(SugarScapeCell cell) {
-		if (cell.agent == null) {
-			return new Color(0, 255, 0, (cell.sugarAmount)/(cell.sugarMax));
+		if (cell.getAgent() == null) {
+			return new Color(0, 255, 0, cell.getSugarRatio());
 		}
 		else {
 			return stateNameToColor.get(cell.getState());
 		}
 	}
 	
-	
-	public void addListeners(SugarScapeCell[][] myCells, Group root) {
-		for (int i = 0; i < myCells.length; i++) {
-			for (int j = 0; j < myCells[0].length; j++) {
-				SugarScapeCell newCell;
-				newCell = myCells[i][j];
-				myCells[i][j].returnNode().addEventHandler(MouseEvent.MOUSE_CLICKED, e -> changeState(root, newCell));
-			}
-		}
+	public String returnStyleSheet() {	// would ideally remove in complete refactoring
+		return STYLESHEET;				// need to keep because abstract method
 	}
 
-	public void changeState(Group root, SugarScapeCell myCell) {
-		myTime.stop();
-		if (myCell.getState().equals(NO_AGENT)) {
-			myCell.agent = new SugarAgentReproduce(this, myBorder);
-			SugarAgentReproduce agent = (SugarAgentReproduce) myCell.agent;
-			agent.setIsMale(true);
-			myCell.shape.setFill(getColor(myCell));
-		}
-		else if (myCell.getState().equals(MALE_AGENT)) {
-			myCell.agent = new SugarAgentReproduce(this, myBorder);
-			SugarAgentReproduce agent = (SugarAgentReproduce) myCell.agent;
-			agent.setIsMale(false);
-			myCell.shape.setFill(getColor(myCell));
-		}
-		else if (myCell.getState().equals(FEMALE_AGENT)) {
-			myCell.agent = null;
-		}
-	}
-
-	@Override
-	public String returnStyleSheet() {
+	public Cell[][] getMyCells() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public HashMap<Color, Number> returnProportion() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-
-	
-	
 }

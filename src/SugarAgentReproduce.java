@@ -3,80 +3,182 @@ import java.util.function.Function;
 
 public class SugarAgentReproduce extends SugarAgent {
 	
-	int isMale;		// 0 if untrue, 1 if true
-	int age = 0;
-	int maxAge;
-	int fertileLowerLimit = 15;
-	int fertileUpperLimit = 70;
-	SugarScapeReproduceSimulation simulation;
+	/**
+	 * true if the agent is male and false otherwise
+	 */
+	private boolean isMale;	
 	
-	public SugarAgentReproduce(SugarScapeReproduceSimulation sim, Border border) {
+	/**
+	 * The current 'age' of the agent
+	 */
+	private int age = 0;
+	
+	/**
+	 * The maximum age the agent can be before dying
+	 */
+	private int maxAge;
+	
+	/**
+	 * The lower age limit for an agent to be fertile
+	 */
+	private int fertileLowerLimit;
+	
+	/**
+	 * The upper age limit for an agent to be fertile
+	 */
+	private int fertileUpperLimit;
+	
+	/**
+	 * The simulation that the agent is a part of
+	 */
+	private SugarScapeReproduceSimulation simulation;
+	
+	/**
+	 * Creates an agent given the simulation, border and
+	 * lower/upper limits for fertility.
+	 * Other traits of agent are randomized in super class
+	 * @param sim
+	 * @param border
+	 * @param lowerLimit
+	 * @param upperLimit
+	 */
+	public SugarAgentReproduce(SugarScapeReproduceSimulation sim, Border border, int lowerLimit, int upperLimit) {
 		super(border);
-		simulation = sim;
+		setSimulationAndFertilityRange(sim, lowerLimit, upperLimit);
 		initializeMaxAgeAndSex();
 	}
 	
-	public SugarAgentReproduce(SugarScapeReproduceSimulation sim, Border border, int initSugar, int metabolism, int visionRange) {
+	/**
+	 * Creates an agent with all properties already given
+	 * except for max age and sex which are randomized
+	 * @param sim
+	 * @param border
+	 * @param lowerLimit
+	 * @param upperLimit
+	 * @param initSugar
+	 * @param metabolism
+	 * @param visionRange
+	 */
+	private SugarAgentReproduce(SugarScapeReproduceSimulation sim, Border border, int lowerLimit, int upperLimit, int initSugar, int metabolism, int visionRange) {
 		super(border, initSugar, metabolism, visionRange);
-		simulation = sim;
+		setSimulationAndFertilityRange(sim, lowerLimit, upperLimit);
 		initializeMaxAgeAndSex();
 	}
 	
-	public void initializeMaxAgeAndSex() {
-		Random initValues = new Random();
-		maxAge = initValues.nextInt(40)+60;
-		isMale = initValues.nextInt(2);
+	/**
+	 * Function to set values for simulation and 
+	 * fertility age limits to reduce duplicated
+	 * code in the constructor
+	 * @param sim
+	 * @param lowerLimit
+	 * @param upperLimit
+	 */
+	private void setSimulationAndFertilityRange(SugarScapeReproduceSimulation sim, int lowerLimit, int upperLimit) {
+		simulation = sim;
+		fertileLowerLimit = lowerLimit;
+		fertileUpperLimit = upperLimit;
 	}
 	
+	/**
+	 * Randomly sets values for max age
+	 * between 60 and 100 and sex
+	 */
+	private void initializeMaxAgeAndSex() {
+		Random initValues = new Random();
+		maxAge = initValues.nextInt(41)+61;
+		int isMaleInt = initValues.nextInt(2);
+		if (isMaleInt == 1) {
+			isMale = true;
+		}
+		else {
+			isMale = false;
+		}
+	}
+	
+	/**
+	 * Increments age of agent by 1
+	 */
 	public void incrementAge() {
 		age++;
 	}
 	
-	public SugarAgentReproduce getBabyAgent(SugarAgentReproduce otherParent) {
+	/**
+	 * @param otherParent
+	 * @return a baby agent made between this
+	 * instance of agent and otherParent passed
+	 * in as parameter
+	 */
+	private SugarAgentReproduce getBabyAgent(SugarAgentReproduce otherParent) {
 		int babyInitSugar = this.initialSugar/2 + otherParent.initialSugar/2;
-		int babyMetabolism = getBabyStat(otherParent, (SugarAgentReproduce agent) -> getAgentMetabolism(agent));
-		int babyVision = getBabyStat(otherParent, (SugarAgentReproduce agent) -> getAgentVision(agent));
+		int babyMetabolism = getBabyStat(otherParent, (SugarAgentReproduce agent) -> agent.getSugarMetabolism());
+		int babyVision = getBabyStat(otherParent, (SugarAgentReproduce agent) -> agent.getVision());
 
-		return new SugarAgentReproduce(simulation, myBorder, babyInitSugar, babyMetabolism, babyVision);
+		return new SugarAgentReproduce(simulation, myBorder, fertileLowerLimit, fertileUpperLimit,
+				babyInitSugar, babyMetabolism, babyVision);
 	}
 	
+	/**
+	 * reproduces with all neighboring agents
+	 * if possible and reduces sugar values of
+	 * this agent and other parent accordingly
+	 */
 	public void reproduce() {
 		SugarScapeCell emptyCell = null;
-		for (SugarScapeCell neighbor : currentLoc.neighbors) {
-			if (neighbor.agent != null) {
-				SugarAgentReproduce potentialMate = (SugarAgentReproduce) neighbor.agent;
+		for (SugarScapeCell neighbor : currentLoc.getNeighbors()) {
+			if (neighbor.getAgent() != null) {
+				SugarAgentReproduce potentialMate = (SugarAgentReproduce) neighbor.getAgent();
 				if (potentialMate.isFertile() && (this.isMale != potentialMate.isMale)) {
-					emptyCell = getEmptyCell(potentialMate);
+					emptyCell = getEmptyNeighboringCell(potentialMate);
 				}
 				if (emptyCell != null) {
-					emptyCell.agent = getBabyAgent(potentialMate);
+					emptyCell.setAgent(getBabyAgent(potentialMate));
 					this.sugar -= (initialSugar/2);
-					potentialMate.sugar -= (initialSugar/2);
+					potentialMate.sugar -= (potentialMate.initialSugar/2);
 				}
 			}
 		}
 	}
 	
-	public SugarScapeCell getEmptyCellFromLoc(SugarScapeCell cell) {
+	/**
+	 * @param cell
+	 * @return an empty cell that neighbors the
+	 * location of the given cell, or null if
+	 * no such cell exists
+	 */
+	private SugarScapeCell getEmptyNeighboringCellFromLoc(SugarScapeCell cell) {
 		SugarScapeCell emptyCell = null;
-		for (SugarScapeCell neighbor : cell.neighbors) {
-			if (neighbor.agent == null) {
+		for (SugarScapeCell neighbor : cell.getNeighbors()) {
+			if (neighbor.getAgent() == null) {
 				return emptyCell;
 			}
 		}
 		return null;
 	}
 	
-	public SugarScapeCell getEmptyCell(SugarAgentReproduce mate) {
+	/**
+	 * @param mate
+	 * @return empty cell neighboring the
+	 * agent passed in
+	 */
+	private SugarScapeCell getEmptyNeighboringCell(SugarAgentReproduce mate) {
 		SugarScapeCell emptyCell = null;
-		emptyCell = getEmptyCellFromLoc(currentLoc);
+		emptyCell = getEmptyNeighboringCellFromLoc(currentLoc);
 		if (emptyCell == null) {
-			emptyCell = getEmptyCellFromLoc(mate.currentLoc);
+			emptyCell = getEmptyNeighboringCellFromLoc(mate.currentLoc);
 		}
 		return emptyCell;
 	}
 	
-	public int getBabyStat(SugarAgentReproduce otherParent, Function<SugarAgentReproduce, Integer> getStat) {
+	/**
+	 * @param otherParent
+	 * @param getStat
+	 * @return randomized stat of 'baby' of this
+	 * agent and passed in agent
+	 * 25% chance stat is equal to this parents
+	 * 25% chance stat is equal to other parents
+	 * 50% chance stat is average between two
+	 */
+	private int getBabyStat(SugarAgentReproduce otherParent, Function<SugarAgentReproduce, Integer> getStat) {
 		Random babyStats = new Random();
 		int chooseStat = babyStats.nextInt(4);
 		if (chooseStat == 0) {
@@ -90,32 +192,36 @@ public class SugarAgentReproduce extends SugarAgent {
 		}		
 	}
 	
-	public int getAgentMetabolism(SugarAgentReproduce agent) {
-		return agent.getSugarMetabolism();
-	}
-	
-	public int getAgentVision(SugarAgentReproduce agent) {
-		return agent.getVision();
-	}
-	
+	/**
+	 * @return true if this agent can reproduce
+	 * and false otherwise
+	 */
 	public boolean isFertile() {
 		return (sugar >= initialSugar && age >= fertileLowerLimit && age < fertileUpperLimit);
 	}
 	
-	@Override
+	/**
+	 * kill the agent if its sugar is too low
+	 * or if it is too old
+	 */
 	public void killAgentIfNeeded() {
 		if (sugar <= 0 || age >= maxAge) {
-			currentLoc.agent = null;
+			currentLoc.setAgent(null);
 		}
 	}
 	
-	public void setIsMale(boolean isMale) {
-		if (isMale) {
-			this.isMale = 0;
-		}
-		else {
-			this.isMale = 1;
-		}
+	/**
+	 * @return true if male, false otherwise
+	 */
+	public boolean isMale() {
+		return isMale;
 	}
-	
+
+	/**
+	 * sets value of 'isMale'
+	 * @param isMale
+	 */
+	public void setMale(boolean isMale) {
+		this.isMale = isMale;
+	}
 }

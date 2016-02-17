@@ -52,8 +52,8 @@ public class SugarScapeSimulation extends Simulation{
 	public void actionOnAllCells(Consumer<SugarAgent> action) {
 		for (int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
-				if (myCells[i][j].agent != null) {
-					action.accept(myCells[i][j].agent);
+				if (myCells[i][j].getAgent() != null) {
+					action.accept(myCells[i][j].getAgent());
 				}
 			}
 		}		
@@ -62,7 +62,7 @@ public class SugarScapeSimulation extends Simulation{
 	public void updateGroundPatches() {
 		for (int i=0; i<myCells.length; i++) {
 			for (int j=0; j<myCells[0].length; j++) {
-				if (myCells[i][j].agent != null) {
+				if (myCells[i][j].getAgent() != null) {
 					myCells[i][j].update();
 				}
 			}
@@ -95,8 +95,8 @@ public class SugarScapeSimulation extends Simulation{
 	}
 	
 	public Color getColor(SugarScapeCell cell) {
-		if (cell.agent == null) {
-			return new Color(0, 255, 0, (cell.sugarAmount)/(cell.sugarMax));
+		if (cell.getAgent() == null) {
+			return new Color(0, 255, 0, cell.getSugarRatio());
 		}
 		else {
 			return stateNameToColor.get(cell.getState());
@@ -112,7 +112,7 @@ public class SugarScapeSimulation extends Simulation{
 	}
 	
 	public void setStateCell(SugarScapeCell cell) {
-		if (cell.agent == null) {
+		if (cell.getAgent() == null) {
 			cell.setState(NO_AGENT);
 		}
 		else {
@@ -143,11 +143,11 @@ public class SugarScapeSimulation extends Simulation{
 		myTime.stop();
 		if (myCell.getState().equals(NO_AGENT)) {
 			myCell.setState(HAS_AGENT);
-			myCell.agent = new SugarAgent(this, myBorder);
+			myCell.setAgent(new SugarAgentSimple(this, myBorder));
 			myCell.shape.setFill(getColor(myCell));
 		} else if (myCell.getState().equals(HAS_AGENT)) {
 			myCell.setState(NO_AGENT);
-			myCell.agent = null;
+			myCell.setAgent(null);
 			myCell.shape.setFill(getColor(myCell));
 		}
 	}

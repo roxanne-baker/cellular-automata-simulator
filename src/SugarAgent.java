@@ -1,7 +1,7 @@
 import java.util.Random;
 import java.util.function.Function;
 
-public class SugarAgent {
+public abstract class SugarAgent {
 
 	int initialSugar;
 	int sugar;
@@ -41,32 +41,29 @@ public class SugarAgent {
 	
 	
 	
-	public void killAgentIfNeeded() {
-		if (sugar <= 0) {
-			currentLoc.agent = null;
-		}
-	}
+	public abstract void killAgentIfNeeded();
+
 	
 	public void updateSugar() {
 		SugarScapeCell nextLoc = getNextLoc();
-		currentLoc.agent = null;
+		currentLoc.setAgent(null);
 		
 		currentLoc = nextLoc;
-		currentLoc.agent = this;
+		currentLoc.setAgent(this);
 		
-		sugar += currentLoc.sugarAmount;
+		sugar += currentLoc.getSugarAmount();
 		sugar -= sugarMetabolism;
-		currentLoc.sugarAmount = 0;
+		currentLoc.setSugarAmount(0);
 	}
 
 	public SugarScapeCell getLoc(SugarScapeCell lookingAtLoc, SugarScapeCell maxSugarLoc,
 			Function<SugarScapeCell, SugarScapeCell> getNeighbor) {
 		for (int i=0; i<vision; i++) {
 			lookingAtLoc = getNeighbor.apply(lookingAtLoc);
-			if (lookingAtLoc.sugarAmount > maxSugarLoc.sugarAmount) {
+			if (lookingAtLoc.getSugarAmount() > maxSugarLoc.getSugarAmount()) {
 				maxSugarLoc = lookingAtLoc;
 			}
-			else if (lookingAtLoc.sugarAmount == maxSugarLoc.sugarAmount &&
+			else if (lookingAtLoc.getSugarAmount() == maxSugarLoc.getSugarAmount() &&
 					distanceFrom(lookingAtLoc) < distanceFrom(maxSugarLoc)) {
 				maxSugarLoc = lookingAtLoc;
 			}
@@ -75,7 +72,7 @@ public class SugarAgent {
 	}
 	
 	public SugarScapeCell getNextLoc() {
-		SugarScapeCell maxSugarLoc = currentLoc.neighbors.get(0);
+		SugarScapeCell maxSugarLoc = currentLoc.getNeighbors().get(0);
 		maxSugarLoc = getLoc(maxSugarLoc, maxSugarLoc, (SugarScapeCell cell) -> (getNorthLoc(cell)));	
 		maxSugarLoc = getLoc(maxSugarLoc, maxSugarLoc, (SugarScapeCell cell) -> (getEastLoc(cell)));	
 		maxSugarLoc = getLoc(maxSugarLoc, maxSugarLoc, (SugarScapeCell cell) -> (getSouthLoc(cell)));
@@ -84,23 +81,23 @@ public class SugarAgent {
 	}
 	
 	public int distanceFrom(SugarScapeCell cell) {
-		return (Math.max(Math.abs(currentLoc.row-cell.row), Math.abs(currentLoc.col-cell.col)));
+		return (Math.max(Math.abs(currentLoc.getRow()-cell.getRow()), Math.abs(currentLoc.getCol()-cell.getCol())));
 	}
 	
 	public SugarScapeCell getNorthLoc(SugarScapeCell cell) {
-		return (SugarScapeCell) (myBorder.getNorthNeighbor(simulation.getMyCells(), cell.row, cell.col));
+		return (SugarScapeCell) (myBorder.getNorthNeighbor(simulation.getMyCells(), cell.getRow(), cell.getCol()));
 	}
 	
 	public SugarScapeCell getSouthLoc(SugarScapeCell cell) {
-		return (SugarScapeCell) (myBorder.getSouthNeighbor(simulation.getMyCells(), cell.row, cell.col));
+		return (SugarScapeCell) (myBorder.getSouthNeighbor(simulation.getMyCells(), cell.getRow(), cell.getCol()));
 	}
 	
 	public SugarScapeCell getEastLoc(SugarScapeCell cell) {
-		return (SugarScapeCell) (myBorder.getRightNeighbor(simulation.getMyCells(), cell.row, cell.col));
+		return (SugarScapeCell) (myBorder.getRightNeighbor(simulation.getMyCells(), cell.getRow(), cell.getCol()));
 	}
 	
 	public SugarScapeCell getWestLoc(SugarScapeCell cell) {
-		return (SugarScapeCell) (myBorder.getLeftNeighbor(simulation.getMyCells(), cell.row, cell.col));
+		return (SugarScapeCell) (myBorder.getLeftNeighbor(simulation.getMyCells(), cell.getRow(), cell.getCol()));
 	}
 	
 	public int getSugarMetabolism() {
