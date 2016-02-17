@@ -27,7 +27,7 @@ import javafx.util.Duration;
 import javafx.event.*;
 
 /**
- * Sets the user interface
+ * This entire file is part of my masterpiece
  * @author Zdravko Paskalev
  *
  */
@@ -53,6 +53,7 @@ public class UserInterface {
     
     private Simulation RunningSimulation = null;
     private boolean active=true;
+    private boolean start;
     private Scene myScene;
     private ResourceBundle myResources;
     private ComboBox<String> myFiles;
@@ -78,13 +79,7 @@ public class UserInterface {
     private XYChart.Series [] series;
     private int iteration=0;
     private Jaxbconfiguration jxb;
-
     private JAXBConfig newConfiguration;
-    
-   
-    
-    
-    
     private boolean firsttime=true;
     Grid myGrid;
     Timeline animation = new Timeline();
@@ -96,8 +91,6 @@ public class UserInterface {
 	 * Creates a new user interface and initializes the running simulation
 	 */
 	public UserInterface(){
-
-		//RunningSimulation=new Simulation();
 		myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + "Buttons");
 	}
 	
@@ -142,17 +135,16 @@ public class UserInterface {
 	    }
 	
 	/**
-	 * Sets up a new simulation by calling a configuration to read the simulation parameters and type 
+	 * Loads a new simulation configuration by using JXBConfig to read the simulation parameters and type 
 	 * from a file
 	 * @param root
 	 */
-	public void setNewSimulation(Group root){
+	public void LoadSimulation(Group root){
 		animation.setRate(STARTING_RATE);
 		active=true;
+		start=true;
 		String myFile=DEFAULT_DIRECTORY+myFiles.getValue();
-
 		newConfiguration = new JAXBConfig();
-		
         try {
             jxb = newConfiguration.unmarshal(Class.forName("jaxbconfiguration.Jaxbconfiguration"), new InputSource(myFile));
         }
@@ -164,25 +156,34 @@ public class UserInterface {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-            System.out.println(myFile.toString());
+        setSimulation(root);
+	}
+	/**
+	 * Sets up the new Simulation
+	 * @param root
+	 */
+	public void setSimulation(Group root){
 		int width = jxb.getParameters().getWidth();
 		int height= jxb.getParameters().getHeight();
 		List<String> states = new ArrayList<String>();
 		states = jxb.getStateMatrix().getState();
-
-		
 		String name=jxb.getParameters().getName();
-
 		setGrid(root, height, width, states);
 		Simulation newSimulation;
 		newSimulation = getNewSimulation(myGrid, root, jxb, name);
-		
 		RunningSimulation=newSimulation;
 		setLineChart(root);
 		setSlider(root, name);
 	}
 	
-	
+	/**
+	 * Returns new Simulation based on the loaded type from JXBConfig
+	 * @param myGrid
+	 * @param root
+	 * @param jxb
+	 * @param name
+	 * @return
+	 */
 	public Simulation getNewSimulation(Grid myGrid, Group root, Jaxbconfiguration jxb, String name){
 		Simulation newSimulation;
 		Border myBorder = new ToroidalBorder();
@@ -197,7 +198,6 @@ public class UserInterface {
 		    newSimulation=new PredatorPreySimulation(myGrid, jxb.getParameters().getPredatorStarve(), jxb.getParameters().getPredatorBreed(),
 		                                             jxb.getParameters().getPreyBreed(),root, animation, myBorder, myPossibilities[2]);		                                             
 		}
-		
 		else{
 			newSimulation=new FireSimulation(myGrid, jxb.getParameters().getProbabilityCatch(),root, animation, myBorder, myPossibilities[3]);			
 		}
@@ -211,26 +211,25 @@ public class UserInterface {
 	public void setSlider(Group root, String name){
 		Slider slider;
 		if (name.equals(myPossibilities[1]) || name.equals(myPossibilities[3])) {
-			Slider[]slides= new Slider[1];
 			slider = new Slider(0, 1, 0.3);
-			slider.setMajorTickUnit(0.25f);
-			slider.setBlockIncrement(0.1f);
 			mySlider=slider;
-			slides[0]=slider;
-			addSliderHandler(root);
-		}
-	}
-	/**
-	 * Adds slider handler
-	 * @param root
-	 */
-	public void addSliderHandler(Group root){
+			mySlider.setMajorTickUnit(0.25f);
+			mySlider.setBlockIncrement(0.1f);
 			mySlider.setShowTickMarks(true);
 			mySlider.setShowTickLabels(true);
 			mySlider.setPrefWidth(SWIDTH);
 			root.getChildren().add(mySlider);
 			mySlider.setTranslateY(VSLIDER);
 			mySlider.setTranslateX(HSIZE / 2 - SWIDTH / 2);
+			addSliderHandler();
+		}
+	}
+	/**
+	 * Adds slider handler
+	 * @param root
+	 */
+	public void addSliderHandler(){
+			
 			EventHandler<MouseEvent>sliderHandler=new EventHandler<MouseEvent>() {
 				public void handle(MouseEvent event) {
 					while (mySlider.isValueChanging() == true) {}
@@ -253,6 +252,49 @@ public class UserInterface {
 		root.getChildren().remove(myChart);
 		root.getChildren().remove(mySlider);
 		myScene.getStylesheets().remove(DEFAULT_RESOURCE_PACKAGE + RunningSimulation.returnStyleSheet());
+	}
+	/**
+	 * Sets up the graph to display the proportion of different types of cells
+	 * @param root
+	 */
+	public void setLineChart(Group root){
+		final NumberAxis xAxis = new NumberAxis();
+        final NumberAxis yAxis = new NumberAxis();
+        xAxis.setForceZeroInRange(true);
+        iteration=0;
+		myChart=new LineChart<Number, Number>(xAxis,yAxis);
+		myChart.setCreateSymbols(false);
+		initializeLineChart();
+		myChart.setTranslateY(HSIZE);
+		myChart.setPrefHeight(GHEIGHT);
+		myChart.setPrefWidth(7*HSIZE/8);
+		root.getChildren().add(myChart);
+	}
+	
+	public void initializeLineChart(){
+		series = new XYChart.Series[RunningSimulation.getNumberOfStates()];
+		int i=0;
+		Map<Color, Number> newReturn=RunningSimulation.returnProportion();
+		myScene.getStylesheets().add(DEFAULT_RESOURCE_PACKAGE + RunningSimulation.returnStyleSheet());
+		for(Color s:newReturn.keySet()){
+			series[i]=new XYChart.Series();
+			myChart.getData().add(series[i]);
+			i++;
+		}
+	}
+	/**
+	 * Updates the chart with new data when the next iteration comes
+	 * @param newS
+	 */
+	public void updateChart(Simulation newS){
+		Map<Color,Number>newProportions=RunningSimulation.returnProportion();
+		int i=0;
+		for(Color s:newProportions.keySet()){
+			double k=(double)newProportions.get(s);
+			series[i].getData().add(new XYChart.Data(iteration,k));
+			i++;
+			iteration++;
+		}
 	}
 	/**
 	 * Creates a Button given its name and initializes an array with all the Buttons
@@ -299,6 +341,12 @@ public class UserInterface {
 			root.getChildren().add(allButtons[i]);
 		}
 	}
+	public void addSaveButton(Group root){
+		Save = new Button(myResources.getString("SaveButton"));
+		Save.setTranslateX(SAVEW);
+		root.getChildren().add(Save);
+		setSaveHandler(root);
+	}
 	/**
 	 * Calls methods to create the Buttons and sets up the Combo box
 	 * @param root
@@ -306,82 +354,15 @@ public class UserInterface {
 	public void setButtons(Group root){
 		createAllButtons();
 		placeButtons(root);
+		addSaveButton(root);
 		myFiles=new ComboBox<String>();
-		
-		
 		myFiles.getItems().addAll("gameoflife.xml", "gameoflife2.xml", "gameoflife3.xml", "segregation.xml", "segregation2.xml", "cornerFire.xml", "centerFire.xml", 
 		                          "patchyFire.xml", "segregation3.xml", "predatorprey.xml", "predatorprey2.xml", "predatorprey3.xml", "gameoflife_triangle.xml","predatorprey_triangle.xml", "segregation_hexagon.xml", "saved_result.xml");
-
 		root.getChildren().add(myFiles);
-		loadHandler(root);
-		Save = new Button(myResources.getString("SaveButton"));
-		Save.setTranslateX(SAVEW);
-		root.getChildren().add(Save);
-		saveHandler(root);
-		
+		setLoadHandler(root);
+				
 	}
-	/**
-	 * Adds handler to the load button
-	 * @param root
-	 */
-	private void loadHandler(Group root) {
-		Load.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
-    		@Override
-			public void handle(MouseEvent event) {
-    			if(firsttime==false){
-    				animation.stop();
-    				clearMyGrid(root);
-    				animation.getKeyFrames().remove(myFrame);
-    				removeHandlers();
-    				Start.removeEventHandler(ActionEvent.ACTION, startHandler);
-    			}
-    			firsttime=false;
-    			setNewSimulation(root);
-    			setNewHandlers(root);
-    		}
-    	});
-	}
-	/**
-	 * Creates a Save Button to save a file into the current saved_result file;
-	 * @param root
-	 */
-	private void saveHandler(Group root) {
-		Save.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
-    		@Override
-			public void handle(MouseEvent event) {
-    			String name=RunningSimulation.returnName();
-    			jxb.getParameters().setName(name);
-    			double [] mysize=RunningSimulation.returnParameters();
-				jxb.getParameters().setHeight((int)mysize[0]);
-    			jxb.getParameters().setWidth((int)mysize[1]);
-    			if(name.equals(myPossibilities[1])){
-    				jxb.getParameters().setThreshold(mysize[2]);
-    			}
-    			else if(name.equals(myPossibilities[2])){
-    				jxb.getParameters().setPreyBreed((int)mysize[2]);
-    				jxb.getParameters().setPredatorBreed((int)mysize[3]);
-    				jxb.getParameters().setPredatorStarve((int)mysize[4]);
-    			}
-    			if(name.equals(myPossibilities[1])){
-    				jxb.getParameters().setProbabilityCatch(mysize[2]);
-    			}
-    			jxb.getStateMatrix().getState().clear();
-    			System.out.println(RunningSimulation.returnStates().toString());
-    			jxb.getStateMatrix().getState().addAll(RunningSimulation.returnStates());
-    			try {
-					newConfiguration.marshal(Class.forName("jaxbconfiguration.Jaxbconfiguration"), jxb);
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (JAXBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-    			
-    		}
-    	});
-	}
+	
 	/**
 	 * Calls methods to set and add new handlers to the Buttons
 	 * @param root
@@ -415,7 +396,59 @@ public class UserInterface {
 		SlowDown.addEventHandler(MouseEvent.MOUSE_CLICKED, slowDownHandler);
 		Forward.addEventHandler(MouseEvent.MOUSE_CLICKED, forwardHandler);
 	}
-	
+	/**
+	 * Adds handler to the load button
+	 * @param root
+	 */
+	private void setLoadHandler(Group root) {
+		Load.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+    		@Override
+			public void handle(MouseEvent event) {
+    			if(firsttime==false){
+    				animation.stop();
+    				clearMyGrid(root);
+    				animation.getKeyFrames().remove(myFrame);
+    				removeHandlers();
+    			}
+    			firsttime=false;
+    			LoadSimulation(root);
+    			setNewHandlers(root);
+    		}
+    	});
+	}
+	/**
+	 * Creates a Save Button to save a file into the current saved_result file;
+	 * @param root
+	 */
+	private void setSaveHandler(Group root) {
+		Save.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+    		@Override
+			public void handle(MouseEvent event) {
+    			String name=RunningSimulation.returnName();
+    			jxb.getParameters().setName(name);
+    			double [] mysize=RunningSimulation.returnParameters();
+    			if(name.equals(myPossibilities[1])){
+    				jxb.getParameters().setThreshold(mysize[2]);
+    			}
+    			if(name.equals(myPossibilities[1])){
+    				jxb.getParameters().setProbabilityCatch(mysize[2]);
+    			}
+    			jxb.getStateMatrix().getState().clear();
+    			jxb.getStateMatrix().getState().addAll(RunningSimulation.returnStates());
+    			try {
+					newConfiguration.marshal(Class.forName("jaxbconfiguration.Jaxbconfiguration"), jxb);
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JAXBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+    			
+    		}
+    	});
+	}
 	/**
 	 * Sets up the eventhandler for the start button
 	 */
@@ -425,8 +458,10 @@ public class UserInterface {
         	
         	myFrame = new KeyFrame(Duration.millis(MILLISECOND_DELAY),new EventHandler<ActionEvent>(){
         		public void handle(ActionEvent newEvent){
-        			RunningSimulation.update();
-        			updateChart(RunningSimulation);
+        			if(start){
+        				RunningSimulation.update();
+        				updateChart(RunningSimulation);
+        			}
         		}
         	});
         	animation.setCycleCount(Timeline.INDEFINITE);
@@ -481,6 +516,7 @@ public class UserInterface {
 			public void handle(MouseEvent event){
 				if(active){
 					animation.play();
+					start=true;
 				}
 			}
 		};
@@ -492,6 +528,7 @@ public class UserInterface {
 		pauseHandler=new EventHandler<MouseEvent>(){
 			public void handle(MouseEvent event){
 				animation.stop();
+				start=false;
 			}
 		};
 	}
@@ -511,6 +548,7 @@ public class UserInterface {
 	 * Removes event handlers from the scene
 	 */
 	public void removeHandlers(){
+		Start.removeEventHandler(ActionEvent.ACTION, startHandler);
 		Pause.removeEventHandler(MouseEvent.MOUSE_CLICKED, pauseHandler);
 		Stop.removeEventHandler(MouseEvent.MOUSE_CLICKED, stopHandler);
 		Resume.removeEventHandler(MouseEvent.MOUSE_CLICKED, resumeHandler);
@@ -518,46 +556,5 @@ public class UserInterface {
 		SlowDown.removeEventHandler(MouseEvent.MOUSE_CLICKED, slowDownHandler);
 		Forward.removeEventHandler(MouseEvent.MOUSE_CLICKED,forwardHandler);
 	}
-	/**
-	 * Sets up the graph to display the proportion of different types of cells
-	 * @param root
-	 */
-	public void setLineChart(Group root){
-		final NumberAxis xAxis = new NumberAxis();
-        final NumberAxis yAxis = new NumberAxis();
-        xAxis.setForceZeroInRange(true);
-        iteration=0;
-		myChart=new LineChart<Number, Number>(xAxis,yAxis);
-		myChart.setCreateSymbols(false);
-		int j=RunningSimulation.getNumberOfStates();
-		series = new XYChart.Series[j];
-		int i=0;
-		Map<Color, Number> newReturn=RunningSimulation.returnProportion();
-		myScene.getStylesheets().add(DEFAULT_RESOURCE_PACKAGE + RunningSimulation.returnStyleSheet());
-		for(Color s:newReturn.keySet()){
-			series[i]=new XYChart.Series();
-			myChart.getData().add(series[i]);
-			i++;
-		}
-		myChart.setTranslateY(HSIZE);
-		myChart.setPrefHeight(GHEIGHT);
-		myChart.setPrefWidth(7*HSIZE/8);
-		root.getChildren().add(myChart);
-	}
 
-	/**
-	 * Updates the chart with new data when the next iteration comes
-	 * @param newS
-	 */
-	public void updateChart(Simulation newS){
-		int j=RunningSimulation.getNumberOfStates();
-		Map<Color,Number>newProportions=RunningSimulation.returnProportion();
-		int i=0;
-		for(Color s:newProportions.keySet()){
-			double k=(double)newProportions.get(s);
-			series[i].getData().add(new XYChart.Data(iteration,k));
-			i++;
-			iteration++;
-		}
-	}
 }
