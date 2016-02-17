@@ -29,7 +29,10 @@ import javafx.event.*;
 /**
  * This entire file is part of my masterpiece
  * @author Zdravko Paskalev
- *
+ * I believe the code is better done and organized now as I got rid of redundant code in several methods,
+ * split methods further into smaller methods to improve the set up and the readability of the code. I separated
+ * the method that sets up the Simulation and the one that sets up the LineChart. Now despite the fact that I couldn't
+ * split up the UserInterface Class into subclasses I feel that the code is more accessible and easier to read
  */
 public class UserInterface {
 
@@ -270,7 +273,9 @@ public class UserInterface {
 		myChart.setPrefWidth(7*HSIZE/8);
 		root.getChildren().add(myChart);
 	}
-	
+	/**Initializes the LineChart
+	 * 
+	 */
 	public void initializeLineChart(){
 		series = new XYChart.Series[RunningSimulation.getNumberOfStates()];
 		int i=0;
@@ -341,6 +346,10 @@ public class UserInterface {
 			root.getChildren().add(allButtons[i]);
 		}
 	}
+	/**Adds a Save Button to preserve the current configuration into saved_result.xml
+	 * 
+	 * @param root
+	 */
 	public void addSaveButton(Group root){
 		Save = new Button(myResources.getString("SaveButton"));
 		Save.setTranslateX(SAVEW);
