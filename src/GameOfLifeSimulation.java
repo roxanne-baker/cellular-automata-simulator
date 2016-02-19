@@ -20,9 +20,13 @@ public class GameOfLifeSimulation extends Simulation {
 	public static final String ALIVE = "alive";
 	public static final String DEAD = "dead";
 	
-	/** pass in Grid in order to set neighbors accordingly
-	 * 
+	/**
+	 * Passes parameters to set up new Game of Life Simulation
 	 * @param newGrid
+	 * @param root
+	 * @param animation
+	 * @param border
+	 * @param myName
 	 */
 	public GameOfLifeSimulation(Grid newGrid, Group root, Timeline animation, Border border, String myName){
 		super(newGrid, myName);
