@@ -8,13 +8,14 @@ import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 /**
- * Creates a Game of Life Simulation
+ * This entire file is part of my masterpiece
  * @author Zdravko Paskalev
+ * I believe this class is well done now as I removed all the obsolete methods and adjusted the UserInterface to not 
+ * rely on those. As a result the class does exactly what it is expected to and doesn't carry any unnecessary burden. 
  *
  */
 public class GameOfLifeSimulation extends Simulation {
 
-	private int count=0;
 	private static final String STYLESHEET = "default.css";
 	public static final String ALIVE = "alive";
 	public static final String DEAD = "dead";
@@ -35,33 +36,9 @@ public class GameOfLifeSimulation extends Simulation {
 	 * Associates the state with the color
 	 */
 	public void setStateNameToColor() {
-		/**
-		stateNameToColor = new HashMap<String, Color>();
-		stateNameToColor.put(this.ALIVE, Color.BLACK);
-		stateNameToColor.put(this.DEAD, Color.WHITE);
-		**/
 		stateNames = new ArrayList<String>(Arrays.asList(ALIVE, DEAD));
 		List<Color> colorNames = new ArrayList<Color>(Arrays.asList(Color.BLACK, Color.WHITE));
 		setStateNameToColor(stateNames, colorNames);
-	}
-	/**
-	 * Records the updated state of a cell
-	 * @param cell
-	 * @param position
-	 * @param newState
-	 * @return
-	 */
-	public String[][] updateCell(Cell cell, int[] position, String[][] newState) {
-		int row = position[0];
-		int col = position[1];
-		int liveNeighbours = getNumLiveNeighbours(cell);
-		if((liveNeighbours<2 || liveNeighbours>3) && cell.getState().equals(ALIVE)){
-			newState[row][col] = DEAD;
-		}
-		if(liveNeighbours == 3 && cell.getState().equals(DEAD)){
-			newState[row][col] = ALIVE;
-		}
-		return newState;
 	}
 	/**
 	 * Returns the number of live neighbours
@@ -83,8 +60,6 @@ public class GameOfLifeSimulation extends Simulation {
 	 * Calls methods to update the cell states
 	 */
 	public void updateCellStates() {
-		System.out.println("Count:" + count);
-		count++;
 		String[][] newState = getInitialStates();
 		newState = getNextStates(newState);
 		setNextStates(newState);
@@ -121,10 +96,17 @@ public class GameOfLifeSimulation extends Simulation {
 			}
 		}
 	}
-
+	/**
+	 * Return the css file with the colors for the simulation.
+	 */
 	public String returnStyleSheet(){
 		return STYLESHEET;
 	}
+	/**
+	 * Adds listeners to the grid of cells.
+	 * @param myCells
+	 * @param root
+	 */
 	public void addListeners(Cell[][]myCells, Group root){
 		for(int i=0;i<myCells.length;i++){
 			for(int j=0;j<myCells[0].length;j++){
@@ -134,14 +116,6 @@ public class GameOfLifeSimulation extends Simulation {
 			}
 		}
 	}
-
-	public double[] returnParameters(){
-		double[]param =new double[2];
-		param[0]=myCells.length;
-		param[1]=myCells[0].length;
-		return param;
-	}
-	
 	/**
 	 * Calls methods to update the cells and set their colors
 	 */

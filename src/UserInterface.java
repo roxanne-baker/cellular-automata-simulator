@@ -27,12 +27,8 @@ import javafx.util.Duration;
 import javafx.event.*;
 
 /**
- * This entire file is part of my masterpiece
+ *
  * @author Zdravko Paskalev
- * I believe the code is better done and organized now as I got rid of redundant code in several methods,
- * split methods further into smaller methods to improve the set up and the readability of the code. I separated
- * the method that sets up the Simulation and the one that sets up the LineChart. Now despite the fact that I couldn't
- * split up the UserInterface Class into subclasses I feel that the code is more accessible and easier to read
  */
 public class UserInterface {
 
